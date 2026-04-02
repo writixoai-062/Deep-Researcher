@@ -1,16 +1,751 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>ThoughtScope</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!-- Replace SUPABASE_URL and SUPABASE_ANON_KEY with actual values if not using the defaults below -->
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ThoughtScope — See How AI Really Thinks</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: { primary: '#10A37F', accent: '#3B82F6' },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+
+    /* Dark defaults */
+    :root { --bg: #0A0A0A; --card: #141414; --border: #1E1E1E; --text: #ffffff; --muted: #9ca3af; --header-bg: rgba(10,10,10,0.85); }
+    .light-mode { --bg: #ffffff; --card: #f9fafb; --border: #e5e7eb; --text: #111827; --muted: #6b7280; --header-bg: rgba(255,255,255,0.85); }
+
+    body { background: var(--bg); color: var(--text); transition: background .25s, color .25s; }
+
+    .gradient-text { background: linear-gradient(135deg, #10A37F 0%, #3B82F6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .gradient-bg   { background: linear-gradient(135deg, #10A37F 0%, #3B82F6 100%); }
+
+    /* Card */
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 1rem; }
+    .card-sm { background: var(--card); border: 1px solid var(--border); border-radius: .875rem; }
+
+    /* Header */
+    header { background: var(--header-bg); border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+
+    /* Nav link */
+    .nav-link { color: var(--muted); font-size: .875rem; font-weight: 500; padding: .4rem .75rem; border-radius: .5rem; text-decoration: none; transition: color .2s, background .2s; }
+    .nav-link:hover { color: var(--text); background: rgba(128,128,128,.08); }
+
+    /* Buttons */
+    .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: .65rem 1.5rem; background: linear-gradient(135deg, #10A37F 0%, #3B82F6 100%); border: none; border-radius: 9999px; color: white; font-weight: 600; font-size: .9rem; cursor: pointer; transition: opacity .2s; text-decoration: none; }
+    .btn-primary:hover { opacity: .88; }
+    .btn-primary:disabled { opacity: .55; cursor: not-allowed; }
+    .btn-outline { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: .65rem 1.5rem; background: transparent; border: 1px solid var(--border); border-radius: 9999px; color: var(--text); font-weight: 500; font-size: .9rem; cursor: pointer; transition: background .2s, border-color .2s; text-decoration: none; }
+    .btn-outline:hover { background: rgba(128,128,128,.08); }
+    .btn-ghost  { display: inline-flex; align-items: center; justify-content: center; padding: .5rem .875rem; background: transparent; border: none; border-radius: .5rem; color: var(--muted); font-weight: 500; font-size: .875rem; cursor: pointer; transition: color .2s, background .2s; text-decoration: none; }
+    .btn-ghost:hover { color: var(--text); background: rgba(128,128,128,.08); }
+
+    /* Input */
+    .input-field { flex: 1; padding: .75rem 1.1rem; background: var(--card); border: 1px solid var(--border); border-radius: .875rem; color: var(--text); outline: none; font-size: .875rem; font-family: inherit; transition: border-color .2s, box-shadow .2s; min-width: 0; }
+    .input-field::placeholder { color: var(--muted); }
+    .input-field:focus { border-color: #10A37F; box-shadow: 0 0 0 3px rgba(16,163,127,.12); }
+
+    /* Pulse glow */
+    @keyframes pulse-ring { 0%,100% { box-shadow: 0 0 0 0 rgba(16,163,127,.35); } 55% { box-shadow: 0 0 0 10px rgba(16,163,127,0); } }
+    .pulse-glow { animation: pulse-ring 2.2s ease infinite; }
+
+    /* Spinner */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 1.1rem; height: 1.1rem; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; margin-right: .4rem; vertical-align: middle; }
+
+    /* Fade-up animation */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+    .fade-up { opacity:0; }
+    .fade-up.visible { animation: fadeUp .6s ease-out forwards; }
+    .fade-up-d1.visible { animation-delay:.08s; }
+    .fade-up-d2.visible { animation-delay:.16s; }
+    .fade-up-d3.visible { animation-delay:.24s; }
+    .fade-up-d4.visible { animation-delay:.32s; }
+    .fade-up-d5.visible { animation-delay:.4s; }
+    .fade-up-d6.visible { animation-delay:.48s; }
+
+    /* FAQ */
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height .35s ease, padding .35s ease; }
+    .faq-item.open .faq-answer { max-height: 300px; padding-top: .75rem; }
+    .faq-arrow { transition: transform .3s; }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); }
+
+    /* Pricing popular */
+    .pricing-popular { border-color: #10A37F; box-shadow: 0 0 40px rgba(16,163,127,.12); }
+
+    /* Light mode overrides */
+    .light-mode .btn-ghost { color: #6b7280; }
+    .light-mode .btn-ghost:hover { color: #111827; }
+    .light-mode .nav-link { color: #6b7280; }
+    .light-mode .nav-link:hover { color: #111827; }
+
+    /* Mobile menu */
+    #mobileMenu { display: none; background: var(--card); border-top: 1px solid var(--border); }
+    #mobileMenu.open { display: block; }
+
+    /* Section headings */
+    .section-label { display: inline-flex; align-items: center; gap: .5rem; padding: .4rem 1rem; border: 1px solid var(--border); border-radius: 9999px; font-size: .8rem; font-weight: 600; color: var(--muted); background: var(--card); margin-bottom: 1rem; }
+
+    /* Status messages */
+    .msg-success { padding: .875rem 1rem; background: rgba(16,163,127,.1); border: 1px solid rgba(16,163,127,.25); border-radius: .875rem; color: #6ee7b7; font-size: .875rem; display: none; }
+    .msg-error   { padding: .875rem 1rem; background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25); border-radius: .875rem; color: #fca5a5; font-size: .875rem; display: none; }
+
+    /* Glow blob */
+    .blob { position:absolute; border-radius:50%; filter:blur(70px); pointer-events:none; z-index:0; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     STICKY HEADER
+════════════════════════════════════════════ -->
+<header id="mainHeader" class="fixed top-0 left-0 right-0 z-50">
+  <div style="max-width:1200px;margin:0 auto;padding:0 1.5rem;height:64px;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+
+    <!-- Logo -->
+    <a href="#home" style="display:flex;align-items:center;gap:.625rem;text-decoration:none;flex-shrink:0;">
+      <div style="width:34px;height:34px;border-radius:.625rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.2);" class="gradient-bg">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </div>
+      <span style="font-weight:800;font-size:1.1rem;color:var(--text);">ThoughtScope</span>
+    </a>
+
+    <!-- Center nav — desktop -->
+    <nav class="hidden md:flex" style="gap:.25rem;align-items:center;">
+      <a href="#home"         class="nav-link">Home</a>
+      <a href="#features"     class="nav-link">Features</a>
+      <a href="#pricing"      class="nav-link">Pricing</a>
+      <a href="#faq"          class="nav-link">About</a>
+    </nav>
+
+    <!-- Right actions — desktop -->
+    <div class="hidden md:flex" style="align-items:center;gap:.5rem;flex-shrink:0;">
+      <button id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme" style="width:36px;height:36px;border-radius:.5rem;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:background .2s;" onmouseover="this.style.background='rgba(128,128,128,.08)'" onmouseout="this.style.background='transparent'">
+        <span id="themeIconDesk">
+          <!-- Sun (shown in dark mode) -->
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </span>
+      </button>
+      <a href="./login.html"  class="btn-ghost">Login</a>
+      <a href="./signup.html" class="btn-outline" style="font-size:.85rem;padding:.5rem 1.1rem;">Sign Up</a>
+      <button onclick="scrollToJoin()" class="btn-primary pulse-glow" style="font-size:.82rem;padding:.5rem 1.1rem;">Join Waiting List</button>
+    </div>
+
+    <!-- Mobile: theme toggle + hamburger -->
+    <div class="flex md:hidden" style="align-items:center;gap:.5rem;">
+      <button onclick="toggleTheme()" aria-label="Toggle theme" style="width:36px;height:36px;border-radius:.5rem;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);">
+        <span id="themeIconMob">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </span>
+      </button>
+      <button id="hamburger" onclick="toggleMenu()" aria-label="Menu" style="width:36px;height:36px;border-radius:.5rem;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);">
+        <svg id="menuIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg id="closeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobileMenu">
+    <div style="padding:1rem 1.5rem;display:flex;flex-direction:column;gap:.5rem;">
+      <a href="#home"         onclick="toggleMenu()" class="nav-link" style="padding:.625rem .75rem;">Home</a>
+      <a href="#features"     onclick="toggleMenu()" class="nav-link" style="padding:.625rem .75rem;">Features</a>
+      <a href="#pricing"      onclick="toggleMenu()" class="nav-link" style="padding:.625rem .75rem;">Pricing</a>
+      <a href="#faq"          onclick="toggleMenu()" class="nav-link" style="padding:.625rem .75rem;">About</a>
+      <div style="height:1px;background:var(--border);margin:.5rem 0;"></div>
+      <a href="./login.html"  class="btn-ghost" style="justify-content:flex-start;">Login</a>
+      <a href="./signup.html" class="btn-outline" style="justify-content:center;margin-bottom:.25rem;">Sign Up</a>
+      <button onclick="scrollToJoin();toggleMenu();" class="btn-primary pulse-glow">Join Waiting List</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════ -->
+<section id="home" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:7rem 1.5rem 5rem;position:relative;overflow:hidden;">
+  <!-- Blobs -->
+  <div class="blob" style="width:520px;height:520px;top:10%;left:50%;transform:translateX(-50%);background:radial-gradient(circle,rgba(16,163,127,.08) 0%,transparent 70%);"></div>
+  <div class="blob" style="width:280px;height:280px;top:20%;left:20%;background:radial-gradient(circle,rgba(16,163,127,.05) 0%,transparent 70%);"></div>
+  <div class="blob" style="width:280px;height:280px;top:20%;right:20%;background:radial-gradient(circle,rgba(59,130,246,.05) 0%,transparent 70%);"></div>
+
+  <div style="position:relative;z-index:1;max-width:860px;text-align:center;" class="fade-up visible">
+    <!-- Badge -->
+    <div class="section-label" style="margin-bottom:1.5rem;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      AI Thought Analyzer
+    </div>
+
+    <!-- Headline -->
+    <h1 style="font-size:clamp(2.8rem,7vw,5rem);font-weight:900;line-height:1.05;margin-bottom:1.5rem;color:var(--text);">
+      See How <span class="gradient-text">AI Really&nbsp;Thinks</span>
+    </h1>
+
+    <!-- Sub -->
+    <p style="font-size:1.2rem;line-height:1.65;color:var(--muted);max-width:620px;margin:0 auto 2.5rem;">
+      Paste any ChatGPT conversation — get instant analysis of why AI gave that answer, plus 10 specialized agents ready to take you further.
+    </p>
+
+    <!-- CTAs -->
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1rem;margin-bottom:3rem;">
+      <button onclick="scrollToJoin()" class="btn-primary pulse-glow" style="font-size:1rem;padding:.875rem 2rem;">
+        Join Waiting List
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+      <button class="btn-outline" style="font-size:1rem;padding:.875rem 2rem;">Watch Demo</button>
+    </div>
+
+    <!-- Stats -->
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.5rem 1.5rem;font-size:.9rem;color:var(--muted);">
+      <span>⭐ 1000+ users</span>
+      <span style="width:4px;height:4px;border-radius:50%;background:var(--border);display:inline-block;"></span>
+      <span>🌍 Global coverage</span>
+      <span style="width:4px;height:4px;border-radius:50%;background:var(--border);display:inline-block;"></span>
+      <span>🚀 Launching soon</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     FEATURES
+════════════════════════════════════════════ -->
+<section id="features" style="padding:6rem 1.5rem;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:4rem;" class="fade-up">
+      <div class="section-label">Capabilities</div>
+      <h2 style="font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:var(--text);margin-bottom:.875rem;">Everything you need to understand AI</h2>
+      <p style="font-size:1.05rem;color:var(--muted);max-width:520px;margin:0 auto;">Six powerful capabilities that transform how you analyze, improve, and scale your AI conversations.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;">
+      <!-- Feature cards -->
+      <div class="card fade-up fade-up-d1" style="padding:1.75rem;transition:box-shadow .25s;">
+        <div class="gradient-bg" style="width:42px;height:42px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;margin-bottom:1.125rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <h3 style="font-weight:700;font-size:1rem;color:var(--text);margin-bottom:.5rem;">AI Thought Analysis</h3>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.65;">Reveals exactly why ChatGPT gave that specific answer, surfacing the full reasoning chain and decision points behind every response.</p>
+      </div>
+      <div class="card fade-up fade-up-d2" style="padding:1.75rem;">
+        <div class="gradient-bg" style="width:42px;height:42px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;margin-bottom:1.125rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>
+        </div>
+        <h3 style="font-weight:700;font-size:1rem;color:var(--text);margin-bottom:.5rem;">Boss Agent</h3>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.65;">Auto-detects your category and instantly recommends the best specialized agent — no manual selection, just the right tool every time.</p>
+      </div>
+      <div class="card fade-up fade-up-d3" style="padding:1.75rem;">
+        <div class="gradient-bg" style="width:42px;height:42px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;margin-bottom:1.125rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <h3 style="font-weight:700;font-size:1rem;color:var(--text);margin-bottom:.5rem;">10 Specialized Agents</h3>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.65;">Content, Code, Prompt, Hook, Language Bridge and 5 more — purpose-built agents designed for every task you face.</p>
+      </div>
+      <div class="card fade-up fade-up-d4" style="padding:1.75rem;">
+        <div class="gradient-bg" style="width:42px;height:42px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;margin-bottom:1.125rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <h3 style="font-weight:700;font-size:1rem;color:var(--text);margin-bottom:.5rem;">Multi-Language</h3>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.65;">Full support for English, Urdu, Hindi, Arabic and 20+ additional languages with native-quality analysis and output.</p>
+      </div>
+      <div class="card fade-up fade-up-d5" style="padding:1.75rem;">
+        <div class="gradient-bg" style="width:42px;height:42px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;margin-bottom:1.125rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <h3 style="font-weight:700;font-size:1rem;color:var(--text);margin-bottom:.5rem;">Smart Credits</h3>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.65;">5 free monthly credits, Pro 100 credits, Business unlimited — flexible pricing that scales precisely with your needs.</p>
+      </div>
+      <div class="card fade-up fade-up-d6" style="padding:1.75rem;">
+        <div class="gradient-bg" style="width:42px;height:42px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;margin-bottom:1.125rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3 style="font-weight:700;font-size:1rem;color:var(--text);margin-bottom:.5rem;">Privacy First</h3>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.65;">Your data is never stored, never logged, never sold. Complete end-to-end privacy by design — not as an afterthought.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     HOW IT WORKS
+════════════════════════════════════════════ -->
+<section style="padding:6rem 1.5rem;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div style="max-width:900px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:4rem;" class="fade-up">
+      <div class="section-label">Process</div>
+      <h2 style="font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:var(--text);margin-bottom:.875rem;">How it works</h2>
+      <p style="font-size:1.05rem;color:var(--muted);">Three simple steps to unlock AI transparency</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2.5rem;text-align:center;">
+      <div class="fade-up fade-up-d1">
+        <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:68px;height:68px;border-radius:50%;margin-bottom:1.25rem;" class="gradient-bg">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/></svg>
+          <span style="position:absolute;top:-4px;right:-4px;width:22px;height:22px;border-radius:50%;background:var(--bg);border:1px solid var(--border);font-size:.72rem;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:center;">1</span>
+        </div>
+        <h3 style="font-weight:700;color:var(--text);margin-bottom:.5rem;">Paste your conversation</h3>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.65;">Copy your ChatGPT conversation URL or paste the full text directly into ThoughtScope.</p>
+      </div>
+      <div class="fade-up fade-up-d2">
+        <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:68px;height:68px;border-radius:50%;margin-bottom:1.25rem;" class="gradient-bg">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.04Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.04Z"/></svg>
+          <span style="position:absolute;top:-4px;right:-4px;width:22px;height:22px;border-radius:50%;background:var(--bg);border:1px solid var(--border);font-size:.72rem;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:center;">2</span>
+        </div>
+        <h3 style="font-weight:700;color:var(--text);margin-bottom:.5rem;">AI analyzes everything</h3>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.65;">Our system dissects the question, the answer, and the full reasoning chain behind every response.</p>
+      </div>
+      <div class="fade-up fade-up-d3">
+        <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:68px;height:68px;border-radius:50%;margin-bottom:1.25rem;" class="gradient-bg">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <span style="position:absolute;top:-4px;right:-4px;width:22px;height:22px;border-radius:50%;background:var(--bg);border:1px solid var(--border);font-size:.72rem;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:center;">3</span>
+        </div>
+        <h3 style="font-weight:700;color:var(--text);margin-bottom:.5rem;">Get insights + agent match</h3>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.65;">Receive a full analysis report and automatic recommendation for the best specialized agent.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     PRICING
+════════════════════════════════════════════ -->
+<section id="pricing" style="padding:6rem 1.5rem;">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:4rem;" class="fade-up">
+      <div class="section-label">Pricing</div>
+      <h2 style="font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:var(--text);margin-bottom:.875rem;">Simple, transparent pricing</h2>
+      <p style="font-size:1.05rem;color:var(--muted);">Start free. Scale when you're ready.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;align-items:start;">
+
+      <!-- Free -->
+      <div class="card fade-up fade-up-d1" style="padding:2rem;display:flex;flex-direction:column;">
+        <div style="margin-bottom:1.5rem;">
+          <h3 style="font-weight:800;font-size:1.1rem;color:var(--text);margin-bottom:.25rem;">Free</h3>
+          <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem;">Perfect to get started</p>
+          <div style="display:flex;align-items:flex-end;gap:.25rem;">
+            <span style="font-size:2.6rem;font-weight:900;color:var(--text);">$0</span>
+            <span style="color:var(--muted);margin-bottom:.375rem;">/month</span>
+          </div>
+        </div>
+        <ul style="list-style:none;padding:0;margin:0 0 2rem;display:flex;flex-direction:column;gap:.75rem;flex:1;">
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.875rem;color:var(--muted);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>5 credits/month</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.875rem;color:var(--muted);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>2 specialized agents</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.875rem;color:var(--muted);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Basic AI analysis</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.875rem;color:var(--muted);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Email support</li>
+        </ul>
+        <a href="./signup.html" class="btn-outline" style="text-align:center;border-radius:.875rem;padding:.75rem;">Get Started Free</a>
+      </div>
+
+      <!-- Pro (popular) -->
+      <div class="card pricing-popular fade-up fade-up-d2" style="padding:2rem;display:flex;flex-direction:column;position:relative;transform:scale(1.03);transform-origin:center;">
+        <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);">
+          <span class="gradient-bg" style="display:inline-block;padding:.3rem 1rem;border-radius:9999px;font-size:.72rem;font-weight:700;color:white;">Most Popular</span>
+        </div>
+        <div style="margin-bottom:1.5rem;margin-top:.5rem;">
+          <h3 style="font-weight:800;font-size:1.1rem;color:var(--text);margin-bottom:.25rem;">Pro</h3>
+          <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem;">For serious users</p>
+          <div style="display:flex;align-items:flex-end;gap:.25rem;">
+            <span style="font-size:2.6rem;font-weight:900;color:var(--text);">$9.99</span>
+            <span style="color:var(--muted);margin-bottom:.375rem;">/month</span>
+          </div>
+        </div>
+        <ul style="list-style:none;padding:0;margin:0 0 2rem;display:flex;flex-direction:column;gap:.75rem;flex:1;">
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.875rem;color:var(--text);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>100 credits/month</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.875rem;color:var(--text);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>All 10 specialized agents</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.875rem;color:var(--text);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Deep AI analysis</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.875rem;color:var(--text);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Priority support</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.875rem;color:var(--text);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>PDF & JSON export</li>
+        </ul>
+        <button onclick="scrollToJoin()" class="btn-primary" style="border-radius:.875rem;padding:.75rem;">Get Started</button>
+      </div>
+
+      <!-- Business -->
+      <div class="card fade-up fade-up-d3" style="padding:2rem;display:flex;flex-direction:column;">
+        <div style="margin-bottom:1.5rem;">
+          <h3 style="font-weight:800;font-size:1.1rem;color:var(--text);margin-bottom:.25rem;">Business</h3>
+          <p style="font-size:.875rem;color:var(--muted);margin-bottom:1rem;">For teams and enterprises</p>
+          <div style="display:flex;align-items:flex-end;gap:.25rem;">
+            <span style="font-size:2.6rem;font-weight:900;color:var(--text);">$29.99</span>
+            <span style="color:var(--muted);margin-bottom:.375rem;">/month</span>
+          </div>
+        </div>
+        <ul style="list-style:none;padding:0;margin:0 0 2rem;display:flex;flex-direction:column;gap:.75rem;flex:1;">
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.875rem;color:var(--muted);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Unlimited credits</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.875rem;color:var(--muted);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>All Pro features</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.875rem;color:var(--muted);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>API access</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.875rem;color:var(--muted);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Team collaboration</li>
+          <li style="display:flex;align-items:center;gap:.625rem;font-size:.875rem;color:var(--muted);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>SSO support</li>
+        </ul>
+        <a href="./signup.html" class="btn-outline" style="text-align:center;border-radius:.875rem;padding:.75rem;">Contact Sales</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     CTA SECTION
+════════════════════════════════════════════ -->
+<section style="padding:6rem 1.5rem;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div style="max-width:640px;margin:0 auto;text-align:center;" class="fade-up">
+    <h2 style="font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:var(--text);margin-bottom:1rem;">Ready to understand AI better?</h2>
+    <p style="font-size:1.05rem;color:var(--muted);margin-bottom:2.25rem;">Join thousands of researchers, creators, and developers who trust ThoughtScope.</p>
+    <button onclick="scrollToJoin()" class="btn-primary pulse-glow" style="font-size:1.05rem;padding:1rem 2.5rem;">
+      Join Waiting List
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     FAQ
+════════════════════════════════════════════ -->
+<section id="faq" style="padding:6rem 1.5rem;">
+  <div style="max-width:680px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:3rem;" class="fade-up">
+      <div class="section-label">FAQ</div>
+      <h2 style="font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:var(--text);margin-bottom:.875rem;">Frequently asked questions</h2>
+      <p style="font-size:1rem;color:var(--muted);">Everything you need to know about ThoughtScope.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.75rem;" class="fade-up">
+
+      <div class="card faq-item" style="overflow:hidden;">
+        <button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;background:transparent;border:none;cursor:pointer;text-align:left;color:var(--text);">
+          <span style="font-weight:600;font-size:.95rem;">What is ThoughtScope?</span>
+          <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-left:1rem;color:var(--muted);"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer" style="padding:0 1.5rem;"><p style="font-size:.875rem;color:var(--muted);line-height:1.7;padding-bottom:1.25rem;">ThoughtScope is an AI conversation intelligence platform. Paste any ChatGPT conversation and our system reveals the underlying reasoning, biases, and patterns — plus recommends the best specialized agent for your follow-up work.</p></div>
+      </div>
+
+      <div class="card faq-item" style="overflow:hidden;">
+        <button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;background:transparent;border:none;cursor:pointer;text-align:left;color:var(--text);">
+          <span style="font-weight:600;font-size:.95rem;">How many agents are there?</span>
+          <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-left:1rem;color:var(--muted);"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer" style="padding:0 1.5rem;"><p style="font-size:.875rem;color:var(--muted);line-height:1.7;padding-bottom:1.25rem;">ThoughtScope includes 10 specialized agents: Content Agent, Code Agent, Prompt Engineer, Hook Writer, Language Bridge, Summary Agent, Research Agent, Debug Agent, SEO Agent, and the Boss Agent that automatically routes you to the right one.</p></div>
+      </div>
+
+      <div class="card faq-item" style="overflow:hidden;">
+        <button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;background:transparent;border:none;cursor:pointer;text-align:left;color:var(--text);">
+          <span style="font-weight:600;font-size:.95rem;">Can I cancel anytime?</span>
+          <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-left:1rem;color:var(--muted);"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer" style="padding:0 1.5rem;"><p style="font-size:.875rem;color:var(--muted);line-height:1.7;padding-bottom:1.25rem;">Absolutely. No long-term contracts, no cancellation fees, no hidden terms. Cancel with one click from your account settings — your access continues until the end of your billing period.</p></div>
+      </div>
+
+      <div class="card faq-item" style="overflow:hidden;">
+        <button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;background:transparent;border:none;cursor:pointer;text-align:left;color:var(--text);">
+          <span style="font-weight:600;font-size:.95rem;">Is my data safe?</span>
+          <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-left:1rem;color:var(--muted);"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer" style="padding:0 1.5rem;"><p style="font-size:.875rem;color:var(--muted);line-height:1.7;padding-bottom:1.25rem;">Yes. We operate on a strict zero-retention policy. Your conversations are analyzed in-memory and never written to disk. We do not train on your data. Your privacy is non-negotiable.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     REVIEWS
+════════════════════════════════════════════ -->
+<section style="padding:6rem 1.5rem;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:4rem;" class="fade-up">
+      <div class="section-label">Reviews</div>
+      <h2 style="font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:var(--text);margin-bottom:.875rem;">Loved by researchers and creators</h2>
+      <p style="font-size:1.05rem;color:var(--muted);">Join thousands already using ThoughtScope to unlock AI transparency.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;">
+
+      <div class="card fade-up fade-up-d1" style="padding:1.75rem;display:flex;flex-direction:column;gap:1rem;">
+        <div style="display:flex;gap:2px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.7;flex:1;">"Finally I understand why AI gives certain answers. I was spending hours guessing what prompted a bad response — ThoughtScope shows me the exact reasoning chain in seconds."</p>
+        <div style="display:flex;align-items:center;gap:.75rem;padding-top:.75rem;border-top:1px solid var(--border);">
+          <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#9333ea);display:flex;align-items:center;justify-content:center;color:white;font-size:.75rem;font-weight:700;flex-shrink:0;">SM</div>
+          <div>
+            <div style="font-size:.875rem;font-weight:600;color:var(--text);">Sarah M.</div>
+            <div style="font-size:.78rem;color:var(--muted);">Content Creator</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card fade-up fade-up-d2" style="padding:1.75rem;display:flex;flex-direction:column;gap:1rem;">
+        <div style="display:flex;gap:2px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.7;flex:1;">"The Boss Agent is a game changer for my freelance workflow. It figures out exactly which specialized agent I need without me having to guess. My output quality doubled."</p>
+        <div style="display:flex;align-items:center;gap:.75rem;padding-top:.75rem;border-top:1px solid var(--border);">
+          <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#10A37F,#059669);display:flex;align-items:center;justify-content:center;color:white;font-size:.75rem;font-weight:700;flex-shrink:0;">AK</div>
+          <div>
+            <div style="font-size:.875rem;font-weight:600;color:var(--text);">Ali K.</div>
+            <div style="font-size:.78rem;color:var(--muted);">Freelancer & Consultant</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card fade-up fade-up-d3" style="padding:1.75rem;display:flex;flex-direction:column;gap:1rem;">
+        <div style="display:flex;gap:2px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p style="font-size:.875rem;color:var(--muted);line-height:1.7;flex:1;">"Saved me hours of prompt testing every week. Instead of trial and error, I now see exactly why a prompt worked or failed and fix it immediately."</p>
+        <div style="display:flex;align-items:center;gap:.75rem;padding-top:.75rem;border-top:1px solid var(--border);">
+          <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#4f46e5);display:flex;align-items:center;justify-content:center;color:white;font-size:.75rem;font-weight:700;flex-shrink:0;">MR</div>
+          <div>
+            <div style="font-size:.875rem;font-weight:600;color:var(--text);">Maya R.</div>
+            <div style="font-size:.78rem;color:var(--muted);">Senior Developer</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     JOIN WAITING LIST
+════════════════════════════════════════════ -->
+<section id="join-waitlist" style="padding:7rem 1.5rem;">
+  <div style="max-width:560px;margin:0 auto;text-align:center;" class="fade-up">
+    <div class="gradient-bg" style="width:52px;height:52px;border-radius:1rem;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;box-shadow:0 8px 24px rgba(16,163,127,.25);">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    </div>
+    <h2 style="font-size:clamp(1.8rem,4vw,2.4rem);font-weight:800;color:var(--text);margin-bottom:.625rem;">Join for free</h2>
+    <p style="font-size:1rem;color:var(--muted);margin-bottom:.375rem;">
+      First 20 users get a <strong style="color:#10A37F;">20% lifetime discount</strong> — act fast.
+    </p>
+    <p style="font-size:.825rem;color:var(--muted);margin-bottom:2rem;">No spam. No credit card required.</p>
+
+    <!-- Form -->
+    <form id="waiting-form" onsubmit="handleWaitlist(event)" style="display:flex;flex-direction:column;gap:.875rem;">
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
+        <input id="email" type="email" placeholder="Enter your email address" required class="input-field" autocomplete="email" />
+        <button type="submit" id="joinBtn" class="btn-primary pulse-glow" style="flex-shrink:0;padding:.75rem 1.5rem;border-radius:.875rem;font-size:.9rem;">
+          Join Waiting List
+        </button>
+      </div>
+      <div id="waitlistSuccess" class="msg-success">🎉 You're on the waiting list! First 20 users get 20% lifetime discount.</div>
+      <div id="waitlistError"   class="msg-error">This email is already registered or an error occurred. Try a different email.</div>
+    </form>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+<footer style="border-top:1px solid var(--border);background:var(--card);">
+  <div style="max-width:1200px;margin:0 auto;padding:3.5rem 1.5rem 2rem;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:2.5rem;margin-bottom:2.5rem;">
+
+      <!-- Brand -->
+      <div>
+        <a href="#home" style="display:flex;align-items:center;gap:.625rem;text-decoration:none;margin-bottom:.875rem;">
+          <div class="gradient-bg" style="width:28px;height:28px;border-radius:.5rem;display:flex;align-items:center;justify-content:center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </div>
+          <span style="font-weight:800;color:var(--text);font-size:.95rem;">ThoughtScope</span>
+        </a>
+        <p style="font-size:.825rem;color:var(--muted);line-height:1.65;max-width:210px;margin-bottom:1.25rem;">Unveiling the cognitive architecture behind AI — one conversation at a time.</p>
+        <div style="display:flex;gap:.875rem;">
+          <a href="#" aria-label="Twitter" style="color:var(--muted);transition:color .2s;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--text')" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--muted')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" aria-label="LinkedIn" style="color:var(--muted);transition:color .2s;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--text')" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--muted')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="#" aria-label="GitHub" style="color:var(--muted);transition:color .2s;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--text')" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--muted')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Product -->
+      <div>
+        <h4 style="font-weight:700;font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem;">Product</h4>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.625rem;">
+          <li><a href="#features" style="font-size:.875rem;color:var(--muted);text-decoration:none;transition:color .2s;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--text')" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--muted')">Features</a></li>
+          <li><a href="#pricing"  style="font-size:.875rem;color:var(--muted);text-decoration:none;transition:color .2s;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--text')" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--muted')">Pricing</a></li>
+          <li><a href="#"         style="font-size:.875rem;color:var(--muted);text-decoration:none;transition:color .2s;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--text')" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--muted')">Agents</a></li>
+          <li><a href="#"         style="font-size:.875rem;color:var(--muted);text-decoration:none;transition:color .2s;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--text')" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--muted')">API</a></li>
+        </ul>
+      </div>
+
+      <!-- Resources -->
+      <div>
+        <h4 style="font-weight:700;font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem;">Resources</h4>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.625rem;">
+          <li><a href="#" style="font-size:.875rem;color:var(--muted);text-decoration:none;transition:color .2s;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--text')" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--muted')">Documentation</a></li>
+          <li><a href="#" style="font-size:.875rem;color:var(--muted);text-decoration:none;transition:color .2s;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--text')" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--muted')">Status</a></li>
+          <li><a href="#" style="font-size:.875rem;color:var(--muted);text-decoration:none;transition:color .2s;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--text')" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--muted')">Community</a></li>
+          <li><a href="#" style="font-size:.875rem;color:var(--muted);text-decoration:none;transition:color .2s;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--text')" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--muted')">Blog</a></li>
+        </ul>
+      </div>
+
+    </div>
+    <div style="padding-top:1.5rem;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;">
+      <span style="font-size:.825rem;color:var(--muted);">© 2026 ThoughtScope. All rights reserved.</span>
+      <div style="display:flex;gap:1.25rem;">
+        <a href="#" style="font-size:.825rem;color:var(--muted);text-decoration:none;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--text')" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--muted')">Privacy Policy</a>
+        <a href="#" style="font-size:.825rem;color:var(--muted);text-decoration:none;" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--text')" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--muted')">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</main>
+
+<!-- ════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════ -->
+<script>
+  // ── Supabase config ──────────────────────────────────────
+  // Replace SUPABASE_URL and SUPABASE_ANON_KEY with actual values
+  const SUPABASE_URL = 'https://acdrbtuhxpskuuimevwu.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjZHJidHVoeHBza3V1aW1ldnd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMzU4NTMsImV4cCI6MjA5MDcxMTg1M30.jIxOnGza9D1nBbEqnmglIKSK0L5pbkqkLb1iCZOGQdM';
+
+  // ── Waiting list ─────────────────────────────────────────
+  async function addToWaitingList(email) {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/waiting_list`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ email: email })
+    });
+    return response;
+  }
+
+  async function handleWaitlist(e) {
+    e.preventDefault();
+    const email   = document.getElementById('email').value.trim();
+    const btn     = document.getElementById('joinBtn');
+    const success = document.getElementById('waitlistSuccess');
+    const error   = document.getElementById('waitlistError');
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Joining…';
+    success.style.display = 'none';
+    error.style.display   = 'none';
+
+    try {
+      const res = await addToWaitingList(email);
+      if (res.ok || res.status === 201) {
+        success.style.display = 'block';
+        document.getElementById('waiting-form').reset();
+      } else if (res.status === 409 || res.status === 422) {
+        error.textContent = 'This email is already on the waiting list.';
+        error.style.display = 'block';
+      } else {
+        const body = await res.json().catch(() => ({}));
+        error.textContent = body?.message || 'Something went wrong. Please try again.';
+        error.style.display = 'block';
+      }
+    } catch {
+      error.textContent = 'Connection error. Please check your internet and try again.';
+      error.style.display = 'block';
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = 'Join Waiting List';
+  }
+
+  // ── Theme toggle ─────────────────────────────────────────
+  let isDark = true;
+
+  const moonSVG = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+  const sunSVG  = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>`;
+
+  function toggleTheme() {
+    isDark = !isDark;
+    document.documentElement.classList.toggle('dark', isDark);
+    document.body.classList.toggle('light-mode', !isDark);
+    document.getElementById('themeIconDesk').innerHTML = isDark ? sunSVG : moonSVG;
+    document.getElementById('themeIconMob').innerHTML  = isDark ? sunSVG : moonSVG;
+    localStorage.setItem('ts-theme', isDark ? 'dark' : 'light');
+  }
+
+  // Restore saved theme
+  (function () {
+    const saved = localStorage.getItem('ts-theme');
+    if (saved === 'light') {
+      isDark = false;
+      document.documentElement.classList.remove('dark');
+      document.body.classList.add('light-mode');
+      document.getElementById('themeIconDesk').innerHTML = moonSVG;
+      document.getElementById('themeIconMob').innerHTML  = moonSVG;
+    }
+  })();
+
+  // ── Mobile menu ──────────────────────────────────────────
+  let menuOpen = false;
+  function toggleMenu() {
+    menuOpen = !menuOpen;
+    document.getElementById('mobileMenu').classList.toggle('open', menuOpen);
+    document.getElementById('menuIcon').style.display  = menuOpen ? 'none'  : 'block';
+    document.getElementById('closeIcon').style.display = menuOpen ? 'block' : 'none';
+  }
+
+  // ── Scroll to join section ────────────────────────────────
+  function scrollToJoin() {
+    document.getElementById('join-waitlist').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ── FAQ accordion ─────────────────────────────────────────
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  }
+
+  // ── Scroll-triggered fade-up ──────────────────────────────
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // ── Header scroll effect ─────────────────────────────────
+  window.addEventListener('scroll', () => {
+    const h = document.getElementById('mainHeader');
+    h.style.boxShadow = window.scrollY > 10 ? '0 1px 16px rgba(0,0,0,.2)' : 'none';
+  }, { passive: true });
+</script>
+
+</body>
 </html>
