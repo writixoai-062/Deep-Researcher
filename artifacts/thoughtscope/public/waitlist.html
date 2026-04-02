@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<!-- Replace SUPABASE_URL and SUPABASE_ANON_KEY with actual values if not using the defaults below -->
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Join Waiting List — ThoughtScope</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: { primary: '#10A37F', accent: '#3B82F6' } } }
+    }
+  </script>
+  <style>
+    body { background: #0A0A0A; font-family: 'Inter', system-ui, sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #10A37F 0%, #3B82F6 100%); }
+    .gradient-text { background: linear-gradient(135deg, #10A37F 0%, #3B82F6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .input-field { flex: 1; padding: .75rem 1rem; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: .75rem; color: white; outline: none; transition: border-color .2s, box-shadow .2s; font-size: .875rem; min-width: 0; }
+    .input-field::placeholder { color: #6b7280; }
+    .input-field:focus { border-color: #10A37F; box-shadow: 0 0 0 3px rgba(16,163,127,.12); }
+    .btn-primary { padding: .75rem 1.75rem; background: linear-gradient(135deg, #10A37F 0%, #3B82F6 100%); border: none; border-radius: .75rem; color: white; font-weight: 600; font-size: .9rem; cursor: pointer; transition: opacity .2s; white-space: nowrap; }
+    .btn-primary:hover { opacity: .88; }
+    .btn-primary:disabled { opacity: .55; cursor: not-allowed; }
+    .error-msg { display: none; padding: .75rem 1rem; background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.2); border-radius: .75rem; color: #fca5a5; font-size: .875rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .spinner { width: 1.1rem; height: 1.1rem; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; margin-right: .4rem; vertical-align: middle; }
+    .success-view { animation: fadeIn .5s ease-out; }
+    .glow { box-shadow: 0 0 50px rgba(16,163,127,.1); }
+    .feature-item { display: flex; align-items: center; gap: .625rem; color: #9ca3af; font-size: .875rem; }
+    .feature-dot { width: 6px; height: 6px; border-radius: 50%; background: #10A37F; flex-shrink: 0; }
+    @keyframes pulse-ring { 0%,100% { box-shadow: 0 0 0 0 rgba(16,163,127,.3); } 50% { box-shadow: 0 0 0 12px rgba(16,163,127,0); } }
+    .pulse-ring { animation: pulse-ring 2.5s ease infinite; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center px-4 py-12">
+
+  <!-- Background -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full" style="background:radial-gradient(circle,rgba(16,163,127,.06) 0%,transparent 65%)"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full" style="background:radial-gradient(circle,rgba(59,130,246,.05) 0%,transparent 65%)"></div>
+  </div>
+
+  <!-- Nav -->
+  <a href="/thoughtscope/" class="fixed top-0 left-0 right-0 flex items-center gap-2.5 px-6 py-4 bg-[#0A0A0A]/80 backdrop-blur border-b border-[#1E1E1E] z-40">
+    <div class="w-7 h-7 rounded-lg gradient-bg flex items-center justify-center shadow-sm">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </div>
+    <span class="font-bold text-white text-sm">ThoughtScope</span>
+    <span class="text-gray-600 text-sm ml-1">← Back to home</span>
+  </a>
+
+  <div class="relative w-full max-w-lg mt-16">
+
+    <!-- Form view -->
+    <div id="formView">
+      <!-- Badge -->
+      <div class="flex justify-center mb-6">
+        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#2a2a2a] bg-[#141414] text-sm text-gray-400">
+          <span class="w-2 h-2 rounded-full bg-green-400 inline-block animate-pulse"></span>
+          Waiting List — Limited Spots
+        </span>
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl font-black text-center text-white leading-tight mb-4">
+        Get Early Access +<br /><span class="gradient-text">20% Lifetime Discount</span>
+      </h1>
+      <p class="text-center text-gray-400 mb-8 text-lg leading-relaxed">
+        Be among the first to analyze AI conversations at a deeper level.<br />No credit card required.
+      </p>
+
+      <!-- Perks -->
+      <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-8">
+        <div class="feature-item"><div class="feature-dot"></div><span>20% lifetime discount</span></div>
+        <div class="feature-item"><div class="feature-dot"></div><span>Early feature access</span></div>
+        <div class="feature-item"><div class="feature-dot"></div><span>Priority support</span></div>
+        <div class="feature-item"><div class="feature-dot"></div><span>Exclusive onboarding</span></div>
+      </div>
+
+      <!-- Input form -->
+      <div class="glow bg-[#141414] border border-[#1E1E1E] rounded-2xl p-6 sm:p-8">
+        <form id="waitlistForm" onsubmit="handleJoin(event)">
+          <div class="flex flex-col sm:flex-row gap-3 mb-3">
+            <input id="email" type="email" placeholder="Enter your email address" required class="input-field" autocomplete="email" />
+            <button type="submit" id="joinBtn" class="btn-primary pulse-ring">
+              Join Now
+            </button>
+          </div>
+          <div id="errorMsg" class="error-msg"></div>
+        </form>
+        <p class="text-xs text-gray-500 mt-3 text-center">No spam ever. Unsubscribe at any time.</p>
+      </div>
+
+      <!-- Social proof -->
+      <div class="mt-6 flex items-center justify-center gap-6 text-sm text-gray-500">
+        <span>⭐ 1000+ on list</span>
+        <span class="w-1 h-1 bg-gray-700 rounded-full"></span>
+        <span>🌍 Global</span>
+        <span class="w-1 h-1 bg-gray-700 rounded-full"></span>
+        <span>🚀 Launching soon</span>
+      </div>
+    </div>
+
+    <!-- Success view -->
+    <div id="successView" style="display:none;" class="success-view text-center">
+      <div class="w-20 h-20 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-6 shadow-xl">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <h2 class="text-3xl font-black text-white mb-2">You're in! 🎉</h2>
+      <p class="text-gray-400 mb-8">Here's your spot on the ThoughtScope waiting list.</p>
+
+      <div class="glow bg-[#141414] border border-[#1E1E1E] rounded-2xl p-6 sm:p-8 mb-6 text-left">
+        <!-- Position -->
+        <div class="flex items-center justify-between py-3 border-b border-[#1E1E1E]">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white text-xs font-bold">#</div>
+            <span class="text-gray-400 text-sm">Your position</span>
+          </div>
+          <span id="positionDisplay" class="text-2xl font-black gradient-text">—</span>
+        </div>
+        <!-- Discount code -->
+        <div class="flex items-center justify-between py-3 border-b border-[#1E1E1E]">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-green-500/15 flex items-center justify-center">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <span class="text-gray-400 text-sm">Your discount code</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <code id="codeDisplay" class="text-primary font-mono font-bold text-sm">—</code>
+            <button onclick="copyDiscount()" id="copyBtn" class="px-2.5 py-1 bg-primary/10 border border-primary/20 rounded-md text-primary text-xs font-semibold hover:bg-primary/20 transition-colors">Copy</button>
+          </div>
+        </div>
+        <!-- Discount value -->
+        <div class="flex items-center justify-between py-3">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-yellow-500/15 flex items-center justify-center">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <span class="text-gray-400 text-sm">Discount</span>
+          </div>
+          <span class="text-yellow-400 font-bold">20% Lifetime Off</span>
+        </div>
+      </div>
+
+      <p id="copyFeedback" class="text-green-400 text-sm mb-4" style="display:none;">✓ Code copied to clipboard!</p>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="/thoughtscope/" class="px-6 py-3 bg-[#141414] border border-[#2a2a2a] rounded-xl text-white text-sm font-medium hover:bg-[#1a1a1a] transition-colors text-center">← Back to Home</a>
+        <a href="/thoughtscope/signup.html" class="px-6 py-3 rounded-xl gradient-bg text-white text-sm font-semibold hover:opacity-90 transition-opacity text-center">Create Account →</a>
+      </div>
+    </div>
+
+    <!-- Already on list view -->
+    <div id="alreadyView" style="display:none;" class="success-view text-center">
+      <div class="w-20 h-20 rounded-2xl bg-blue-500/20 flex items-center justify-center mx-auto mb-6">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+      </div>
+      <h2 class="text-3xl font-black text-white mb-2">Already registered</h2>
+      <p class="text-gray-400 mb-6">This email is already on the waiting list.</p>
+      <a href="/thoughtscope/login.html" class="inline-block px-6 py-3 rounded-xl gradient-bg text-white text-sm font-semibold hover:opacity-90 transition-opacity">Sign In to see your spot →</a>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Replace SUPABASE_URL and SUPABASE_ANON_KEY with actual values
+    const SUPABASE_URL = 'https://acdrbtuhxpskuuimevwu.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjZHJidHVoeHBza3V1aW1ldnd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMzU4NTMsImV4cCI6MjA5MDcxMTg1M30.jIxOnGza9D1nBbEqnmglIKSK0L5pbkqkLb1iCZOGQdM';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let discountCode = '';
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg; el.style.display = 'block';
+    }
+    function setLoading(loading) {
+      const btn = document.getElementById('joinBtn');
+      btn.disabled = loading;
+      btn.innerHTML = loading ? '<span class="spinner"></span>Joining…' : 'Join Now';
+    }
+
+    async function handleJoin(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      setLoading(true);
+      document.getElementById('errorMsg').style.display = 'none';
+
+      const { data, error } = await supabase
+        .from('waiting_list')
+        .insert([{ email }])
+        .select('position, discount_code')
+        .single();
+
+      setLoading(false);
+
+      if (error) {
+        if (error.code === '23505') {
+          document.getElementById('formView').style.display = 'none';
+          document.getElementById('alreadyView').style.display = 'block';
+        } else {
+          showError('Something went wrong. Please try again.');
+          console.error(error);
+        }
+        return;
+      }
+
+      discountCode = data.discount_code || '';
+      document.getElementById('positionDisplay').textContent = '#' + data.position;
+      document.getElementById('codeDisplay').textContent = discountCode;
+      document.getElementById('formView').style.display = 'none';
+      document.getElementById('successView').style.display = 'block';
+    }
+
+    function copyDiscount() {
+      if (!discountCode) return;
+      navigator.clipboard.writeText(discountCode).then(() => {
+        document.getElementById('copyFeedback').style.display = 'block';
+        document.getElementById('copyBtn').textContent = 'Copied!';
+        setTimeout(() => {
+          document.getElementById('copyFeedback').style.display = 'none';
+          document.getElementById('copyBtn').textContent = 'Copy';
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -268,8 +268,8 @@ export default function LandingPage() {
                 {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </button>
             )}
-            <Button variant="ghost" size="sm" data-testid="button-login">Login</Button>
-            <Button size="sm" data-testid="button-signup" className="bg-primary text-primary-foreground hover:opacity-90">Sign Up</Button>
+            <Button variant="ghost" size="sm" data-testid="button-login" asChild><a href="/thoughtscope/login.html">Login</a></Button>
+            <Button size="sm" data-testid="button-signup" className="bg-primary text-primary-foreground hover:opacity-90" asChild><a href="/thoughtscope/signup.html">Sign Up</a></Button>
             {showWaitingList && (
               <button
                 data-testid="button-join-waitlist-header"
@@ -316,8 +316,8 @@ export default function LandingPage() {
                   ))}
                 </nav>
                 <div className="flex flex-col gap-3 pt-2 border-t border-border">
-                  <Button variant="ghost" className="w-full justify-start" data-testid="button-login-mobile">Login</Button>
-                  <Button className="w-full gradient-bg border-0 text-white hover:opacity-90" data-testid="button-signup-mobile">Sign Up</Button>
+                  <Button variant="ghost" className="w-full justify-start" data-testid="button-login-mobile" asChild><a href="/thoughtscope/login.html">Login</a></Button>
+                  <Button className="w-full gradient-bg border-0 text-white hover:opacity-90" data-testid="button-signup-mobile" asChild><a href="/thoughtscope/signup.html">Sign Up</a></Button>
                   {showWaitingList && (
                     <button
                       data-testid="button-join-waitlist-mobile"
