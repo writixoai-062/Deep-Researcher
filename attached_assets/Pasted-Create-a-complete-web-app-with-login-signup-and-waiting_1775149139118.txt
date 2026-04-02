@@ -1,0 +1,121 @@
+Create a complete web app with login/signup and waiting list using Supabase.
+
+Tech: HTML, Tailwind CSS, JavaScript. NO React.
+
+## Supabase Credentials (user will replace):
+- SUPABASE_URL = https://acdrbtuhxpskuuimevwu.supabase.co
+- SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjZHJidHVoeHBza3V1aW1ldnd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMzU4NTMsImV4cCI6MjA5MDcxMTg1M30.jIxOnGza9D1nBbEqnmglIKSK0L5pbkqkLb1iCZOGQdM
+
+## Tables Already Created:
+- waiting_list (email, position, discount_code)
+- profiles (id, email, plan, credits)
+
+## Features Required:
+
+### 1. Header (Sticky):
+- Left: Logo "ThoughtScope"
+- Center: Home, Dashboard, Features, About
+- Right: Dark/Light toggle, Sign In, Sign Up, "Join Waiting List"
+
+### 2. Authentication Modals (Popup):
+
+**Sign Up Modal:**
+- Full Name, Email, Password, Confirm Password
+- Sign Up button (calls supabase.auth.signUp)
+- On success: Auto sign in, create profile entry
+
+**Sign In Modal:**
+- Email, Password
+- Sign In button (calls supabase.auth.signIn)
+
+### 3. Waiting List Section (on homepage):
+- Email input + "Join Waiting List" button
+- Submit to waiting_list table
+- Show "Position: X" and discount code if in first 20
+
+### 4. Dashboard (after login):
+- Welcome: "Hello, [name]"
+- Plan: Free
+- Credits remaining: 5
+- Waiting list position and discount code
+- "Start Analyzing" button (Coming soon)
+
+### 5. All Landing Page Sections:
+- Hero, Features (6 cards), How It Works (3 steps)
+- Pricing (Free $0, Pro $9.99, Business $29.99)
+- FAQ (4 accordion), Fake Reviews (3 cards)
+- Join for Free (email input), Footer (3 columns)
+
+## Colors:
+Dark: bg #0A0A0A, cards #141414, primary #10A37F
+Light: bg white, cards #F9FAFB, primary #3B82F6
+
+## Requirements:
+- Dark/Light mode toggle with localStorage
+- Mobile responsive (hamburger menu)
+- No React — pure HTML/CSS/JS
+- One single HTML file
+
+## Supabase JS SDK:
+Add: <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+## JavaScript Functions:
+```javascript
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Sign Up
+async function signUp(email, password, fullName) {
+  const { data, error } = await supabase.auth.signUp({
+    email, password,
+    options: { data: { full_name: fullName } }
+  });
+  return { data, error };
+}
+
+// Sign In
+async function signIn(email, password) {
+  const { data, error } = await supabase.auth.signIn({ email, password });
+  return { data, error };
+}
+
+// Sign Out
+async function signOut() {
+  await supabase.auth.signOut();
+}
+
+// Join Waiting List
+async function joinWaitingList(email) {
+  const { error } = await supabase
+    .from('waiting_list')
+    .insert([{ email }]);
+  return { error };
+}
+
+// Get Waiting List Status
+async function getWaitingListStatus(email) {
+  const { data, error } = await supabase
+    .from('waiting_list')
+    .select('position, discount_code')
+    .eq('email', email)
+    .single();
+  return { data, error };
+}
+
+// Get User Profile
+async function getProfile(userId) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
+  return { data, error };
+}
+
+// Check auth state on page load
+supabase.auth.onAuthStateChange(async (event, session) => {
+  if (session) {
+    // User logged in, update UI
+  } else {
+    // User logged out
+  }
+});
