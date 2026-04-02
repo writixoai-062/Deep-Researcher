@@ -1,0 +1,89 @@
+Create a complete landing page for "ThoughtScope" — an AI tool that reveals how ChatGPT really thinks.
+
+Tech: HTML, Tailwind CSS, Vanilla JavaScript (NO React, NO React Icons)
+
+## NO REACT — Use plain HTML/CSS/JS only
+
+## COLORS:
+DARK MODE:
+- Body: #0A0A0A, Cards: #141414, Borders: #2A2A2A
+- Text Primary: #FFFFFF, Text Secondary: #9CA3AF
+
+LIGHT MODE:
+- Body: #FFFFFF, Cards: #F9FAFB, Borders: #E5E7EB  
+- Text Primary: #111827, Text Secondary: #6B7280
+
+BUTTONS:
+- Dark mode primary: #10A37F (Teal), hover #0E8C6D
+- Light mode primary: #3B82F6 (Blue), hover #2563EB
+- Gradient CTA: from #10A37F to #3B82F6
+
+## HEADER (Sticky with backdrop blur):
+- Left: Logo (🔍) + "ThoughtScope"
+- Center: Home, Dashboard, Features, About
+- Right: Dark/Light toggle (🌙/☀️), Login, Sign Up, "Join Waiting List" (pulse animation)
+
+## HERO SECTION:
+- Badge: "🔍 AI Thought Analyzer"
+- Heading: "See How" + gradient text "AI Really Thinks"
+- Subheading: "Paste any ChatGPT conversation — Get instant analysis why AI gave that answer + 10 specialized agents"
+- CTA: "Join Waiting List" (gradient), "Watch Demo" (outline)
+- Stats: "⭐ 1000+ users • 🌍 Global • 🚀 Launching soon"
+
+## FEATURES (6 cards in 3x2 grid):
+1. 🔍 AI Thought Analysis — Reveals why ChatGPT gave that specific answer
+2. 🤖 Boss Agent — Auto-detects your category & recommends best agent
+3. 📝 10 Specialized Agents — Content, Code, Prompt, Hook, Language Bridge
+4. 🌐 Multi-Language — English, Urdu, Hindi, Arabic & 20+ languages
+5. 📊 Smart Credits — 5 free monthly, Pro 100 credits, Business unlimited
+6. 🔒 Privacy First — Your data never stored, complete privacy
+
+## HOW IT WORKS (3 steps):
+Step 1: 📝 Paste ChatGPT link
+Step 2: 🔍 AI analyzes question + answer
+Step 3: 🎯 Get analysis + agent recommendation
+
+## PRICING (3 cards):
+- Free: $0 — 5 credits/month, 2 agents
+- Pro: $9.99 — 100 credits/month, all agents
+- Business: $29.99 — Unlimited credits, API access
+
+## CTA SECTION:
+"Ready to understand AI better?" + "Join Waiting List" button
+
+## FAQ (4 questions accordion):
+1. What is ThoughtScope?
+2. How many agents are there?
+3. Can I cancel anytime?
+4. Is my data safe?
+
+## FAKE REVIEWS (3 cards):
+⭐⭐⭐⭐⭐ "Finally understand why AI gives certain answers" — Sarah, Creator
+⭐⭐⭐⭐⭐ "The Boss Agent is a game changer" — Ali, Freelancer
+⭐⭐⭐⭐⭐ "Saved me hours of prompt testing" — Maya, Developer
+
+## JOIN FOR FREE:
+Email input + "Join Waiting List" button
+Text: "First 20 users get 20% lifetime discount"
+
+## FOOTER (3 columns):
+Column 1: "ThoughtScope" + tagline
+Column 2: Product (Features, Pricing, Agents, API)
+Column 3: Social (Twitter, LinkedIn, GitHub, Product Hunt)
+
+## SOCIAL ICONS (Use SVG, NO React Icons):
+- Twitter: SVG path for Twitter/X
+- LinkedIn: SVG path for LinkedIn
+- GitHub: SVG path for GitHub
+- Product Hunt: SVG path for Product Hunt
+
+## EXTRAS:
+- Mobile responsive with hamburger menu
+- Smooth scroll
+- Dark/light mode toggle working with localStorage
+- Waiting List button visible for 2 weeks only (add comment)
+- Use Tailwind CSS CDN
+- Use Font Awesome CDN for icons (optional but safer)
+
+## NO REACT — Use plain HTML/CSS/JS only
+## NO NPM INSTALL NEEDED — Directly run in browser
