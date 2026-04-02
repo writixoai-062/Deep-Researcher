@@ -1,12 +1,14 @@
+// Replace SUPABASE_URL and SUPABASE_ANON_KEY with actual values if not using environment variables
 import { useState, useEffect, useRef } from "react";
 import { useTheme } from "next-themes";
 import {
   Search, Sun, Moon, Menu, X, ChevronDown, ChevronUp,
   Brain, Bot, FileText, Globe, CreditCard, Lock,
-  ArrowRight, Check, Star, Mail
+  ArrowRight, Check, Star, Mail, Loader2, AlertCircle, CheckCircle2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { joinWaitingList } from "@/lib/supabase";
 
 /* ─── Waiting list visibility: show for 2 weeks from launch (Apr 2, 2026) ─── */
 const LAUNCH_DATE = new Date("2026-04-02").getTime();
@@ -48,82 +50,93 @@ function ProductHuntIcon({ className }: { className?: string }) {
 
 /* ─── Feature data ─── */
 const features = [
-  {
-    icon: Search,
-    title: "AI Thought Analysis",
-    desc: "Reveals why ChatGPT gave that specific answer, surfacing the reasoning chains and decision points behind every response.",
-  },
-  {
-    icon: Bot,
-    title: "Boss Agent",
-    desc: "Auto-detects your category and recommends the best specialized agent for your exact use case — instantly.",
-  },
-  {
-    icon: FileText,
-    title: "10 Specialized Agents",
-    desc: "Content, Code, Prompt, Hook, Language Bridge and 5 more — purpose-built agents for every task you face.",
-  },
-  {
-    icon: Globe,
-    title: "Multi-Language",
-    desc: "Full support for English, Urdu, Hindi, Arabic and 20+ additional languages with native-quality output.",
-  },
-  {
-    icon: CreditCard,
-    title: "Smart Credits",
-    desc: "5 free monthly credits, Pro 100 credits, Business unlimited — flexible pricing that scales with your work.",
-  },
-  {
-    icon: Lock,
-    title: "Privacy First",
-    desc: "Your data is never stored, never logged, never sold. Complete end-to-end privacy by design.",
-  },
+  { icon: Search, title: "AI Thought Analysis", desc: "Reveals exactly why ChatGPT gave that specific answer, surfacing the full reasoning chain and decision points behind every response." },
+  { icon: Bot, title: "Boss Agent", desc: "Auto-detects your category and instantly recommends the best specialized agent — no manual selection, just the right tool every time." },
+  { icon: FileText, title: "10 Specialized Agents", desc: "Content, Code, Prompt, Hook, Language Bridge and 5 more — purpose-built agents designed for every task you face." },
+  { icon: Globe, title: "Multi-Language", desc: "Full support for English, Urdu, Hindi, Arabic and 20+ additional languages with native-quality analysis and output." },
+  { icon: CreditCard, title: "Smart Credits", desc: "5 free monthly credits, Pro 100 credits, Business unlimited — flexible pricing that scales precisely with your needs." },
+  { icon: Lock, title: "Privacy First", desc: "Your data is never stored, never logged, never sold. Complete end-to-end privacy by design — not as an afterthought." },
 ];
 
 /* ─── FAQ data ─── */
 const faqs = [
-  {
-    q: "What is ThoughtScope?",
-    a: "ThoughtScope is an AI conversation intelligence platform. You paste any ChatGPT conversation, and our system reveals the underlying reasoning, biases, and patterns in the AI's responses — plus recommends the best specialized agent for your follow-up work.",
-  },
-  {
-    q: "How many agents are there?",
-    a: "ThoughtScope includes 10 specialized agents: Content Agent, Code Agent, Prompt Engineer, Hook Writer, Language Bridge, Summary Agent, Research Agent, Debug Agent, SEO Agent, and the Boss Agent that automatically routes you to the best one.",
-  },
-  {
-    q: "Can I cancel anytime?",
-    a: "Absolutely. There are no long-term contracts, no cancellation fees, and no hidden terms. Cancel your subscription with one click from your account settings — your access continues until the end of your billing period.",
-  },
-  {
-    q: "Is my data safe?",
-    a: "Yes. We operate on a strict zero-retention policy. Your conversations are analyzed in-memory and never written to disk. We do not train on your data. Your privacy is non-negotiable.",
-  },
+  { q: "What is ThoughtScope?", a: "ThoughtScope is an AI conversation intelligence platform. Paste any ChatGPT conversation and our system reveals the underlying reasoning, biases, and patterns — plus recommends the best specialized agent for your follow-up work." },
+  { q: "How many agents are there?", a: "ThoughtScope includes 10 specialized agents: Content Agent, Code Agent, Prompt Engineer, Hook Writer, Language Bridge, Summary Agent, Research Agent, Debug Agent, SEO Agent, and the Boss Agent that automatically routes you to the right one." },
+  { q: "Can I cancel anytime?", a: "Absolutely. No long-term contracts, no cancellation fees, no hidden terms. Cancel with one click from your account settings — your access continues until the end of your billing period." },
+  { q: "Is my data safe?", a: "Yes. We operate on a strict zero-retention policy. Your conversations are analyzed in-memory and never written to disk. We do not train on your data. Your privacy is non-negotiable." },
 ];
 
 /* ─── Reviews data ─── */
 const reviews = [
-  {
-    text: "Finally I understand why AI gives certain answers. I was spending hours guessing what prompted a bad response — ThoughtScope shows me the exact reasoning chain in seconds.",
-    name: "Sarah M.",
-    title: "Content Creator",
-    initials: "SM",
-    color: "from-violet-500 to-purple-600",
-  },
-  {
-    text: "The Boss Agent is a game changer for my freelance workflow. It figures out exactly which specialized agent I need without me having to guess. My output quality doubled.",
-    name: "Ali K.",
-    title: "Freelancer & Consultant",
-    initials: "AK",
-    color: "from-teal-500 to-green-600",
-  },
-  {
-    text: "Saved me hours of prompt testing every week. Instead of trial and error, I now see exactly why a prompt worked or failed and fix it immediately.",
-    name: "Maya R.",
-    title: "Senior Developer",
-    initials: "MR",
-    color: "from-blue-500 to-indigo-600",
-  },
+  { text: "Finally I understand why AI gives certain answers. I was spending hours guessing what prompted a bad response — ThoughtScope shows me the exact reasoning chain in seconds.", name: "Sarah M.", title: "Content Creator", initials: "SM", color: "from-violet-500 to-purple-600" },
+  { text: "The Boss Agent is a game changer for my freelance workflow. It figures out exactly which specialized agent I need without me having to guess. My output quality doubled.", name: "Ali K.", title: "Freelancer & Consultant", initials: "AK", color: "from-teal-500 to-green-600" },
+  { text: "Saved me hours of prompt testing every week. Instead of trial and error, I now see exactly why a prompt worked or failed and fix it immediately.", name: "Maya R.", title: "Senior Developer", initials: "MR", color: "from-blue-500 to-indigo-600" },
 ];
+
+/* ─── Status message component ─── */
+function StatusMsg({ success, message }: { success: boolean; message: string }) {
+  return (
+    <div className={`flex items-start gap-3 p-4 rounded-xl border text-sm ${success ? "bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400" : "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400"}`}>
+      {success ? <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" /> : <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />}
+      <span>{message}</span>
+    </div>
+  );
+}
+
+/* ─── Email form with Supabase submission ─── */
+function WaitlistForm({ className = "" }: { className?: string }) {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email || loading) return;
+    setLoading(true);
+    setResult(null);
+    const res = await joinWaitingList(email);
+    setResult(res);
+    setLoading(false);
+    if (res.success) setEmail("");
+  }
+
+  return (
+    <div className={`w-full ${className}`}>
+      {result ? (
+        <div className="space-y-3">
+          <StatusMsg success={result.success} message={result.message} />
+          {!result.success && (
+            <button onClick={() => setResult(null)} className="text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors">
+              Try again
+            </button>
+          )}
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+          <input
+            type="email"
+            placeholder="Enter your email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            disabled={loading}
+            data-testid="input-email"
+            className="flex-1 px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow text-sm disabled:opacity-60"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            data-testid="button-email-submit"
+            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-white gradient-bg hover:opacity-90 transition-opacity whitespace-nowrap disabled:opacity-60"
+          >
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+            {loading ? "Joining..." : "Join Waiting List"}
+          </button>
+        </form>
+      )}
+    </div>
+  );
+}
 
 /* ─── Accordion item ─── */
 function AccordionItem({ q, a }: { q: string; a: string }) {
@@ -131,17 +144,13 @@ function AccordionItem({ q, a }: { q: string; a: string }) {
   return (
     <div className="border border-border rounded-xl overflow-hidden bg-card">
       <button
-        data-testid={`faq-toggle-${q.slice(0, 20)}`}
+        data-testid={`faq-toggle-${q.slice(0, 20).replace(/\s/g, "-")}`}
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-muted/50 transition-colors"
         aria-expanded={open}
       >
         <span className="font-semibold text-foreground">{q}</span>
-        {open ? (
-          <ChevronUp className="w-5 h-5 text-muted-foreground shrink-0 ml-4" />
-        ) : (
-          <ChevronDown className="w-5 h-5 text-muted-foreground shrink-0 ml-4" />
-        )}
+        {open ? <ChevronUp className="w-5 h-5 text-muted-foreground shrink-0 ml-4" /> : <ChevronDown className="w-5 h-5 text-muted-foreground shrink-0 ml-4" />}
       </button>
       {open && (
         <div className="px-6 pb-5 text-muted-foreground text-sm leading-relaxed border-t border-border pt-4">
@@ -152,8 +161,8 @@ function AccordionItem({ q, a }: { q: string; a: string }) {
   );
 }
 
-/* ─── Intersection observer hook for scroll animations ─── */
-function useInView(threshold = 0.15) {
+/* ─── Intersection observer hook ─── */
+function useInView(threshold = 0.12) {
   const ref = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
@@ -169,13 +178,38 @@ function useInView(threshold = 0.15) {
   return { ref, inView };
 }
 
+/* ─── Waitlist modal / inline popup ─── */
+function WaitlistModal({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div
+        className="relative bg-card border border-border rounded-2xl p-8 max-w-md w-full shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button onClick={onClose} className="absolute top-4 right-4 p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" aria-label="Close">
+          <X className="w-4 h-4" />
+        </button>
+        <div className="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center mb-5">
+          <Mail className="w-6 h-6 text-white" />
+        </div>
+        <h3 className="text-xl font-bold mb-1">Join the Waiting List</h3>
+        <p className="text-sm text-muted-foreground mb-6">
+          First 20 users get a <span className="text-primary font-semibold">20% lifetime discount</span>. Enter your email to secure your spot.
+        </p>
+        <WaitlistForm />
+        <p className="text-xs text-muted-foreground mt-3 text-center">No spam. No credit card required.</p>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Main component ─── */
 export default function LandingPage() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [email, setEmail] = useState("");
-  const [joined, setJoined] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -186,6 +220,7 @@ export default function LandingPage() {
   const reviewsIn = useInView(0.1);
   const faqIn = useInView(0.1);
   const ctaIn = useInView(0.1);
+  const joinIn = useInView(0.1);
 
   const navLinks = [
     { label: "Home", href: "#home" },
@@ -194,20 +229,18 @@ export default function LandingPage() {
     { label: "About", href: "#faq" },
   ];
 
-  function handleJoin(e: React.FormEvent) {
-    e.preventDefault();
-    if (email) setJoined(true);
-  }
-
   return (
     <div className="min-h-screen bg-background text-foreground">
 
+      {/* ── MODAL ── */}
+      {modalOpen && <WaitlistModal onClose={() => setModalOpen(false)} />}
+
       {/* ── STICKY HEADER ── */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-md border-b border-border">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-md border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
 
           {/* Logo */}
-          <a href="#home" className="flex items-center gap-2.5 shrink-0 group" data-testid="link-logo">
+          <a href="#home" data-testid="link-logo" className="flex items-center gap-2.5 shrink-0">
             <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center shadow-sm">
               <Search className="w-4 h-4 text-white" />
             </div>
@@ -217,12 +250,7 @@ export default function LandingPage() {
           {/* Center nav — desktop */}
           <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
             {navLinks.map((l) => (
-              <a
-                key={l.label}
-                href={l.href}
-                data-testid={`nav-${l.label.toLowerCase()}`}
-                className="px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              >
+              <a key={l.label} href={l.href} data-testid={`nav-${l.label.toLowerCase()}`} className="px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                 {l.label}
               </a>
             ))}
@@ -230,7 +258,6 @@ export default function LandingPage() {
 
           {/* Right controls — desktop */}
           <div className="hidden md:flex items-center gap-2">
-            {/* Theme toggle */}
             {mounted && (
               <button
                 data-testid="button-theme-toggle"
@@ -241,11 +268,12 @@ export default function LandingPage() {
                 {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </button>
             )}
-            <Button variant="ghost" size="sm" data-testid="button-login" className="text-sm">Login</Button>
-            <Button size="sm" data-testid="button-signup" className="text-sm bg-primary text-primary-foreground hover:opacity-90">Sign Up</Button>
+            <Button variant="ghost" size="sm" data-testid="button-login">Login</Button>
+            <Button size="sm" data-testid="button-signup" className="bg-primary text-primary-foreground hover:opacity-90">Sign Up</Button>
             {showWaitingList && (
               <button
                 data-testid="button-join-waitlist-header"
+                onClick={() => setModalOpen(true)}
                 className="pulse-glow animate-pulse px-4 py-2 rounded-full text-sm font-semibold text-white gradient-bg hover:opacity-90 transition-opacity"
               >
                 Join Waiting List
@@ -253,7 +281,7 @@ export default function LandingPage() {
             )}
           </div>
 
-          {/* Mobile: theme + hamburger */}
+          {/* Mobile controls */}
           <div className="flex md:hidden items-center gap-2">
             {mounted && (
               <button
@@ -267,15 +295,13 @@ export default function LandingPage() {
             )}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
-                <button
-                  data-testid="button-mobile-menu"
-                  className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                  aria-label="Open menu"
-                >
+                <button data-testid="button-mobile-menu" className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" aria-label="Open menu">
                   {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                 </button>
               </SheetTrigger>
               <SheetContent side="right" className="w-72 p-6 flex flex-col gap-6">
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <SheetDescription className="sr-only">Site navigation links and actions</SheetDescription>
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
                     <Search className="w-4 h-4 text-white" />
@@ -284,12 +310,7 @@ export default function LandingPage() {
                 </div>
                 <nav className="flex flex-col gap-1">
                   {navLinks.map((l) => (
-                    <a
-                      key={l.label}
-                      href={l.href}
-                      onClick={() => setMobileOpen(false)}
-                      className="px-3 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                    >
+                    <a key={l.label} href={l.href} onClick={() => setMobileOpen(false)} className="px-3 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                       {l.label}
                     </a>
                   ))}
@@ -300,6 +321,7 @@ export default function LandingPage() {
                   {showWaitingList && (
                     <button
                       data-testid="button-join-waitlist-mobile"
+                      onClick={() => { setMobileOpen(false); setModalOpen(true); }}
                       className="animate-pulse w-full py-2.5 rounded-full font-semibold text-sm text-white gradient-bg hover:opacity-90 transition-opacity"
                     >
                       Join Waiting List
@@ -314,17 +336,13 @@ export default function LandingPage() {
 
       <main>
 
-        {/* ── HERO SECTION ── */}
-        <section
-          id="home"
-          ref={heroIn.ref}
-          className="min-h-screen flex items-center justify-center pt-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden"
-        >
+        {/* ── HERO ── */}
+        <section id="home" ref={heroIn.ref} className="min-h-screen flex items-center justify-center pt-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
           {/* Background glow */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#10A37F]/10 to-[#3B82F6]/10 blur-3xl" />
-            <div className="absolute top-1/3 left-1/4 w-[300px] h-[300px] rounded-full bg-[#10A37F]/5 blur-2xl" />
-            <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] rounded-full bg-[#3B82F6]/5 blur-2xl" />
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-[#10A37F]/10 to-[#3B82F6]/10 blur-3xl" />
+            <div className="absolute top-1/3 left-1/4 w-[250px] h-[250px] rounded-full bg-[#10A37F]/6 blur-2xl" />
+            <div className="absolute top-1/3 right-1/4 w-[250px] h-[250px] rounded-full bg-[#3B82F6]/6 blur-2xl" />
           </div>
 
           <div className={`relative z-10 max-w-4xl mx-auto text-center transition-all duration-700 ${heroIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
@@ -333,39 +351,36 @@ export default function LandingPage() {
               <Search className="w-3.5 h-3.5 text-primary" />
               AI Thought Analyzer
             </div>
-
             {/* Headline */}
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight mb-6">
               <span className="text-foreground">See How </span>
               <span className="gradient-text">AI Really Thinks</span>
             </h1>
-
             {/* Subheading */}
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-              Paste any ChatGPT conversation — Get instant analysis of why AI gave that answer, plus 10 specialized agents ready to help you go further.
+              Paste any ChatGPT conversation — Get instant analysis of why AI gave that answer, plus 10 specialized agents ready to take you further.
             </p>
-
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
-              {showWaitingList && (
+              {showWaitingList ? (
                 <button
                   data-testid="button-hero-waitlist"
+                  onClick={() => setModalOpen(true)}
                   className="pulse-glow w-full sm:w-auto px-8 py-3.5 rounded-full font-bold text-white gradient-bg hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
                 >
                   Join Waiting List
                   <ArrowRight className="w-4 h-4" />
                 </button>
+              ) : (
+                <Button size="lg" className="w-full sm:w-auto px-8 rounded-full gradient-bg border-0 text-white hover:opacity-90" data-testid="button-hero-start">
+                  Start Analyzing Free
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
               )}
-              <Button
-                variant="outline"
-                size="lg"
-                data-testid="button-hero-demo"
-                className="w-full sm:w-auto px-8 rounded-full"
-              >
+              <Button variant="outline" size="lg" data-testid="button-hero-demo" className="w-full sm:w-auto px-8 rounded-full">
                 Watch Demo
               </Button>
             </div>
-
             {/* Stats */}
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5"><Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" /> 1000+ users</span>
@@ -377,18 +392,12 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── FEATURES SECTION ── */}
-        <section
-          id="features"
-          ref={featuresIn.ref}
-          className="py-24 px-4 sm:px-6 lg:px-8"
-        >
+        {/* ── FEATURES ── */}
+        <section id="features" ref={featuresIn.ref} className="py-24 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className={`text-center mb-16 transition-all duration-700 ${featuresIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
               <h2 className="text-3xl sm:text-4xl font-bold mb-4">Everything you need to understand AI</h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                Six powerful capabilities that transform how you analyze, improve, and scale your AI conversations.
-              </p>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Six powerful capabilities that transform how you analyze, improve, and scale your AI conversations.</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {features.map((f, i) => {
@@ -397,9 +406,7 @@ export default function LandingPage() {
                   <div
                     key={f.title}
                     data-testid={`card-feature-${i}`}
-                    className={`bg-card border border-card-border rounded-xl p-6 hover:shadow-lg transition-all duration-500 group ${
-                      featuresIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                    }`}
+                    className={`bg-card border border-card-border rounded-xl p-6 hover:shadow-lg transition-all duration-500 group ${featuresIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
                     style={{ transitionDelay: featuresIn.inView ? `${i * 80}ms` : "0ms" }}
                   >
                     <div className="w-10 h-10 rounded-lg gradient-bg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
@@ -415,31 +422,26 @@ export default function LandingPage() {
         </section>
 
         {/* ── HOW IT WORKS ── */}
-        <section
-          id="how-it-works"
-          ref={stepsIn.ref}
-          className="py-24 px-4 sm:px-6 lg:px-8 bg-card/50"
-        >
+        <section id="how-it-works" ref={stepsIn.ref} className="py-24 px-4 sm:px-6 lg:px-8 bg-card/50">
           <div className="max-w-4xl mx-auto">
             <div className={`text-center mb-16 transition-all duration-700 ${stepsIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
               <h2 className="text-3xl sm:text-4xl font-bold mb-4">How it works</h2>
               <p className="text-muted-foreground text-lg">Three simple steps to unlock AI transparency</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-              {/* Connector lines — desktop */}
               <div className="hidden md:block absolute top-8 left-1/3 right-1/3 h-0.5 bg-gradient-to-r from-[#10A37F] to-[#3B82F6] opacity-30" />
               {[
-                { num: "01", icon: FileText, label: "Paste your ChatGPT link", desc: "Copy your ChatGPT conversation URL or paste the full text directly into ThoughtScope." },
-                { num: "02", icon: Brain, label: "AI analyzes everything", desc: "Our system dissects the question, the answer, and the reasoning chain behind every response." },
-                { num: "03", icon: Search, label: "Get insights + agent match", desc: "Receive a full analysis report and an automatic recommendation for the best specialized agent." },
+                { icon: FileText, label: "Paste your ChatGPT link", desc: "Copy your ChatGPT conversation URL or paste the full text directly into ThoughtScope." },
+                { icon: Brain, label: "AI analyzes everything", desc: "Our system dissects the question, the answer, and the full reasoning chain behind every response." },
+                { icon: Search, label: "Get insights + agent match", desc: "Receive a full analysis report and automatic recommendation for the best specialized agent." },
               ].map((step, i) => (
                 <div
-                  key={step.num}
+                  key={step.label}
                   data-testid={`step-${i + 1}`}
                   className={`text-center transition-all duration-500 ${stepsIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
                   style={{ transitionDelay: stepsIn.inView ? `${i * 120}ms` : "0ms" }}
                 >
-                  <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-full gradient-bg text-white font-bold text-xl mb-5 shadow-lg mx-auto">
+                  <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-full gradient-bg text-white mb-5 shadow-lg mx-auto">
                     <step.icon className="w-7 h-7" />
                     <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-background border border-border text-xs font-bold text-foreground flex items-center justify-center">
                       {i + 1}
@@ -454,23 +456,15 @@ export default function LandingPage() {
         </section>
 
         {/* ── PRICING ── */}
-        <section
-          id="pricing"
-          ref={pricingIn.ref}
-          className="py-24 px-4 sm:px-6 lg:px-8"
-        >
+        <section id="pricing" ref={pricingIn.ref} className="py-24 px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
             <div className={`text-center mb-16 transition-all duration-700 ${pricingIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
               <h2 className="text-3xl sm:text-4xl font-bold mb-4">Simple, transparent pricing</h2>
               <p className="text-muted-foreground text-lg">Start free. Scale when you're ready.</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
               {/* Free */}
-              <div
-                data-testid="card-pricing-free"
-                className={`bg-card border border-card-border rounded-xl p-8 flex flex-col transition-all duration-500 ${pricingIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-                style={{ transitionDelay: pricingIn.inView ? "0ms" : "0ms" }}
-              >
+              <div data-testid="card-pricing-free" className={`bg-card border border-card-border rounded-xl p-8 flex flex-col transition-all duration-500 ${pricingIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`} style={{ transitionDelay: "0ms" }}>
                 <div className="mb-6">
                   <h3 className="font-bold text-xl mb-1">Free</h3>
                   <p className="text-muted-foreground text-sm mb-4">Perfect to get started</p>
@@ -490,16 +484,10 @@ export default function LandingPage() {
                 <Button variant="outline" className="w-full rounded-xl" data-testid="button-free-plan">Get Started Free</Button>
               </div>
 
-              {/* Pro — highlighted */}
-              <div
-                data-testid="card-pricing-pro"
-                className={`relative bg-card border-2 border-primary rounded-xl p-8 flex flex-col shadow-xl shadow-primary/10 transition-all duration-500 ${pricingIn.inView ? "opacity-100 translate-y-0 scale-105" : "opacity-0 translate-y-8 scale-100"}`}
-                style={{ transitionDelay: pricingIn.inView ? "100ms" : "0ms" }}
-              >
+              {/* Pro */}
+              <div data-testid="card-pricing-pro" className={`relative bg-card border-2 border-primary rounded-xl p-8 flex flex-col shadow-xl shadow-primary/10 transition-all duration-500 ${pricingIn.inView ? "opacity-100 translate-y-0 scale-105" : "opacity-0 translate-y-8"}`} style={{ transitionDelay: "100ms" }}>
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <span className="px-4 py-1 rounded-full text-xs font-bold text-white gradient-bg shadow-sm">
-                    Most Popular
-                  </span>
+                  <span className="px-4 py-1 rounded-full text-xs font-bold text-white gradient-bg shadow-sm">Most Popular</span>
                 </div>
                 <div className="mb-6 mt-2">
                   <h3 className="font-bold text-xl mb-1">Pro</h3>
@@ -517,17 +505,11 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <Button className="w-full rounded-xl gradient-bg border-0 text-white hover:opacity-90" data-testid="button-pro-plan">
-                  Get Started
-                </Button>
+                <Button className="w-full rounded-xl gradient-bg border-0 text-white hover:opacity-90" data-testid="button-pro-plan">Get Started</Button>
               </div>
 
               {/* Business */}
-              <div
-                data-testid="card-pricing-business"
-                className={`bg-card border border-card-border rounded-xl p-8 flex flex-col transition-all duration-500 ${pricingIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-                style={{ transitionDelay: pricingIn.inView ? "200ms" : "0ms" }}
-              >
+              <div data-testid="card-pricing-business" className={`bg-card border border-card-border rounded-xl p-8 flex flex-col transition-all duration-500 ${pricingIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`} style={{ transitionDelay: "200ms" }}>
                 <div className="mb-6">
                   <h3 className="font-bold text-xl mb-1">Business</h3>
                   <p className="text-muted-foreground text-sm mb-4">For teams and enterprises</p>
@@ -550,12 +532,39 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ── CTA SECTION ── */}
+        <section ref={ctaIn.ref} className="py-24 px-4 sm:px-6 lg:px-8 bg-card/50">
+          <div className={`max-w-3xl mx-auto text-center transition-all duration-700 ${ctaIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to understand AI better?</h2>
+            <p className="text-muted-foreground text-lg mb-8">Join thousands of researchers, creators, and developers who trust ThoughtScope.</p>
+            {showWaitingList && (
+              <button
+                data-testid="button-cta-waitlist"
+                onClick={() => setModalOpen(true)}
+                className="pulse-glow animate-pulse inline-flex items-center gap-2 px-10 py-4 rounded-full font-bold text-lg text-white gradient-bg hover:opacity-90 transition-opacity shadow-lg"
+              >
+                Join Waiting List
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+        </section>
+
+        {/* ── FAQ ── */}
+        <section id="faq" ref={faqIn.ref} className="py-24 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl mx-auto">
+            <div className={`text-center mb-12 transition-all duration-700 ${faqIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">Frequently asked questions</h2>
+              <p className="text-muted-foreground">Everything you need to know about ThoughtScope.</p>
+            </div>
+            <div className={`space-y-3 transition-all duration-700 delay-100 ${faqIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+              {faqs.map((f) => <AccordionItem key={f.q} q={f.q} a={f.a} />)}
+            </div>
+          </div>
+        </section>
+
         {/* ── REVIEWS ── */}
-        <section
-          id="reviews"
-          ref={reviewsIn.ref}
-          className="py-24 px-4 sm:px-6 lg:px-8 bg-card/50"
-        >
+        <section id="reviews" ref={reviewsIn.ref} className="py-24 px-4 sm:px-6 lg:px-8 bg-card/50">
           <div className="max-w-5xl mx-auto">
             <div className={`text-center mb-16 transition-all duration-700 ${reviewsIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
               <h2 className="text-3xl sm:text-4xl font-bold mb-4">Loved by researchers and creators</h2>
@@ -570,9 +579,7 @@ export default function LandingPage() {
                   style={{ transitionDelay: reviewsIn.inView ? `${i * 100}ms` : "0ms" }}
                 >
                   <div className="flex gap-0.5">
-                    {[...Array(5)].map((_, j) => (
-                      <Star key={j} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
+                    {[...Array(5)].map((_, j) => <Star key={j} className="w-4 h-4 fill-yellow-400 text-yellow-400" />)}
                   </div>
                   <p className="text-sm text-muted-foreground leading-relaxed flex-1">"{r.text}"</p>
                   <div className="flex items-center gap-3 pt-2 border-t border-border">
@@ -590,93 +597,28 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── CTA SECTION ── */}
-        <section
-          ref={ctaIn.ref}
-          className="py-24 px-4 sm:px-6 lg:px-8"
-        >
-          <div className={`max-w-3xl mx-auto text-center transition-all duration-700 ${ctaIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to understand AI better?</h2>
-            <p className="text-muted-foreground text-lg mb-8">
-              Join thousands of researchers, creators, and developers who trust ThoughtScope.
-            </p>
-            {showWaitingList && (
-              <button
-                data-testid="button-cta-waitlist"
-                className="pulse-glow animate-pulse inline-flex items-center gap-2 px-10 py-4 rounded-full font-bold text-lg text-white gradient-bg hover:opacity-90 transition-opacity shadow-lg"
-              >
-                Join Waiting List
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            )}
-          </div>
-        </section>
-
-        {/* ── FAQ ── */}
-        <section
-          id="faq"
-          ref={faqIn.ref}
-          className="py-24 px-4 sm:px-6 lg:px-8 bg-card/50"
-        >
-          <div className="max-w-2xl mx-auto">
-            <div className={`text-center mb-12 transition-all duration-700 ${faqIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">Frequently asked questions</h2>
-              <p className="text-muted-foreground">Everything you need to know about ThoughtScope.</p>
-            </div>
-            <div className={`space-y-3 transition-all duration-700 delay-100 ${faqIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-              {faqs.map((f) => (
-                <AccordionItem key={f.q} q={f.q} a={f.a} />
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* ── JOIN FOR FREE / EMAIL CAPTURE ── */}
-        <section className="py-24 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-xl mx-auto text-center">
+        <section ref={joinIn.ref} className="py-24 px-4 sm:px-6 lg:px-8">
+          <div className={`max-w-xl mx-auto text-center transition-all duration-700 ${joinIn.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
             <div className="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center mx-auto mb-6">
               <Mail className="w-6 h-6 text-white" />
             </div>
             <h2 className="text-3xl font-bold mb-3">Join for free</h2>
             <p className="text-muted-foreground mb-2">
-              First 20 users get a 20% lifetime discount — act fast.
+              First 20 users get a <span className="text-primary font-semibold">20% lifetime discount</span> — act fast.
             </p>
-            <p className="text-xs text-muted-foreground mb-8">No spam. No credit card. Cancel anytime.</p>
-            {joined ? (
-              <div className="flex items-center justify-center gap-2 py-4 px-6 bg-primary/10 border border-primary/20 rounded-xl text-primary font-semibold">
-                <Check className="w-5 h-5" />
-                You're on the list! We'll be in touch.
-              </div>
-            ) : (
-              <form onSubmit={handleJoin} className="flex flex-col sm:flex-row gap-3">
-                <input
-                  type="email"
-                  placeholder="Enter your email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  data-testid="input-email"
-                  className="flex-1 px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow text-sm"
-                />
-                <button
-                  type="submit"
-                  data-testid="button-email-submit"
-                  className="px-6 py-3 rounded-xl font-semibold text-sm text-white gradient-bg hover:opacity-90 transition-opacity whitespace-nowrap"
-                >
-                  Join Waiting List
-                </button>
-              </form>
-            )}
+            <p className="text-xs text-muted-foreground mb-8">No spam. No credit card required. Cancel anytime.</p>
+            <WaitlistForm />
           </div>
         </section>
+
       </main>
 
       {/* ── FOOTER ── */}
       <footer className="border-t border-border bg-card/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 mb-10">
-
-            {/* Col 1: Brand */}
+            {/* Brand */}
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-7 h-7 rounded-lg gradient-bg flex items-center justify-center">
@@ -688,46 +630,31 @@ export default function LandingPage() {
                 Unveiling the cognitive architecture behind AI — one conversation at a time.
               </p>
               <div className="flex gap-3">
-                <a href="#" data-testid="link-twitter" aria-label="Twitter/X" className="text-muted-foreground hover:text-foreground transition-colors">
-                  <TwitterIcon className="w-5 h-5" />
-                </a>
-                <a href="#" data-testid="link-linkedin" aria-label="LinkedIn" className="text-muted-foreground hover:text-foreground transition-colors">
-                  <LinkedInIcon className="w-5 h-5" />
-                </a>
-                <a href="#" data-testid="link-github" aria-label="GitHub" className="text-muted-foreground hover:text-foreground transition-colors">
-                  <GitHubIcon className="w-5 h-5" />
-                </a>
-                <a href="#" data-testid="link-producthunt" aria-label="Product Hunt" className="text-muted-foreground hover:text-foreground transition-colors">
-                  <ProductHuntIcon className="w-5 h-5" />
-                </a>
+                <a href="#" data-testid="link-twitter" aria-label="Twitter/X" className="text-muted-foreground hover:text-foreground transition-colors"><TwitterIcon className="w-5 h-5" /></a>
+                <a href="#" data-testid="link-linkedin" aria-label="LinkedIn" className="text-muted-foreground hover:text-foreground transition-colors"><LinkedInIcon className="w-5 h-5" /></a>
+                <a href="#" data-testid="link-github" aria-label="GitHub" className="text-muted-foreground hover:text-foreground transition-colors"><GitHubIcon className="w-5 h-5" /></a>
+                <a href="#" data-testid="link-producthunt" aria-label="Product Hunt" className="text-muted-foreground hover:text-foreground transition-colors"><ProductHuntIcon className="w-5 h-5" /></a>
               </div>
             </div>
-
-            {/* Col 2: Product */}
+            {/* Product */}
             <div>
               <h4 className="font-semibold text-foreground mb-4 text-sm uppercase tracking-wider">Product</h4>
               <ul className="space-y-3">
                 {["Features", "Pricing", "Agents", "API"].map((l) => (
-                  <li key={l}>
-                    <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{l}</a>
-                  </li>
+                  <li key={l}><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{l}</a></li>
                 ))}
               </ul>
             </div>
-
-            {/* Col 3: Social & Legal */}
+            {/* Resources */}
             <div>
               <h4 className="font-semibold text-foreground mb-4 text-sm uppercase tracking-wider">Resources</h4>
               <ul className="space-y-3">
                 {["Documentation", "Status", "Community", "Blog"].map((l) => (
-                  <li key={l}>
-                    <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{l}</a>
-                  </li>
+                  <li key={l}><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{l}</a></li>
                 ))}
               </ul>
             </div>
           </div>
-
           <div className="pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
             <span>© 2026 ThoughtScope. All rights reserved.</span>
             <div className="flex gap-5">
