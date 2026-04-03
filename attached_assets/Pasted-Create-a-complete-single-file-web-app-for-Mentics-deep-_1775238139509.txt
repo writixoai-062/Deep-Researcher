@@ -1,0 +1,105 @@
+Create a complete single-file web app for "Mentics — deep research" with dashboard and AI analysis tool.
+
+## BRANDING:
+- Logo: 🧠 MENTICS with "deep research" below in small text
+- Tagline: "See how AI really thinks"
+
+## HEADER (Sticky):
+- Left: Logo area (🧠 MENTICS + "deep research" small below)
+- Center: Home, Dashboard, Features, About
+- Right: Dark/Light toggle (🌙/☀️), "Join Waiting List" button (pulse animation), Sign In, Sign Up
+
+## AUTH MODALS (Popup):
+- Sign Up: Full Name, Email, Password, Confirm Password
+- Sign In: Email, Password
+- Forgot password link
+
+## DASHBOARD (shown after login, same page):
+Layout: 2 columns
+
+LEFT COLUMN (Main Tool):
+- Card: "🎯 PASTE YOUR CHATGPT CONVERSATION"
+- Textarea: "Paste ChatGPT link or question here..."
+- Context selector: Student | Professional | Researcher | Curious | Technical
+- Button: [ANALYZE — Uses 1 credit]
+- Output area: Shows AI analysis + detailed answer
+
+RIGHT COLUMN (User Info):
+- Welcome card: "Hello, [Name]"
+- Credits card: "X credits remaining" with progress bar
+- Plan card: Free / Pro / Business
+- Waiting list card: Position + Discount code (with copy button)
+- "Start Analyzing" button (if credits >0)
+- "Upgrade Plan" button
+
+## WAITING LIST SECTION (on homepage for non-logged in users):
+- Email input + "Join Waiting List" button
+- Shows: "First 20 users get 20% lifetime discount"
+
+## MAIN TOOL FUNCTIONS (JavaScript):
+1. analyzeQuestion() function:
+   - Takes user question + selected context
+   - Calls OpenRouter API (GPT-4o-mini) with prompt:
+     "Analyze this question and ChatGPT's answer. 
+     1. What did ChatGPT assume?
+     2. What information is missing?
+     3. Give a better answer for [context] user"
+   - Shows analysis in output area
+   - Deducts 1 credit from user
+
+2. Boss Agent auto-detection:
+   - Analyzes user's question
+   - Detects if user is: content creator, developer, student, marketer, researcher
+   - Shows recommendation: "🤖 Boss Agent recommends: [Agent Name]"
+
+3. Credit system:
+   - Free users: 5 credits/month
+   - Pro: 100 credits ($9.99)
+   - Business: Unlimited ($29.99)
+
+## LANDING PAGE SECTIONS (for non-logged in users):
+- Hero section
+- Features (6 cards): AI Thought Analysis, Boss Agent, 10 Agents, Multi-Language, Smart Credits, Privacy First
+- How It Works (3 steps)
+- Pricing (Free $0, Pro $9.99, Business $29.99)
+- CTA section
+- FAQ (4 accordion questions)
+- Fake reviews (3 cards)
+- Join for Free section
+- Footer (3 columns)
+
+## COLORS:
+DARK MODE:
+- Body: #0A0A0A
+- Cards: #141414
+- Borders: #2A2A2A
+- Primary button: #10A37F (Teal), hover #0E8C6D
+- Text: white
+
+LIGHT MODE:
+- Body: #FFFFFF
+- Cards: #F9FAFB
+- Borders: #E5E7EB
+- Primary button: #3B82F6 (Blue), hover #2563EB
+- Text: black
+
+## SUPABASE INTEGRATION:
+- Tables already exist: waiting_list, profiles
+- Auth: signUp, signIn, signOut
+- Functions: joinWaitingList(), getWaitingListStatus(), getProfile(), updateCredits()
+
+## OPENROUTER API (GPT-4o-mini):
+- Use fetch to call: https://openrouter.ai/api/v1/chat/completions
+- Model: openai/gpt-4o-mini
+- API key: User will provide (or use free tier)
+
+## REQUIREMENTS:
+- No React — pure HTML/CSS/JS
+- Dark/Light mode toggle working with localStorage
+- Mobile responsive (hamburger menu)
+- All in one HTML file
+- Comments in code
+
+## PLACEHOLDERS TO REPLACE:
+- // REPLACE WITH SUPABASE URL AND KEY
+- // REPLACE WITH OPENROUTER API KEY
