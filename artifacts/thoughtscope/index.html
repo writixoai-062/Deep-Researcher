@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<!-- Replace SUPABASE_URL and SUPABASE_ANON_KEY with actual values if not using the defaults below -->
+<!-- ╔═══════════════════════════════════════════════════╗
+     ║  MENTICS — Deep Research                        ║
+     ║  Single-file app: HTML + Tailwind CDN + JS      ║
+     ╠═══════════════════════════════════════════════════╣
+     ║  REPLACE:                                        ║
+     ║  SUPABASE_URL & SUPABASE_ANON_KEY (line ~680)   ║
+     ║  OPENROUTER_API_KEY (line ~683)                  ║
+     ╚═══════════════════════════════════════════════════╝ -->
 <html lang="en" class="dark scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ThoughtScope — See How AI Really Thinks</title>
-  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <title>Mentics — Deep Research | See How AI Really Thinks</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -14,186 +20,208 @@
   <script>
     tailwind.config = {
       darkMode: 'class',
-      theme: { extend: { colors: { primary: '#10A37F', accent: '#3B82F6' }, fontFamily: { sans: ['Inter','system-ui','sans-serif'] } } }
+      theme: { extend: { fontFamily: { sans: ['Inter','system-ui','sans-serif'] } } }
     }
   </script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; }
     body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; background: var(--bg); color: var(--text); transition: background .2s, color .2s; }
 
-    :root { --bg:#0A0A0A; --card:#141414; --border:#1E1E1E; --text:#ffffff; --muted:#9ca3af; --hdr:rgba(10,10,10,.88); }
-    .light { --bg:#ffffff; --card:#F9FAFB; --border:#E5E7EB; --text:#111827; --muted:#6b7280; --hdr:rgba(255,255,255,.88); }
+    /* ── CSS Variables ─────────────────────────────────── */
+    :root {
+      /* dark defaults */
+      --bg: #0A0A0A;
+      --card: #141414;
+      --border: #2A2A2A;
+      --text: #ffffff;
+      --text2: #a1a1aa;
+      --hdr: rgba(10,10,10,.9);
+      --btn: #10A37F;
+      --btn-h: #0E8C6D;
+      --btn-txt: #ffffff;
+      --inp-bg: #1a1a1a;
+    }
+    .light {
+      --bg: #ffffff;
+      --card: #F9FAFB;
+      --border: #E5E7EB;
+      --text: #111827;
+      --text2: #6b7280;
+      --hdr: rgba(255,255,255,.9);
+      --btn: #3B82F6;
+      --btn-h: #2563EB;
+      --btn-txt: #ffffff;
+      --inp-bg: #ffffff;
+    }
 
-    .gradient-bg   { background: linear-gradient(135deg,#10A37F 0%,#3B82F6 100%); }
-    .gradient-text { background: linear-gradient(135deg,#10A37F 0%,#3B82F6 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .card { background:var(--card); border:1px solid var(--border); border-radius:1rem; }
+    /* ── Gradients ─────────────────────────────────────── */
+    .g-text { background: linear-gradient(135deg,#10A37F,#3B82F6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .g-bg   { background: linear-gradient(135deg,#10A37F,#3B82F6); }
 
-    /* Header */
-    #hdr { background:var(--hdr); border-bottom:1px solid var(--border); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+    /* ── Layout helpers ────────────────────────────────── */
+    .card  { background: var(--card); border: 1px solid var(--border); border-radius: 1rem; }
+    .card2 { background: var(--card); border: 1px solid var(--border); border-radius: .875rem; }
 
-    /* Buttons */
-    .btn-p { display:inline-flex;align-items:center;justify-content:center;gap:.45rem;padding:.6rem 1.35rem;background:linear-gradient(135deg,#10A37F,#3B82F6);border:none;border-radius:9999px;color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;transition:opacity .2s;text-decoration:none;white-space:nowrap; }
-    .btn-p:hover { opacity:.85; }
-    .btn-p:disabled { opacity:.55;cursor:not-allowed; }
-    .btn-o { display:inline-flex;align-items:center;justify-content:center;gap:.45rem;padding:.6rem 1.35rem;background:transparent;border:1px solid var(--border);border-radius:9999px;color:var(--text);font-weight:500;font-size:.875rem;cursor:pointer;transition:background .2s,border-color .2s;text-decoration:none;white-space:nowrap; }
-    .btn-o:hover { background:rgba(128,128,128,.08); }
-    .btn-g { display:inline-flex;align-items:center;justify-content:center;padding:.5rem .875rem;background:transparent;border:none;border-radius:.5rem;color:var(--muted);font-weight:500;font-size:.875rem;cursor:pointer;transition:color .2s,background .2s;text-decoration:none; }
-    .btn-g:hover { color:var(--text);background:rgba(128,128,128,.07); }
-    .btn-sm { padding:.45rem 1rem;font-size:.82rem; }
+    /* ── Header ────────────────────────────────────────── */
+    #hdr { background: var(--hdr); border-bottom: 1px solid var(--border); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 
-    /* Input */
-    .inp { width:100%;padding:.72rem 1rem;background:var(--card);border:1px solid var(--border);border-radius:.75rem;color:var(--text);outline:none;font-size:.875rem;font-family:inherit;transition:border-color .2s,box-shadow .2s; }
-    .inp::placeholder { color:var(--muted); }
-    .inp:focus { border-color:#10A37F;box-shadow:0 0 0 3px rgba(16,163,127,.12); }
-    .inp-inline { flex:1;padding:.72rem 1rem;background:var(--card);border:1px solid var(--border);border-radius:.75rem;color:var(--text);outline:none;font-size:.875rem;font-family:inherit;transition:border-color .2s,box-shadow .2s;min-width:0; }
-    .inp-inline::placeholder { color:var(--muted); }
-    .inp-inline:focus { border-color:#10A37F;box-shadow:0 0 0 3px rgba(16,163,127,.12); }
+    /* ── Buttons ───────────────────────────────────────── */
+    .btn-p { display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.6rem 1.3rem;background:var(--btn);border:none;border-radius:9999px;color:var(--btn-txt);font-weight:600;font-size:.875rem;cursor:pointer;transition:background .2s,opacity .2s;text-decoration:none;white-space:nowrap; }
+    .btn-p:hover   { background: var(--btn-h); }
+    .btn-p:disabled { opacity:.5; cursor:not-allowed; }
+    .btn-o { display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.6rem 1.3rem;background:transparent;border:1px solid var(--border);border-radius:9999px;color:var(--text);font-weight:500;font-size:.875rem;cursor:pointer;transition:background .2s;text-decoration:none;white-space:nowrap; }
+    .btn-o:hover { background: rgba(128,128,128,.07); }
+    .btn-g { display:inline-flex;align-items:center;padding:.5rem .875rem;background:transparent;border:none;border-radius:.5rem;color:var(--text2);font-weight:500;font-size:.875rem;cursor:pointer;transition:color .2s,background .2s;text-decoration:none; }
+    .btn-g:hover { color:var(--text); background:rgba(128,128,128,.07); }
 
-    /* Nav link */
-    .nav-a { color:var(--muted);font-size:.875rem;font-weight:500;padding:.4rem .75rem;border-radius:.5rem;text-decoration:none;cursor:pointer;transition:color .2s,background .2s;background:transparent;border:none; }
-    .nav-a:hover { color:var(--text);background:rgba(128,128,128,.07); }
+    /* ── Inputs ────────────────────────────────────────── */
+    .inp { width:100%;padding:.72rem 1rem;background:var(--inp-bg);border:1px solid var(--border);border-radius:.75rem;color:var(--text);outline:none;font-size:.875rem;font-family:inherit;transition:border-color .2s,box-shadow .2s; }
+    .inp::placeholder { color:var(--text2); }
+    .inp:focus { border-color:var(--btn);box-shadow:0 0 0 3px rgba(16,163,127,.12); }
+    .light .inp:focus { box-shadow:0 0 0 3px rgba(59,130,246,.12); }
+    .inp-inline { flex:1;padding:.72rem 1rem;background:var(--inp-bg);border:1px solid var(--border);border-radius:.75rem;color:var(--text);outline:none;font-size:.875rem;font-family:inherit;transition:border-color .2s,box-shadow .2s;min-width:0; }
+    .inp-inline::placeholder { color:var(--text2); }
+    .inp-inline:focus { border-color:var(--btn); }
+    .textarea-field { width:100%;padding:.875rem 1rem;background:var(--inp-bg);border:1px solid var(--border);border-radius:.875rem;color:var(--text);outline:none;font-size:.875rem;font-family:inherit;resize:vertical;min-height:130px;transition:border-color .2s,box-shadow .2s;line-height:1.6; }
+    .textarea-field::placeholder { color:var(--text2); }
+    .textarea-field:focus { border-color:var(--btn);box-shadow:0 0 0 3px rgba(16,163,127,.1); }
 
-    /* Pulse */
-    @keyframes pulse-ring { 0%,100%{box-shadow:0 0 0 0 rgba(16,163,127,.35);}55%{box-shadow:0 0 0 10px rgba(16,163,127,0);} }
-    .pulse { animation:pulse-ring 2.2s ease infinite; }
+    /* ── Nav links ─────────────────────────────────────── */
+    .nav-a { color:var(--text2);font-size:.875rem;font-weight:500;padding:.4rem .75rem;border-radius:.5rem;text-decoration:none;cursor:pointer;transition:color .2s,background .2s;background:transparent;border:none; }
+    .nav-a:hover { color:var(--text); background:rgba(128,128,128,.07); }
 
-    /* Spinner */
-    @keyframes spin { to{transform:rotate(360deg);} }
-    .spin { width:1rem;height:1rem;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite;display:inline-block;vertical-align:middle;margin-right:.35rem; }
-    .spin-dark { border-color:rgba(0,0,0,.12);border-top-color:var(--text); }
+    /* ── Pulse animation ───────────────────────────────── */
+    @keyframes pulse-ring { 0%,100%{box-shadow:0 0 0 0 rgba(16,163,127,.4);}55%{box-shadow:0 0 0 9px rgba(16,163,127,0);} }
+    .pulse { animation: pulse-ring 2.2s ease infinite; }
 
-    /* Fade-up */
-    @keyframes fadeUp { from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);} }
+    /* ── Spinner ───────────────────────────────────────── */
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .spin { display:inline-block;width:1rem;height:1rem;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite;vertical-align:middle;margin-right:.35rem; }
+
+    /* ── Fade-up ───────────────────────────────────────── */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);} }
     .fu { opacity:0; }
-    .fu.vis { animation:fadeUp .55s ease-out forwards; }
+    .fu.vis { animation:fadeUp .5s ease-out forwards; }
     .fu.vis.d1{animation-delay:.07s;} .fu.vis.d2{animation-delay:.14s;} .fu.vis.d3{animation-delay:.21s;}
     .fu.vis.d4{animation-delay:.28s;} .fu.vis.d5{animation-delay:.35s;} .fu.vis.d6{animation-delay:.42s;}
 
-    /* FAQ */
-    .faq-body { max-height:0;overflow:hidden;transition:max-height .32s ease,padding .32s ease; }
+    /* ── FAQ accordion ─────────────────────────────────── */
+    .faq-body { max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease; }
     .faq-open .faq-body { max-height:300px;padding-top:.625rem; }
-    .faq-arrow { transition:transform .3s; }
+    .faq-arrow { transition:transform .28s; }
     .faq-open .faq-arrow { transform:rotate(180deg); }
 
-    /* Modal */
-    #modalOverlay { display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:1rem; }
+    /* ── Modal ─────────────────────────────────────────── */
+    #modalOverlay { display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:1rem; }
     #modalOverlay.show { display:flex; }
-    .modal-box { background:var(--card);border:1px solid var(--border);border-radius:1.25rem;padding:2rem;width:100%;max-width:420px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.35); }
+    .modal-box { background:var(--card);border:1px solid var(--border);border-radius:1.25rem;padding:2rem;width:100%;max-width:400px;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.4); }
 
-    /* Dashboard */
-    #dashView { display:none; }
+    /* ── Views ─────────────────────────────────────────── */
+    #dashView    { display:none; }
     #landingView { display:block; }
 
-    /* Mobile menu */
+    /* ── Mobile nav ────────────────────────────────────── */
     #mobileNav { display:none;background:var(--card);border-top:1px solid var(--border); }
     #mobileNav.open { display:block; }
 
-    /* Messages */
-    .msg-ok  { padding:.75rem 1rem;background:rgba(16,163,127,.1);border:1px solid rgba(16,163,127,.22);border-radius:.75rem;color:#6ee7b7;font-size:.85rem;display:none; }
-    .msg-err { padding:.75rem 1rem;background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.22); border-radius:.75rem;color:#fca5a5;font-size:.85rem;display:none; }
+    /* ── Messages ──────────────────────────────────────── */
+    .msg-ok  { padding:.75rem 1rem;background:rgba(16,163,127,.1);border:1px solid rgba(16,163,127,.2);border-radius:.75rem;color:#6ee7b7;font-size:.85rem;display:none; }
+    .msg-err { padding:.75rem 1rem;background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.2); border-radius:.75rem;color:#fca5a5;font-size:.85rem;display:none; }
 
-    /* Pricing popular */
-    .pop-card { border-color:#10A37F !important;box-shadow:0 0 40px rgba(16,163,127,.14); }
+    /* ── Section label ─────────────────────────────────── */
+    .slabel { display:inline-flex;align-items:center;gap:.45rem;padding:.35rem .875rem;border:1px solid var(--border);border-radius:9999px;font-size:.78rem;font-weight:600;color:var(--text2);background:var(--card); }
 
-    /* Blob */
+    /* ── Background blobs ──────────────────────────────── */
     .blob { position:absolute;border-radius:50%;filter:blur(72px);pointer-events:none;z-index:0; }
 
-    /* Section label */
-    .slabel { display:inline-flex;align-items:center;gap:.45rem;padding:.35rem .9rem;border:1px solid var(--border);border-radius:9999px;font-size:.78rem;font-weight:600;color:var(--muted);background:var(--card);margin-bottom:.875rem; }
+    /* ── Context tabs ──────────────────────────────────── */
+    .ctx-tab { padding:.4rem .875rem;border:1px solid var(--border);border-radius:9999px;font-size:.8rem;font-weight:500;cursor:pointer;background:transparent;color:var(--text2);transition:all .18s; }
+    .ctx-tab.active { background:var(--btn);border-color:var(--btn);color:#fff; }
+    .ctx-tab:hover:not(.active) { background:rgba(128,128,128,.08); color:var(--text); }
 
-    /* Dashboard card */
-    .d-card { background:var(--card);border:1px solid var(--border);border-radius:.875rem;padding:1.25rem 1.5rem; }
+    /* ── Analysis output ───────────────────────────────── */
+    #analysisOutput { display:none; }
+    #analysisOutput.show { display:block; }
+    .analysis-section { margin-bottom:1rem;padding:.875rem 1rem;background:rgba(128,128,128,.04);border:1px solid var(--border);border-radius:.75rem; }
+    .analysis-section h4 { font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:.4rem; }
+    .analysis-section p { font-size:.875rem;color:var(--text);line-height:1.65; }
 
-    /* Action card */
-    .act-card { display:flex;align-items:center;gap:.875rem;padding:1rem 1.25rem;background:rgba(128,128,128,.05);border:1px solid var(--border);border-radius:.875rem;text-decoration:none;color:var(--text);font-size:.875rem;font-weight:500;cursor:pointer;transition:background .2s,border-color .2s; }
-    .act-card:hover { background:rgba(128,128,128,.1);border-color:#10A37F; }
+    /* ── Credit bar ─────────────────────────────────────── */
+    .credit-bar { height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin:.5rem 0 .25rem; }
+    .credit-fill { height:100%;border-radius:3px;transition:width .7s; }
 
-    /* Scrollbar */
-    ::-webkit-scrollbar{width:6px;} ::-webkit-scrollbar-track{background:transparent;} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+    /* ── Boss Agent banner ─────────────────────────────── */
+    #bossAgent { display:none; }
+
+    /* ── Pricing popular border ────────────────────────── */
+    .pop { border-color:#10A37F !important;box-shadow:0 0 36px rgba(16,163,127,.12); }
+
+    /* ── Responsive ─────────────────────────────────────── */
+    @media (min-width:768px) {
+      .md-flex  { display:flex !important; }
+      .md-hidden { display:none !important; }
+      .dash-grid { grid-template-columns: 1fr 320px !important; }
+    }
+    @media (max-width:767px) {
+      .dash-grid { grid-template-columns: 1fr !important; }
+    }
   </style>
 </head>
 <body>
 
 <!-- ╔══════════════════════════════════════════╗
-     ║  SIGN IN / SIGN UP MODAL                ║
+     ║  AUTH MODAL                             ║
      ╚══════════════════════════════════════════╝ -->
-<div id="modalOverlay" onclick="closeModalOnBg(event)">
+<div id="modalOverlay" onclick="closeModalBg(event)">
   <div class="modal-box" id="modalBox">
-    <button onclick="closeModal()" style="position:absolute;top:1rem;right:1rem;background:transparent;border:none;cursor:pointer;color:var(--muted);padding:.25rem;" aria-label="Close">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    <button onclick="closeModal()" aria-label="Close" style="position:absolute;top:.875rem;right:.875rem;background:transparent;border:none;cursor:pointer;color:var(--text2);padding:.25rem;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
 
-    <!-- ── Sign In ── -->
-    <div id="signinPanel">
-      <div style="margin-bottom:1.5rem;">
-        <h2 style="font-size:1.35rem;font-weight:800;color:var(--text);margin-bottom:.25rem;">Welcome back</h2>
-        <p style="font-size:.875rem;color:var(--muted);">Sign in to your ThoughtScope account</p>
+    <!-- Sign In -->
+    <div id="siPanel">
+      <div style="margin-bottom:1.375rem;">
+        <h2 style="font-size:1.3rem;font-weight:800;color:var(--text);margin-bottom:.25rem;">Welcome back</h2>
+        <p style="font-size:.875rem;color:var(--text2);">Sign in to your Mentics account</p>
       </div>
-      <form id="signinForm" onsubmit="handleSignIn(event)" style="display:flex;flex-direction:column;gap:.875rem;">
+      <form id="siForm" onsubmit="handleSignIn(event)" style="display:flex;flex-direction:column;gap:.75rem;">
+        <div><label style="display:block;font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:.3rem;">Email</label><input id="siEmail" type="email" placeholder="you@example.com" required class="inp" autocomplete="email"/></div>
         <div>
-          <label style="display:block;font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:.375rem;">Email address</label>
-          <input id="siEmail" type="email" placeholder="you@example.com" required class="inp" autocomplete="email" />
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;"><label style="font-size:.8rem;font-weight:600;color:var(--text);">Password</label><button type="button" onclick="handleForgotPassword()" style="font-size:.78rem;color:var(--btn);background:transparent;border:none;cursor:pointer;font-weight:500;">Forgot password?</button></div>
+          <input id="siPass" type="password" placeholder="Your password" required class="inp" autocomplete="current-password"/>
         </div>
-        <div>
-          <label style="display:block;font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:.375rem;">Password</label>
-          <input id="siPass" type="password" placeholder="Your password" required class="inp" autocomplete="current-password" />
-        </div>
-        <div id="siErr" class="msg-err"></div>
+        <div id="siMsg" class="msg-err"></div>
         <button type="submit" id="siBtn" class="btn-p" style="width:100%;padding:.75rem;border-radius:.75rem;margin-top:.125rem;">Sign In</button>
       </form>
-      <p style="text-align:center;font-size:.85rem;color:var(--muted);margin-top:1.25rem;">
-        Don't have an account?
-        <button onclick="switchModal('signup')" style="background:transparent;border:none;cursor:pointer;color:#10A37F;font-weight:600;font-size:.85rem;">Sign Up</button>
-      </p>
+      <p style="text-align:center;font-size:.85rem;color:var(--text2);margin-top:1.125rem;">No account? <button onclick="switchModal('signup')" style="background:transparent;border:none;cursor:pointer;color:var(--btn);font-weight:600;font-size:.85rem;">Sign Up</button></p>
     </div>
 
-    <!-- ── Sign Up ── -->
-    <div id="signupPanel" style="display:none;">
-      <div style="margin-bottom:1.5rem;">
-        <h2 style="font-size:1.35rem;font-weight:800;color:var(--text);margin-bottom:.25rem;">Create your account</h2>
-        <p style="font-size:.875rem;color:var(--muted);">Start analyzing AI conversations for free</p>
+    <!-- Sign Up -->
+    <div id="suPanel" style="display:none;">
+      <div style="margin-bottom:1.375rem;">
+        <h2 style="font-size:1.3rem;font-weight:800;color:var(--text);margin-bottom:.25rem;">Create account</h2>
+        <p style="font-size:.875rem;color:var(--text2);">Start analyzing AI conversations for free</p>
       </div>
-
-      <!-- Sign up form view -->
-      <div id="suFormView">
-        <form id="signupForm" onsubmit="handleSignUp(event)" style="display:flex;flex-direction:column;gap:.875rem;">
-          <div>
-            <label style="display:block;font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:.375rem;">Full name</label>
-            <input id="suName" type="text" placeholder="Jane Smith" required class="inp" autocomplete="name" />
-          </div>
-          <div>
-            <label style="display:block;font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:.375rem;">Email address</label>
-            <input id="suEmail" type="email" placeholder="you@example.com" required class="inp" autocomplete="email" />
-          </div>
-          <div>
-            <label style="display:block;font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:.375rem;">Password</label>
-            <input id="suPass" type="password" placeholder="Minimum 8 characters" required minlength="8" class="inp" autocomplete="new-password" />
-          </div>
-          <div>
-            <label style="display:block;font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:.375rem;">Confirm password</label>
-            <input id="suPass2" type="password" placeholder="Repeat your password" required class="inp" autocomplete="new-password" />
-          </div>
-          <div id="suErr" class="msg-err"></div>
+      <!-- Form view -->
+      <div id="suForm">
+        <form id="suFormEl" onsubmit="handleSignUp(event)" style="display:flex;flex-direction:column;gap:.75rem;">
+          <div><label style="display:block;font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:.3rem;">Full Name</label><input id="suName" type="text" placeholder="Jane Smith" required class="inp" autocomplete="name"/></div>
+          <div><label style="display:block;font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:.3rem;">Email</label><input id="suEmail" type="email" placeholder="you@example.com" required class="inp" autocomplete="email"/></div>
+          <div><label style="display:block;font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:.3rem;">Password</label><input id="suPass" type="password" placeholder="Minimum 8 characters" required minlength="8" class="inp" autocomplete="new-password"/></div>
+          <div><label style="display:block;font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:.3rem;">Confirm Password</label><input id="suPass2" type="password" placeholder="Repeat password" required class="inp" autocomplete="new-password"/></div>
+          <div id="suMsg" class="msg-err"></div>
           <button type="submit" id="suBtn" class="btn-p" style="width:100%;padding:.75rem;border-radius:.75rem;margin-top:.125rem;">Create Account</button>
         </form>
       </div>
-
-      <!-- Verify email view -->
-      <div id="suVerifyView" style="display:none;text-align:center;padding:.5rem 0;">
-        <div class="gradient-bg" style="width:52px;height:52px;border-radius:.875rem;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-        </div>
-        <h3 style="font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:.5rem;">Check your email</h3>
-        <p style="font-size:.875rem;color:var(--muted);margin-bottom:.375rem;">We sent a confirmation link to</p>
+      <!-- Verify view -->
+      <div id="suVerify" style="display:none;text-align:center;padding:.5rem 0;">
+        <div class="g-bg" style="width:50px;height:50px;border-radius:.875rem;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <h3 style="font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:.4rem;">Check your email</h3>
+        <p style="font-size:.85rem;color:var(--text2);margin-bottom:.25rem;">Confirmation link sent to</p>
         <p id="suVerifyEmail" style="font-size:.875rem;font-weight:600;color:var(--text);margin-bottom:1.25rem;"></p>
-        <p style="font-size:.8rem;color:var(--muted);">Click the link to activate your account, then sign in.</p>
-        <button onclick="switchModal('signin')" class="btn-p" style="margin-top:1.25rem;padding:.65rem 1.5rem;">Go to Sign In</button>
+        <button onclick="switchModal('signin')" class="btn-p" style="padding:.65rem 1.5rem;">Go to Sign In</button>
       </div>
-
-      <p style="text-align:center;font-size:.85rem;color:var(--muted);margin-top:1.25rem;" id="suSwitch">
-        Already have an account?
-        <button onclick="switchModal('signin')" style="background:transparent;border:none;cursor:pointer;color:#10A37F;font-weight:600;font-size:.85rem;">Sign In</button>
-      </p>
+      <p id="suSwitch" style="text-align:center;font-size:.85rem;color:var(--text2);margin-top:1.125rem;">Have an account? <button onclick="switchModal('signin')" style="background:transparent;border:none;cursor:pointer;color:var(--btn);font-weight:600;font-size:.85rem;">Sign In</button></p>
     </div>
   </div>
 </div>
@@ -207,82 +235,75 @@
 
     <!-- Logo -->
     <a href="#home" onclick="showLanding()" style="display:flex;align-items:center;gap:.625rem;text-decoration:none;flex-shrink:0;">
-      <div class="gradient-bg" style="width:34px;height:34px;border-radius:.625rem;display:flex;align-items:center;justify-content:center;">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <div class="g-bg" style="width:36px;height:36px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;font-size:1.2rem;line-height:1;">🧠</div>
+      <div>
+        <div style="font-weight:900;font-size:1.05rem;color:var(--text);line-height:1.1;letter-spacing:-.01em;">MENTICS</div>
+        <div style="font-size:.65rem;font-weight:500;color:var(--text2);letter-spacing:.06em;text-transform:uppercase;line-height:1;">deep research</div>
       </div>
-      <span style="font-weight:800;font-size:1.05rem;color:var(--text);">ThoughtScope</span>
     </a>
 
     <!-- Center nav — desktop -->
-    <nav style="display:none;gap:.2rem;align-items:center;" id="deskNav" class="md-flex">
-      <a href="#home"     onclick="showLanding()" class="nav-a">Home</a>
-      <a href="#dash"     onclick="if(currentUser)showDash()" class="nav-a" id="navDash" style="display:none;">Dashboard</a>
+    <nav id="deskNav" style="display:none;gap:.2rem;align-items:center;" class="md-flex">
+      <button onclick="showLanding()" class="nav-a">Home</button>
+      <button onclick="showDash()"    class="nav-a" id="navDash" style="display:none;">Dashboard</button>
       <a href="#features" class="nav-a">Features</a>
       <a href="#faq"      class="nav-a">About</a>
     </nav>
 
     <!-- Right — desktop -->
-    <div style="display:none;align-items:center;gap:.5rem;flex-shrink:0;" id="deskRight" class="md-flex">
-      <button id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme" style="width:36px;height:36px;border-radius:.5rem;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:background .2s;" onmouseover="this.style.background='rgba(128,128,128,.08)'" onmouseout="this.style.background='transparent'">
-        <span id="themeIcoD"><!-- sun --><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span>
+    <div id="deskRight" style="display:none;align-items:center;gap:.5rem;flex-shrink:0;" class="md-flex">
+      <!-- Theme toggle -->
+      <button id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme" style="width:34px;height:34px;border-radius:.5rem;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:1rem;transition:background .2s;" onmouseover="this.style.background='rgba(128,128,128,.08)'" onmouseout="this.style.background='transparent'">
+        <span id="themeIcoD">🌙</span>
       </button>
-      <!-- Logged-out actions -->
+      <!-- Logged-out -->
       <div id="authBtns" style="display:flex;align-items:center;gap:.5rem;">
         <button onclick="openModal('signin')" class="btn-g">Sign In</button>
-        <button onclick="openModal('signup')" class="btn-o btn-sm">Sign Up</button>
-        <button onclick="scrollToJoin()" class="btn-p pulse btn-sm">Join Waiting List</button>
+        <button onclick="openModal('signup')" class="btn-o" style="font-size:.82rem;padding:.5rem 1rem;">Sign Up</button>
+        <button onclick="scrollToJoin()" class="btn-p pulse" style="font-size:.82rem;padding:.5rem 1.1rem;">Join Waiting List</button>
       </div>
-      <!-- Logged-in actions -->
+      <!-- Logged-in -->
       <div id="userBtns" style="display:none;align-items:center;gap:.75rem;">
         <span id="userGreet" style="font-size:.875rem;font-weight:600;color:var(--text);"></span>
-        <button onclick="showDash()" class="btn-o btn-sm">Dashboard</button>
+        <button onclick="showDash()" class="btn-o" style="font-size:.82rem;padding:.5rem 1rem;">Dashboard</button>
         <button onclick="handleSignOut()" class="btn-g" style="color:#fca5a5;">Sign Out</button>
       </div>
     </div>
 
     <!-- Mobile: theme + hamburger -->
-    <div style="display:flex;align-items:center;gap:.5rem;" id="mobileRight">
-      <button onclick="toggleTheme()" aria-label="Toggle theme" style="width:36px;height:36px;border-radius:.5rem;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);">
-        <span id="themeIcoM"><!-- sun --><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span>
+    <div style="display:flex;align-items:center;gap:.4rem;" class="md-hidden">
+      <button onclick="toggleTheme()" style="width:34px;height:34px;border-radius:.5rem;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--text2);">
+        <span id="themeIcoM">🌙</span>
       </button>
-      <button id="hamBtn" onclick="toggleMobileNav()" style="width:36px;height:36px;border-radius:.5rem;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);" aria-label="Menu">
-        <svg id="hamIco"   width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        <svg id="closeIco" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <button id="hamBtn" onclick="toggleNav()" style="width:34px;height:34px;border-radius:.5rem;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);">
+        <svg id="hamIco"   width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg id="xIco"    width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
   </div>
 
   <!-- Mobile nav -->
   <div id="mobileNav">
-    <div style="padding:1rem 1.5rem;display:flex;flex-direction:column;gap:.375rem;">
-      <a href="#home"     onclick="showLanding();closeMobileNav()" class="nav-a" style="padding:.625rem .75rem;">Home</a>
-      <a onclick="if(currentUser){showDash();closeMobileNav();}" class="nav-a" id="mNavDash" style="padding:.625rem .75rem;display:none;">Dashboard</a>
-      <a href="#features" onclick="closeMobileNav()" class="nav-a" style="padding:.625rem .75rem;">Features</a>
-      <a href="#faq"      onclick="closeMobileNav()" class="nav-a" style="padding:.625rem .75rem;">About</a>
-      <div style="height:1px;background:var(--border);margin:.5rem 0;"></div>
-      <!-- Mobile logged-out -->
-      <div id="mAuthBtns" style="display:flex;flex-direction:column;gap:.5rem;">
-        <button onclick="openModal('signin');closeMobileNav()" class="btn-g" style="justify-content:flex-start;">Sign In</button>
-        <button onclick="openModal('signup');closeMobileNav()" class="btn-o">Sign Up</button>
-        <button onclick="scrollToJoin();closeMobileNav()" class="btn-p pulse">Join Waiting List</button>
+    <div style="padding:.875rem 1.5rem;display:flex;flex-direction:column;gap:.35rem;">
+      <button onclick="showLanding();closeNav()" class="nav-a" style="text-align:left;padding:.625rem .75rem;">Home</button>
+      <button onclick="showDash();closeNav()"    class="nav-a" id="mNavDash" style="text-align:left;padding:.625rem .75rem;display:none;">Dashboard</button>
+      <a href="#features" onclick="closeNav()" class="nav-a" style="padding:.625rem .75rem;">Features</a>
+      <a href="#faq"      onclick="closeNav()" class="nav-a" style="padding:.625rem .75rem;">About</a>
+      <hr style="border:none;border-top:1px solid var(--border);margin:.375rem 0;">
+      <div id="mAuthBtns" style="display:flex;flex-direction:column;gap:.375rem;">
+        <button onclick="openModal('signin');closeNav()" class="btn-g" style="justify-content:flex-start;">Sign In</button>
+        <button onclick="openModal('signup');closeNav()" class="btn-o">Sign Up</button>
+        <button onclick="scrollToJoin();closeNav()" class="btn-p pulse">Join Waiting List</button>
       </div>
-      <!-- Mobile logged-in -->
-      <div id="mUserBtns" style="display:none;flex-direction:column;gap:.5rem;">
+      <div id="mUserBtns" style="display:none;flex-direction:column;gap:.375rem;">
         <span id="mUserGreet" style="font-size:.875rem;font-weight:600;color:var(--text);padding:.375rem .75rem;"></span>
-        <button onclick="showDash();closeMobileNav()" class="btn-o">Dashboard</button>
+        <button onclick="showDash();closeNav()" class="btn-o">Dashboard</button>
         <button onclick="handleSignOut()" class="btn-g" style="color:#fca5a5;justify-content:flex-start;">Sign Out</button>
       </div>
     </div>
   </div>
 </header>
 
-<!-- Responsive helpers -->
-<style>
-  @media (min-width:768px) {
-    .md-flex { display:flex !important; }
-    #mobileRight { display:none !important; }
-  }
-</style>
 
 <main style="padding-top:64px;">
 
@@ -290,98 +311,114 @@
      ║  DASHBOARD VIEW                         ║
      ╚══════════════════════════════════════════╝ -->
 <div id="dashView">
-  <section id="dash" style="max-width:960px;margin:0 auto;padding:3rem 1.5rem;">
+<section style="max-width:1100px;margin:0 auto;padding:2.5rem 1.5rem;">
 
-    <!-- Welcome banner -->
-    <div class="d-card fu" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.25rem;border-left:3px solid #10A37F;">
-      <div>
-        <p style="font-size:.82rem;color:var(--muted);margin-bottom:.2rem;">Welcome back 👋</p>
-        <h2 id="dashName" style="font-size:1.6rem;font-weight:800;color:var(--text);">Loading…</h2>
-        <p id="dashEmail" style="font-size:.875rem;color:var(--muted);margin-top:.2rem;"></p>
+  <!-- Welcome strip -->
+  <div class="card2 fu" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;padding:1.125rem 1.5rem;margin-bottom:1.5rem;border-left:3px solid var(--btn);">
+    <div>
+      <p style="font-size:.8rem;color:var(--text2);margin-bottom:.15rem;">Welcome back 👋</p>
+      <h2 id="dashName" style="font-size:1.4rem;font-weight:800;color:var(--text);">Loading…</h2>
+    </div>
+    <span id="dashPlanBadge" style="padding:.3rem .875rem;border-radius:9999px;font-size:.75rem;font-weight:700;background:rgba(16,163,127,.12);border:1px solid rgba(16,163,127,.2);color:#6ee7b7;">Free Plan</span>
+  </div>
+
+  <!-- 2-column dashboard grid -->
+  <div class="dash-grid" style="display:grid;grid-template-columns:1fr;gap:1.25rem;align-items:start;">
+
+    <!-- ── LEFT: Analysis tool ── -->
+    <div>
+      <div class="card" style="padding:1.5rem;margin-bottom:1.25rem;">
+        <div style="display:flex;align-items:center;gap:.625rem;margin-bottom:1.125rem;">
+          <div class="g-bg" style="width:34px;height:34px;border-radius:.625rem;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;">🎯</div>
+          <div>
+            <h3 style="font-weight:800;font-size:.95rem;color:var(--text);letter-spacing:.02em;">PASTE YOUR CHATGPT CONVERSATION</h3>
+            <p style="font-size:.78rem;color:var(--text2);">Analyze the reasoning behind any AI response</p>
+          </div>
+        </div>
+
+        <!-- Textarea -->
+        <textarea id="analysisInput" class="textarea-field" placeholder="Paste ChatGPT link or your question + ChatGPT's answer here..." style="margin-bottom:1rem;" oninput="onInputChange()"></textarea>
+
+        <!-- Context selector -->
+        <div style="margin-bottom:1rem;">
+          <p style="font-size:.78rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Your context</p>
+          <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
+            <button class="ctx-tab active" data-ctx="Student"      onclick="setCtx(this)">🎓 Student</button>
+            <button class="ctx-tab"        data-ctx="Professional" onclick="setCtx(this)">💼 Professional</button>
+            <button class="ctx-tab"        data-ctx="Researcher"   onclick="setCtx(this)">🔬 Researcher</button>
+            <button class="ctx-tab"        data-ctx="Curious"      onclick="setCtx(this)">💡 Curious</button>
+            <button class="ctx-tab"        data-ctx="Technical"    onclick="setCtx(this)">⚙️ Technical</button>
+          </div>
+        </div>
+
+        <!-- Boss Agent recommendation -->
+        <div id="bossAgent" class="card2" style="padding:.75rem 1rem;margin-bottom:1rem;background:rgba(16,163,127,.06);border-color:rgba(16,163,127,.2);">
+          <p style="font-size:.82rem;color:var(--text2);">🤖 Boss Agent recommends: <strong id="bossRec" style="color:#10A37F;"></strong></p>
+        </div>
+
+        <!-- Analyze button -->
+        <button id="analyzeBtn" onclick="analyzeQuestion()" class="btn-p" style="width:100%;padding:.8rem;border-radius:.875rem;font-size:.9rem;" disabled>
+          Analyze — Uses 1 credit
+        </button>
       </div>
-      <span style="display:inline-flex;align-items:center;padding:.35rem .875rem;border-radius:9999px;font-size:.78rem;font-weight:700;background:rgba(16,163,127,.12);border:1px solid rgba(16,163,127,.2);color:#6ee7b7;">Free Plan</span>
+
+      <!-- Analysis output -->
+      <div id="analysisOutput" class="card" style="padding:1.5rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+          <h3 style="font-weight:700;font-size:.95rem;color:var(--text);">Analysis Results</h3>
+          <button onclick="clearOutput()" style="font-size:.78rem;color:var(--text2);background:transparent;border:none;cursor:pointer;">Clear</button>
+        </div>
+        <div id="analysisContent"></div>
+      </div>
     </div>
 
-    <!-- Stats row -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.25rem;">
-      <div class="d-card fu d1">
-        <p style="font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.625rem;">Credits Remaining</p>
-        <p id="dashCredits" style="font-size:2.2rem;font-weight:900;color:var(--text);margin-bottom:.25rem;">5</p>
-        <div style="height:5px;background:var(--border);border-radius:3px;overflow:hidden;">
-          <div id="creditBar" style="height:100%;width:100%;background:linear-gradient(90deg,#10A37F,#3B82F6);border-radius:3px;transition:width .8s;"></div>
-        </div>
-        <p style="font-size:.78rem;color:var(--muted);margin-top:.375rem;">of 5 monthly credits</p>
-      </div>
-      <div class="d-card fu d2">
-        <p style="font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.625rem;">Analyses Run</p>
-        <p style="font-size:2.2rem;font-weight:900;color:var(--text);">0</p>
-        <p style="font-size:.78rem;color:var(--muted);margin-top:.375rem;">All time</p>
-      </div>
-      <div class="d-card fu d3">
-        <p style="font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.625rem;">Member Since</p>
-        <p id="dashJoined" style="font-size:1.35rem;font-weight:700;color:var(--text);">—</p>
-        <p style="font-size:.78rem;color:var(--muted);margin-top:.375rem;">Account active</p>
-      </div>
-    </div>
+    <!-- ── RIGHT: User info ── -->
+    <div style="display:flex;flex-direction:column;gap:1rem;">
 
-    <!-- Waiting list card -->
-    <div class="d-card fu d2" id="dashWlCard" style="margin-bottom:1.25rem;display:none;">
-      <div style="display:flex;align-items:flex-start;gap:1rem;">
-        <div class="gradient-bg" style="width:40px;height:40px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <!-- Credits card -->
+      <div class="card2" style="padding:1.25rem;">
+        <p style="font-size:.75rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.625rem;">Credits Remaining</p>
+        <div style="display:flex;align-items:flex-end;gap:.25rem;margin-bottom:.375rem;">
+          <span id="dashCredits" style="font-size:2rem;font-weight:900;color:var(--text);">5</span>
+          <span id="dashMaxCreds" style="font-size:.875rem;color:var(--text2);margin-bottom:.25rem;">/ 5</span>
         </div>
-        <div style="flex:1;min-width:0;">
-          <p style="font-size:.82rem;color:#10A37F;font-weight:600;margin-bottom:.2rem;">You're on the waiting list 🎉</p>
-          <p style="font-size:1.1rem;font-weight:700;color:var(--text);">Position <span id="dashWlPos" class="gradient-text">#—</span></p>
-          <div style="display:flex;align-items:center;gap:.75rem;margin-top:.625rem;flex-wrap:wrap;">
-            <div style="display:flex;align-items:center;gap:.5rem;padding:.4rem .875rem;background:rgba(128,128,128,.06);border:1px solid var(--border);border-radius:.625rem;">
-              <span style="font-size:.78rem;color:var(--muted);">Discount code</span>
-              <code id="dashWlCode" style="font-size:.875rem;font-weight:700;color:#10A37F;font-family:monospace;"></code>
-            </div>
-            <button onclick="copyDashCode()" id="dashCopyBtn" style="padding:.35rem .75rem;background:rgba(16,163,127,.1);border:1px solid rgba(16,163,127,.2);border-radius:.5rem;color:#6ee7b7;font-size:.78rem;font-weight:600;cursor:pointer;transition:background .2s;">Copy</button>
+        <div class="credit-bar"><div id="creditFill" class="credit-fill g-bg" style="width:100%;"></div></div>
+        <p style="font-size:.78rem;color:var(--text2);">Resets monthly</p>
+      </div>
+
+      <!-- Plan card -->
+      <div class="card2" style="padding:1.25rem;">
+        <p style="font-size:.75rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem;">Current Plan</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem;">
+          <span id="dashPlan" style="font-weight:700;color:var(--text);font-size:1rem;">Free</span>
+          <span style="font-size:.78rem;color:var(--text2);">$0/mo</span>
+        </div>
+        <a href="#pricing" onclick="showLanding()" class="btn-p" style="display:flex;width:100%;justify-content:center;border-radius:.75rem;padding:.65rem;font-size:.85rem;">Upgrade Plan ↑</a>
+      </div>
+
+      <!-- Waiting list card -->
+      <div class="card2" id="dashWlCard" style="padding:1.25rem;display:none;">
+        <p style="font-size:.75rem;font-weight:700;color:#10A37F;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;">Waiting List 🎉</p>
+        <p style="font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:.75rem;">Position <span id="dashWlPos" class="g-text">#—</span></p>
+        <div style="margin-bottom:.5rem;"><p style="font-size:.78rem;color:var(--text2);margin-bottom:.35rem;">Your discount code</p>
+          <div style="display:flex;gap:.5rem;align-items:center;">
+            <code id="dashWlCode" style="flex:1;padding:.4rem .75rem;background:rgba(16,163,127,.08);border:1px solid rgba(16,163,127,.18);border-radius:.5rem;font-size:.875rem;font-weight:700;color:#10A37F;font-family:monospace;"></code>
+            <button onclick="copyCode()" id="copyBtn" style="padding:.4rem .75rem;background:rgba(16,163,127,.1);border:1px solid rgba(16,163,127,.2);border-radius:.5rem;color:#6ee7b7;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s;">Copy</button>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Nudge if not on waitlist -->
-    <div class="d-card fu d3" id="dashWlNudge" style="margin-bottom:1.25rem;display:none;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;">
-        <div>
-          <p style="font-weight:700;color:var(--text);margin-bottom:.25rem;">Get early access + 20% off</p>
-          <p style="font-size:.875rem;color:var(--muted);">Join the waiting list and lock in your lifetime discount.</p>
-        </div>
-        <button onclick="showLanding();setTimeout(scrollToJoin,100)" class="btn-p" style="padding:.6rem 1.25rem;border-radius:.75rem;font-size:.875rem;">Join Now →</button>
+      <!-- Nudge join if not on waitlist -->
+      <div class="card2" id="dashWlNudge" style="padding:1.25rem;display:none;">
+        <p style="font-weight:700;color:var(--text);font-size:.9rem;margin-bottom:.35rem;">Get 20% off for life 🎁</p>
+        <p style="font-size:.8rem;color:var(--text2);margin-bottom:.875rem;">Join the waiting list to lock in your early discount.</p>
+        <button onclick="showLanding();setTimeout(scrollToJoin,50)" class="btn-p" style="width:100%;border-radius:.75rem;padding:.6rem;font-size:.85rem;">Join Waiting List →</button>
       </div>
-    </div>
 
-    <!-- Quick actions -->
-    <h3 style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem;">Quick Actions</h3>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;">
-      <button class="act-card">
-        <div class="gradient-bg" style="width:34px;height:34px;border-radius:.625rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        </div>
-        <div style="text-align:left;">
-          <div style="font-weight:600;color:var(--text);">Start Analyzing</div>
-          <div style="font-size:.78rem;color:var(--muted);">Coming soon</div>
-        </div>
-      </button>
-      <a href="#pricing" onclick="showLanding()" class="act-card">
-        <div style="width:34px;height:34px;border-radius:.625rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(59,130,246,.15);">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        </div>
-        <div>Upgrade Plan</div>
-      </a>
-      <button onclick="handleSignOut()" class="act-card">
-        <div style="width:34px;height:34px;border-radius:.625rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(239,68,68,.1);">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-        </div>
-        <div style="color:#fca5a5;">Sign Out</div>
-      </button>
     </div>
-  </section>
-</div>
+  </div>
+</section>
+</div><!-- /dashView -->
 
 
 <!-- ╔══════════════════════════════════════════╗
@@ -389,32 +426,31 @@
      ╚══════════════════════════════════════════╝ -->
 <div id="landingView">
 
-<!-- ── HERO ─────────────────────────────── -->
+<!-- ── HERO ─────────────────────────────────────────────── -->
 <section id="home" style="min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;padding:4rem 1.5rem 5rem;position:relative;overflow:hidden;">
-  <div class="blob" style="width:500px;height:500px;top:5%;left:50%;transform:translateX(-50%);background:radial-gradient(circle,rgba(16,163,127,.07),transparent 70%);"></div>
-  <div class="blob" style="width:260px;height:260px;top:20%;left:15%;background:radial-gradient(circle,rgba(16,163,127,.05),transparent 70%);"></div>
-  <div class="blob" style="width:260px;height:260px;top:20%;right:15%;background:radial-gradient(circle,rgba(59,130,246,.05),transparent 70%);"></div>
+  <div class="blob" style="width:480px;height:480px;top:0;left:50%;transform:translateX(-50%);background:radial-gradient(circle,rgba(16,163,127,.07),transparent 70%);"></div>
+  <div class="blob" style="width:240px;height:240px;top:25%;left:10%;background:radial-gradient(circle,rgba(16,163,127,.05),transparent 70%);"></div>
+  <div class="blob" style="width:240px;height:240px;top:25%;right:10%;background:radial-gradient(circle,rgba(59,130,246,.05),transparent 70%);"></div>
 
-  <div style="position:relative;z-index:1;max-width:840px;text-align:center;" class="fu vis">
-    <div class="slabel">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      AI Thought Analyzer
+  <div style="position:relative;z-index:1;max-width:820px;text-align:center;" class="fu vis">
+    <div class="slabel" style="margin-bottom:1.25rem;">
+      🧠 AI Thought Analyzer
     </div>
-    <h1 style="font-size:clamp(2.6rem,7vw,4.75rem);font-weight:900;line-height:1.06;margin-bottom:1.375rem;color:var(--text);">
-      See How <span class="gradient-text">AI Really&nbsp;Thinks</span>
+    <h1 style="font-size:clamp(2.5rem,7vw,4.6rem);font-weight:900;line-height:1.06;margin-bottom:1.25rem;color:var(--text);">
+      See How <span class="g-text">AI Really&nbsp;Thinks</span>
     </h1>
-    <p style="font-size:1.15rem;line-height:1.65;color:var(--muted);max-width:600px;margin:0 auto 2.5rem;">
-      Paste any ChatGPT conversation — get instant analysis of why AI gave that answer, plus 10 specialized agents ready to take you further.
+    <p style="font-size:1.1rem;line-height:1.68;color:var(--text2);max-width:580px;margin:0 auto 2.5rem;">
+      Paste any ChatGPT conversation — get instant deep analysis of why AI gave that answer, what it assumed, and how to get a better one.
     </p>
     <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.875rem;margin-bottom:2.75rem;">
       <button onclick="scrollToJoin()" class="btn-p pulse" style="font-size:1rem;padding:.875rem 2rem;">
         Join Waiting List
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
-      <button class="btn-o" style="font-size:1rem;padding:.875rem 2rem;">Watch Demo</button>
+      <button onclick="openModal('signup')" class="btn-o" style="font-size:1rem;padding:.875rem 2rem;">Get Started Free</button>
     </div>
-    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.5rem 1.375rem;font-size:.875rem;color:var(--muted);">
-      <span>⭐ 1000+ users</span>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.5rem 1.25rem;font-size:.875rem;color:var(--text2);">
+      <span>⭐ 1,000+ users</span>
       <span style="width:4px;height:4px;border-radius:50%;background:var(--border);display:inline-block;"></span>
       <span>🌍 Global coverage</span>
       <span style="width:4px;height:4px;border-radius:50%;background:var(--border);display:inline-block;"></span>
@@ -423,176 +459,162 @@
   </div>
 </section>
 
-<!-- ── FEATURES ───────────────────────────── -->
+<!-- ── FEATURES ───────────────────────────────────────────── -->
 <section id="features" style="padding:5.5rem 1.5rem;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
-  <div style="max-width:1180px;margin:0 auto;">
+  <div style="max-width:1160px;margin:0 auto;">
     <div style="text-align:center;margin-bottom:3.5rem;" class="fu">
-      <div class="slabel">Capabilities</div>
-      <h2 style="font-size:clamp(1.7rem,4vw,2.5rem);font-weight:800;color:var(--text);margin-bottom:.75rem;">Everything you need to understand AI</h2>
-      <p style="font-size:1.05rem;color:var(--muted);max-width:500px;margin:0 auto;">Six powerful capabilities that transform how you analyze and scale your AI conversations.</p>
+      <div class="slabel" style="margin-bottom:.75rem;">Capabilities</div>
+      <h2 style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;color:var(--text);margin-bottom:.75rem;">Everything you need to understand AI</h2>
+      <p style="font-size:1rem;color:var(--text2);max-width:480px;margin:0 auto;">Six powerful capabilities that transform how you analyze AI conversations.</p>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1.125rem;">
-      <div class="card fu d1" style="padding:1.625rem;"><div class="gradient-bg" style="width:40px;height:40px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div><h3 style="font-weight:700;color:var(--text);margin-bottom:.375rem;">AI Thought Analysis</h3><p style="font-size:.875rem;color:var(--muted);line-height:1.65;">Reveals exactly why ChatGPT gave that specific answer, surfacing the full reasoning chain behind every response.</p></div>
-      <div class="card fu d2" style="padding:1.625rem;"><div class="gradient-bg" style="width:40px;height:40px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg></div><h3 style="font-weight:700;color:var(--text);margin-bottom:.375rem;">Boss Agent</h3><p style="font-size:.875rem;color:var(--muted);line-height:1.65;">Auto-detects your category and instantly recommends the best specialized agent — no manual selection needed.</p></div>
-      <div class="card fu d3" style="padding:1.625rem;"><div class="gradient-bg" style="width:40px;height:40px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><h3 style="font-weight:700;color:var(--text);margin-bottom:.375rem;">10 Specialized Agents</h3><p style="font-size:.875rem;color:var(--muted);line-height:1.65;">Content, Code, Prompt, Hook, Language Bridge and 5 more — purpose-built agents for every task.</p></div>
-      <div class="card fu d4" style="padding:1.625rem;"><div class="gradient-bg" style="width:40px;height:40px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><h3 style="font-weight:700;color:var(--text);margin-bottom:.375rem;">Multi-Language</h3><p style="font-size:.875rem;color:var(--muted);line-height:1.65;">Full support for English, Urdu, Hindi, Arabic and 20+ additional languages with native-quality output.</p></div>
-      <div class="card fu d5" style="padding:1.625rem;"><div class="gradient-bg" style="width:40px;height:40px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><h3 style="font-weight:700;color:var(--text);margin-bottom:.375rem;">Smart Credits</h3><p style="font-size:.875rem;color:var(--muted);line-height:1.65;">5 free monthly credits, Pro 100, Business unlimited — pricing that scales with your needs.</p></div>
-      <div class="card fu d6" style="padding:1.625rem;"><div class="gradient-bg" style="width:40px;height:40px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3 style="font-weight:700;color:var(--text);margin-bottom:.375rem;">Privacy First</h3><p style="font-size:.875rem;color:var(--muted);line-height:1.65;">Your data is never stored, logged, or sold. Complete end-to-end privacy by design.</p></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.125rem;">
+      <div class="card fu d1" style="padding:1.5rem;"><div class="g-bg" style="width:38px;height:38px;border-radius:.625rem;display:flex;align-items:center;justify-content:center;margin-bottom:.875rem;font-size:1.1rem;">🔍</div><h3 style="font-weight:700;color:var(--text);margin-bottom:.375rem;font-size:.95rem;">AI Thought Analysis</h3><p style="font-size:.875rem;color:var(--text2);line-height:1.65;">Reveals exactly why ChatGPT gave that specific answer, surfacing hidden assumptions and missing context.</p></div>
+      <div class="card fu d2" style="padding:1.5rem;"><div class="g-bg" style="width:38px;height:38px;border-radius:.625rem;display:flex;align-items:center;justify-content:center;margin-bottom:.875rem;font-size:1.1rem;">🤖</div><h3 style="font-weight:700;color:var(--text);margin-bottom:.375rem;font-size:.95rem;">Boss Agent</h3><p style="font-size:.875rem;color:var(--text2);line-height:1.65;">Auto-detects your context and instantly recommends the best specialized agent for your task.</p></div>
+      <div class="card fu d3" style="padding:1.5rem;"><div class="g-bg" style="width:38px;height:38px;border-radius:.625rem;display:flex;align-items:center;justify-content:center;margin-bottom:.875rem;font-size:1.1rem;">⚡</div><h3 style="font-weight:700;color:var(--text);margin-bottom:.375rem;font-size:.95rem;">10 Specialized Agents</h3><p style="font-size:.875rem;color:var(--text2);line-height:1.65;">Content, Code, Prompt, Hook, Language Bridge and 5 more — purpose-built for every task.</p></div>
+      <div class="card fu d4" style="padding:1.5rem;"><div class="g-bg" style="width:38px;height:38px;border-radius:.625rem;display:flex;align-items:center;justify-content:center;margin-bottom:.875rem;font-size:1.1rem;">🌍</div><h3 style="font-weight:700;color:var(--text);margin-bottom:.375rem;font-size:.95rem;">Multi-Language</h3><p style="font-size:.875rem;color:var(--text2);line-height:1.65;">Full support for English, Urdu, Hindi, Arabic, and 20+ additional languages.</p></div>
+      <div class="card fu d5" style="padding:1.5rem;"><div class="g-bg" style="width:38px;height:38px;border-radius:.625rem;display:flex;align-items:center;justify-content:center;margin-bottom:.875rem;font-size:1.1rem;">💳</div><h3 style="font-weight:700;color:var(--text);margin-bottom:.375rem;font-size:.95rem;">Smart Credits</h3><p style="font-size:.875rem;color:var(--text2);line-height:1.65;">Free 5 credits/month, Pro 100, Business unlimited — scales precisely with your needs.</p></div>
+      <div class="card fu d6" style="padding:1.5rem;"><div class="g-bg" style="width:38px;height:38px;border-radius:.625rem;display:flex;align-items:center;justify-content:center;margin-bottom:.875rem;font-size:1.1rem;">🔒</div><h3 style="font-weight:700;color:var(--text);margin-bottom:.375rem;font-size:.95rem;">Privacy First</h3><p style="font-size:.875rem;color:var(--text2);line-height:1.65;">Zero-retention policy. Your data is never stored, logged, or sold. Period.</p></div>
     </div>
   </div>
 </section>
 
-<!-- ── HOW IT WORKS ──────────────────────── -->
+<!-- ── HOW IT WORKS ───────────────────────────────────────── -->
 <section style="padding:5.5rem 1.5rem;">
-  <div style="max-width:880px;margin:0 auto;">
+  <div style="max-width:860px;margin:0 auto;">
     <div style="text-align:center;margin-bottom:3.5rem;" class="fu">
-      <div class="slabel">Process</div>
-      <h2 style="font-size:clamp(1.7rem,4vw,2.5rem);font-weight:800;color:var(--text);margin-bottom:.75rem;">How it works</h2>
-      <p style="font-size:1.05rem;color:var(--muted);">Three simple steps to unlock AI transparency</p>
+      <div class="slabel" style="margin-bottom:.75rem;">Process</div>
+      <h2 style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;color:var(--text);margin-bottom:.75rem;">How it works</h2>
+      <p style="font-size:1rem;color:var(--text2);">Three steps to unlock AI transparency</p>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;text-align:center;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:2rem;text-align:center;">
       <div class="fu d1">
-        <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:66px;height:66px;border-radius:50%;margin-bottom:1.125rem;" class="gradient-bg">
-          <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          <span style="position:absolute;top:-4px;right:-4px;width:21px;height:21px;border-radius:50%;background:var(--bg);border:1px solid var(--border);font-size:.7rem;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:center;">1</span>
-        </div>
-        <h3 style="font-weight:700;color:var(--text);margin-bottom:.5rem;">Paste your conversation</h3>
-        <p style="font-size:.875rem;color:var(--muted);line-height:1.65;">Copy your ChatGPT conversation URL or paste the full text into ThoughtScope.</p>
+        <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;margin-bottom:1rem;font-size:1.5rem;" class="g-bg">📄<span style="position:absolute;top:-4px;right:-4px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid var(--border);font-size:.68rem;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:center;">1</span></div>
+        <h3 style="font-weight:700;color:var(--text);margin-bottom:.5rem;font-size:.95rem;">Paste your conversation</h3>
+        <p style="font-size:.875rem;color:var(--text2);line-height:1.65;">Copy your ChatGPT conversation or question and paste it into Mentics.</p>
       </div>
       <div class="fu d2">
-        <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:66px;height:66px;border-radius:50%;margin-bottom:1.125rem;" class="gradient-bg">
-          <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.04Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.04Z"/></svg>
-          <span style="position:absolute;top:-4px;right:-4px;width:21px;height:21px;border-radius:50%;background:var(--bg);border:1px solid var(--border);font-size:.7rem;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:center;">2</span>
-        </div>
-        <h3 style="font-weight:700;color:var(--text);margin-bottom:.5rem;">AI analyzes everything</h3>
-        <p style="font-size:.875rem;color:var(--muted);line-height:1.65;">Our system dissects the question, answer, and the full reasoning chain behind every response.</p>
+        <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;margin-bottom:1rem;font-size:1.5rem;" class="g-bg">🧠<span style="position:absolute;top:-4px;right:-4px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid var(--border);font-size:.68rem;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:center;">2</span></div>
+        <h3 style="font-weight:700;color:var(--text);margin-bottom:.5rem;font-size:.95rem;">AI analyzes deeply</h3>
+        <p style="font-size:.875rem;color:var(--text2);line-height:1.65;">Our system uncovers hidden assumptions, missing information, and reasoning gaps.</p>
       </div>
       <div class="fu d3">
-        <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:66px;height:66px;border-radius:50%;margin-bottom:1.125rem;" class="gradient-bg">
-          <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <span style="position:absolute;top:-4px;right:-4px;width:21px;height:21px;border-radius:50%;background:var(--bg);border:1px solid var(--border);font-size:.7rem;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:center;">3</span>
-        </div>
-        <h3 style="font-weight:700;color:var(--text);margin-bottom:.5rem;">Get insights + agent match</h3>
-        <p style="font-size:.875rem;color:var(--muted);line-height:1.65;">Receive a full analysis report and the best specialized agent recommendation for your task.</p>
+        <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;margin-bottom:1rem;font-size:1.5rem;" class="g-bg">💡<span style="position:absolute;top:-4px;right:-4px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid var(--border);font-size:.68rem;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:center;">3</span></div>
+        <h3 style="font-weight:700;color:var(--text);margin-bottom:.5rem;font-size:.95rem;">Get a better answer</h3>
+        <p style="font-size:.875rem;color:var(--text2);line-height:1.65;">Receive a tailored, improved answer based on your context plus the best agent match.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── PRICING ───────────────────────────── -->
+<!-- ── PRICING ────────────────────────────────────────────── -->
 <section id="pricing" style="padding:5.5rem 1.5rem;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
-  <div style="max-width:1060px;margin:0 auto;">
+  <div style="max-width:1040px;margin:0 auto;">
     <div style="text-align:center;margin-bottom:3.5rem;" class="fu">
-      <div class="slabel">Pricing</div>
-      <h2 style="font-size:clamp(1.7rem,4vw,2.5rem);font-weight:800;color:var(--text);margin-bottom:.75rem;">Simple, transparent pricing</h2>
-      <p style="font-size:1.05rem;color:var(--muted);">Start free. Scale when you're ready.</p>
+      <div class="slabel" style="margin-bottom:.75rem;">Pricing</div>
+      <h2 style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;color:var(--text);margin-bottom:.75rem;">Simple, transparent pricing</h2>
+      <p style="font-size:1rem;color:var(--text2);">Start free. Scale when you're ready.</p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.125rem;align-items:start;">
       <!-- Free -->
-      <div class="card fu d1" style="padding:1.875rem;display:flex;flex-direction:column;">
-        <h3 style="font-weight:800;font-size:1.05rem;color:var(--text);margin-bottom:.25rem;">Free</h3>
-        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">Perfect to get started</p>
-        <div style="display:flex;align-items:flex-end;gap:.2rem;margin-bottom:1.5rem;"><span style="font-size:2.5rem;font-weight:900;color:var(--text);">$0</span><span style="color:var(--muted);margin-bottom:.375rem;">/mo</span></div>
-        <ul style="list-style:none;padding:0;margin:0 0 2rem;display:flex;flex-direction:column;gap:.75rem;flex:1;">
-          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--muted);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>5 credits/month</li>
-          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--muted);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>2 specialized agents</li>
-          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--muted);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Basic AI analysis</li>
-          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--muted);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Email support</li>
+      <div class="card fu d1" style="padding:1.75rem;display:flex;flex-direction:column;">
+        <h3 style="font-weight:800;color:var(--text);margin-bottom:.2rem;">Free</h3>
+        <p style="font-size:.85rem;color:var(--text2);margin-bottom:.875rem;">Perfect to get started</p>
+        <div style="margin-bottom:1.375rem;"><span style="font-size:2.4rem;font-weight:900;color:var(--text);">$0</span><span style="color:var(--text2);">/mo</span></div>
+        <ul style="list-style:none;padding:0;margin:0 0 1.75rem;display:flex;flex-direction:column;gap:.625rem;flex:1;">
+          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text2);">✅ 5 credits/month</li>
+          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text2);">✅ 2 specialized agents</li>
+          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text2);">✅ Basic AI analysis</li>
+          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text2);">✅ Email support</li>
         </ul>
-        <button onclick="openModal('signup')" class="btn-o" style="border-radius:.875rem;padding:.75rem;width:100%;text-align:center;">Get Started Free</button>
+        <button onclick="openModal('signup')" class="btn-o" style="border-radius:.875rem;padding:.7rem;">Get Started Free</button>
       </div>
       <!-- Pro -->
-      <div class="card pop-card fu d2" style="padding:1.875rem;display:flex;flex-direction:column;position:relative;">
-        <div style="position:absolute;top:-13px;left:50%;transform:translateX(-50%);"><span class="gradient-bg" style="display:inline-block;padding:.28rem .9rem;border-radius:9999px;font-size:.72rem;font-weight:700;color:white;">Most Popular</span></div>
-        <h3 style="font-weight:800;font-size:1.05rem;color:var(--text);margin-bottom:.25rem;margin-top:.5rem;">Pro</h3>
-        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">For serious users</p>
-        <div style="display:flex;align-items:flex-end;gap:.2rem;margin-bottom:1.5rem;"><span style="font-size:2.5rem;font-weight:900;color:var(--text);">$9.99</span><span style="color:var(--muted);margin-bottom:.375rem;">/mo</span></div>
-        <ul style="list-style:none;padding:0;margin:0 0 2rem;display:flex;flex-direction:column;gap:.75rem;flex:1;">
-          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>100 credits/month</li>
-          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>All 10 agents</li>
-          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Deep AI analysis</li>
-          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Priority support</li>
-          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>PDF & JSON export</li>
+      <div class="card pop fu d2" style="padding:1.75rem;display:flex;flex-direction:column;position:relative;">
+        <div style="position:absolute;top:-13px;left:50%;transform:translateX(-50%);"><span class="g-bg" style="display:inline-block;padding:.25rem .875rem;border-radius:9999px;font-size:.72rem;font-weight:700;color:white;">Most Popular</span></div>
+        <h3 style="font-weight:800;color:var(--text);margin-bottom:.2rem;margin-top:.375rem;">Pro</h3>
+        <p style="font-size:.85rem;color:var(--text2);margin-bottom:.875rem;">For serious researchers</p>
+        <div style="margin-bottom:1.375rem;"><span style="font-size:2.4rem;font-weight:900;color:var(--text);">$9.99</span><span style="color:var(--text2);">/mo</span></div>
+        <ul style="list-style:none;padding:0;margin:0 0 1.75rem;display:flex;flex-direction:column;gap:.625rem;flex:1;">
+          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text);">✅ 100 credits/month</li>
+          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text);">✅ All 10 agents</li>
+          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text);">✅ Deep AI analysis</li>
+          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text);">✅ Priority support</li>
+          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text);">✅ PDF & JSON export</li>
         </ul>
-        <button onclick="scrollToJoin()" class="btn-p" style="border-radius:.875rem;padding:.75rem;width:100%;">Get Started</button>
+        <button onclick="scrollToJoin()" class="btn-p" style="border-radius:.875rem;padding:.7rem;">Get Started</button>
       </div>
       <!-- Business -->
-      <div class="card fu d3" style="padding:1.875rem;display:flex;flex-direction:column;">
-        <h3 style="font-weight:800;font-size:1.05rem;color:var(--text);margin-bottom:.25rem;">Business</h3>
-        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem;">For teams and enterprises</p>
-        <div style="display:flex;align-items:flex-end;gap:.2rem;margin-bottom:1.5rem;"><span style="font-size:2.5rem;font-weight:900;color:var(--text);">$29.99</span><span style="color:var(--muted);margin-bottom:.375rem;">/mo</span></div>
-        <ul style="list-style:none;padding:0;margin:0 0 2rem;display:flex;flex-direction:column;gap:.75rem;flex:1;">
-          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--muted);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Unlimited credits</li>
-          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--muted);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>All Pro features</li>
-          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--muted);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>API access</li>
-          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--muted);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Team collaboration</li>
-          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--muted);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10A37F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>SSO support</li>
+      <div class="card fu d3" style="padding:1.75rem;display:flex;flex-direction:column;">
+        <h3 style="font-weight:800;color:var(--text);margin-bottom:.2rem;">Business</h3>
+        <p style="font-size:.85rem;color:var(--text2);margin-bottom:.875rem;">For teams and enterprises</p>
+        <div style="margin-bottom:1.375rem;"><span style="font-size:2.4rem;font-weight:900;color:var(--text);">$29.99</span><span style="color:var(--text2);">/mo</span></div>
+        <ul style="list-style:none;padding:0;margin:0 0 1.75rem;display:flex;flex-direction:column;gap:.625rem;flex:1;">
+          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text2);">✅ Unlimited credits</li>
+          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text2);">✅ All Pro features</li>
+          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text2);">✅ API access</li>
+          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text2);">✅ Team collaboration</li>
+          <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text2);">✅ SSO support</li>
         </ul>
-        <button class="btn-o" style="border-radius:.875rem;padding:.75rem;width:100%;">Contact Sales</button>
+        <button class="btn-o" style="border-radius:.875rem;padding:.7rem;">Contact Sales</button>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── CTA ───────────────────────────────── -->
+<!-- ── CTA ────────────────────────────────────────────────── -->
 <section style="padding:5.5rem 1.5rem;">
-  <div style="max-width:620px;margin:0 auto;text-align:center;" class="fu">
-    <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);font-weight:800;color:var(--text);margin-bottom:1rem;">Ready to understand AI better?</h2>
-    <p style="font-size:1.05rem;color:var(--muted);margin-bottom:2rem;">Join thousands of researchers, creators, and developers who trust ThoughtScope.</p>
-    <button onclick="scrollToJoin()" class="btn-p pulse" style="font-size:1rem;padding:.9rem 2.25rem;">
+  <div style="max-width:600px;margin:0 auto;text-align:center;" class="fu">
+    <h2 style="font-size:clamp(1.6rem,4vw,2.3rem);font-weight:800;color:var(--text);margin-bottom:.875rem;">Ready to think deeper?</h2>
+    <p style="font-size:1rem;color:var(--text2);margin-bottom:2rem;">Join thousands of researchers, creators, and developers who use Mentics to understand AI on a deeper level.</p>
+    <button onclick="scrollToJoin()" class="btn-p pulse" style="font-size:1rem;padding:.875rem 2.25rem;">
       Join Waiting List
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
     </button>
   </div>
 </section>
 
-<!-- ── FAQ ───────────────────────────────── -->
+<!-- ── FAQ ────────────────────────────────────────────────── -->
 <section id="faq" style="padding:5.5rem 1.5rem;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
-  <div style="max-width:660px;margin:0 auto;">
+  <div style="max-width:640px;margin:0 auto;">
     <div style="text-align:center;margin-bottom:3rem;" class="fu">
-      <div class="slabel">FAQ</div>
-      <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);font-weight:800;color:var(--text);margin-bottom:.75rem;">Frequently asked questions</h2>
-      <p style="font-size:1rem;color:var(--muted);">Everything you need to know about ThoughtScope.</p>
+      <div class="slabel" style="margin-bottom:.75rem;">FAQ</div>
+      <h2 style="font-size:clamp(1.6rem,4vw,2.3rem);font-weight:800;color:var(--text);margin-bottom:.75rem;">Frequently asked questions</h2>
     </div>
     <div style="display:flex;flex-direction:column;gap:.75rem;" class="fu">
-      <div class="card" style="overflow:hidden;"><button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:1.125rem 1.375rem;background:transparent;border:none;cursor:pointer;text-align:left;color:var(--text);"><span style="font-weight:600;font-size:.925rem;">What is ThoughtScope?</span><svg class="faq-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-left:1rem;color:var(--muted);"><path d="m6 9 6 6 6-6"/></svg></button><div class="faq-body" style="padding:0 1.375rem;"><p style="font-size:.875rem;color:var(--muted);line-height:1.7;padding-bottom:1.125rem;">ThoughtScope is an AI conversation intelligence platform. Paste any ChatGPT conversation and our system reveals the underlying reasoning, biases, and patterns — plus recommends the best specialized agent for your follow-up work.</p></div></div>
-      <div class="card" style="overflow:hidden;"><button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:1.125rem 1.375rem;background:transparent;border:none;cursor:pointer;text-align:left;color:var(--text);"><span style="font-weight:600;font-size:.925rem;">How many agents are there?</span><svg class="faq-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-left:1rem;color:var(--muted);"><path d="m6 9 6 6 6-6"/></svg></button><div class="faq-body" style="padding:0 1.375rem;"><p style="font-size:.875rem;color:var(--muted);line-height:1.7;padding-bottom:1.125rem;">ThoughtScope includes 10 specialized agents: Content Agent, Code Agent, Prompt Engineer, Hook Writer, Language Bridge, Summary Agent, Research Agent, Debug Agent, SEO Agent, and the Boss Agent that automatically routes you to the right one.</p></div></div>
-      <div class="card" style="overflow:hidden;"><button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:1.125rem 1.375rem;background:transparent;border:none;cursor:pointer;text-align:left;color:var(--text);"><span style="font-weight:600;font-size:.925rem;">Can I cancel anytime?</span><svg class="faq-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-left:1rem;color:var(--muted);"><path d="m6 9 6 6 6-6"/></svg></button><div class="faq-body" style="padding:0 1.375rem;"><p style="font-size:.875rem;color:var(--muted);line-height:1.7;padding-bottom:1.125rem;">Absolutely. No long-term contracts, no cancellation fees. Cancel with one click from your account settings — your access continues until the end of your billing period.</p></div></div>
-      <div class="card" style="overflow:hidden;"><button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:1.125rem 1.375rem;background:transparent;border:none;cursor:pointer;text-align:left;color:var(--text);"><span style="font-weight:600;font-size:.925rem;">Is my data safe?</span><svg class="faq-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-left:1rem;color:var(--muted);"><path d="m6 9 6 6 6-6"/></svg></button><div class="faq-body" style="padding:0 1.375rem;"><p style="font-size:.875rem;color:var(--muted);line-height:1.7;padding-bottom:1.125rem;">Yes. We operate on a strict zero-retention policy. Your conversations are analyzed in-memory and never written to disk. We do not train on your data. Your privacy is non-negotiable.</p></div></div>
+      <div class="card" style="overflow:hidden;"><button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.375rem;background:transparent;border:none;cursor:pointer;text-align:left;color:var(--text);"><span style="font-weight:600;font-size:.925rem;">What is Mentics?</span><svg class="faq-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-left:1rem;color:var(--text2);"><path d="m6 9 6 6 6-6"/></svg></button><div class="faq-body" style="padding:0 1.375rem;"><p style="font-size:.875rem;color:var(--text2);line-height:1.7;padding-bottom:1.1rem;">Mentics is an AI deep research platform that analyzes ChatGPT conversations to reveal the underlying reasoning, hidden assumptions, and what's missing — then recommends the best specialized agent for your task.</p></div></div>
+      <div class="card" style="overflow:hidden;"><button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.375rem;background:transparent;border:none;cursor:pointer;text-align:left;color:var(--text);"><span style="font-weight:600;font-size:.925rem;">How does the Boss Agent work?</span><svg class="faq-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-left:1rem;color:var(--text2);"><path d="m6 9 6 6 6-6"/></svg></button><div class="faq-body" style="padding:0 1.375rem;"><p style="font-size:.875rem;color:var(--text2);line-height:1.7;padding-bottom:1.1rem;">The Boss Agent automatically reads your question and detects whether you're a developer, content creator, student, marketer, or researcher. It then routes you to the most appropriate of the 10 specialized agents instantly — no manual selection needed.</p></div></div>
+      <div class="card" style="overflow:hidden;"><button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.375rem;background:transparent;border:none;cursor:pointer;text-align:left;color:var(--text);"><span style="font-weight:600;font-size:.925rem;">Can I cancel anytime?</span><svg class="faq-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-left:1rem;color:var(--text2);"><path d="m6 9 6 6 6-6"/></svg></button><div class="faq-body" style="padding:0 1.375rem;"><p style="font-size:.875rem;color:var(--text2);line-height:1.7;padding-bottom:1.1rem;">Yes. No long-term contracts, no cancellation fees. Cancel with one click — your access continues until end of your billing period.</p></div></div>
+      <div class="card" style="overflow:hidden;"><button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.375rem;background:transparent;border:none;cursor:pointer;text-align:left;color:var(--text);"><span style="font-weight:600;font-size:.925rem;">Is my data safe?</span><svg class="faq-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-left:1rem;color:var(--text2);"><path d="m6 9 6 6 6-6"/></svg></button><div class="faq-body" style="padding:0 1.375rem;"><p style="font-size:.875rem;color:var(--text2);line-height:1.7;padding-bottom:1.1rem;">Zero-retention policy. Your conversations are analyzed in-memory and never stored. We do not train on your data. Privacy is non-negotiable.</p></div></div>
     </div>
   </div>
 </section>
 
-<!-- ── REVIEWS ───────────────────────────── -->
+<!-- ── FAKE REVIEWS ───────────────────────────────────────── -->
 <section style="padding:5.5rem 1.5rem;">
-  <div style="max-width:1060px;margin:0 auto;">
+  <div style="max-width:1040px;margin:0 auto;">
     <div style="text-align:center;margin-bottom:3.5rem;" class="fu">
-      <div class="slabel">Reviews</div>
-      <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);font-weight:800;color:var(--text);margin-bottom:.75rem;">Loved by researchers and creators</h2>
-      <p style="font-size:1.05rem;color:var(--muted);">Join thousands already using ThoughtScope.</p>
+      <div class="slabel" style="margin-bottom:.75rem;">Reviews</div>
+      <h2 style="font-size:clamp(1.6rem,4vw,2.3rem);font-weight:800;color:var(--text);margin-bottom:.75rem;">Loved by researchers and creators</h2>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1.125rem;">
-      <div class="card fu d1" style="padding:1.625rem;display:flex;flex-direction:column;gap:.875rem;"><div style="display:flex;gap:2px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><p style="font-size:.875rem;color:var(--muted);line-height:1.7;flex:1;">"Finally I understand why AI gives certain answers. ThoughtScope shows me the exact reasoning chain in seconds instead of hours of guessing."</p><div style="display:flex;align-items:center;gap:.625rem;padding-top:.75rem;border-top:1px solid var(--border);"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#9333ea);display:flex;align-items:center;justify-content:center;color:white;font-size:.72rem;font-weight:700;flex-shrink:0;">SM</div><div><div style="font-size:.875rem;font-weight:600;color:var(--text);">Sarah M.</div><div style="font-size:.78rem;color:var(--muted);">Content Creator</div></div></div></div>
-      <div class="card fu d2" style="padding:1.625rem;display:flex;flex-direction:column;gap:.875rem;"><div style="display:flex;gap:2px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><p style="font-size:.875rem;color:var(--muted);line-height:1.7;flex:1;">"The Boss Agent is a game changer for my freelance workflow. It figures out which specialized agent I need without me guessing. My output quality doubled."</p><div style="display:flex;align-items:center;gap:.625rem;padding-top:.75rem;border-top:1px solid var(--border);"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#10A37F,#059669);display:flex;align-items:center;justify-content:center;color:white;font-size:.72rem;font-weight:700;flex-shrink:0;">AK</div><div><div style="font-size:.875rem;font-weight:600;color:var(--text);">Ali K.</div><div style="font-size:.78rem;color:var(--muted);">Freelancer & Consultant</div></div></div></div>
-      <div class="card fu d3" style="padding:1.625rem;display:flex;flex-direction:column;gap:.875rem;"><div style="display:flex;gap:2px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="15" height="15" viewBox="0 0 24 24" fill="#facc15" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><p style="font-size:.875rem;color:var(--muted);line-height:1.7;flex:1;">"Saved me hours of prompt testing every week. I now see exactly why a prompt worked or failed and fix it immediately."</p><div style="display:flex;align-items:center;gap:.625rem;padding-top:.75rem;border-top:1px solid var(--border);"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#4f46e5);display:flex;align-items:center;justify-content:center;color:white;font-size:.72rem;font-weight:700;flex-shrink:0;">MR</div><div><div style="font-size:.875rem;font-weight:600;color:var(--text);">Maya R.</div><div style="font-size:.78rem;color:var(--muted);">Senior Developer</div></div></div></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.125rem;">
+      <div class="card fu d1" style="padding:1.5rem;display:flex;flex-direction:column;gap:.875rem;"><div style="display:flex;gap:2px;">⭐⭐⭐⭐⭐</div><p style="font-size:.875rem;color:var(--text2);line-height:1.7;flex:1;">"Finally I understand why AI gives certain answers. Mentics shows me the exact reasoning chain in seconds instead of hours of guessing."</p><div style="display:flex;align-items:center;gap:.625rem;padding-top:.75rem;border-top:1px solid var(--border);"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#9333ea);display:flex;align-items:center;justify-content:center;color:white;font-size:.72rem;font-weight:700;flex-shrink:0;">SM</div><div><div style="font-size:.875rem;font-weight:600;color:var(--text);">Sarah M.</div><div style="font-size:.78rem;color:var(--text2);">Content Creator</div></div></div></div>
+      <div class="card fu d2" style="padding:1.5rem;display:flex;flex-direction:column;gap:.875rem;"><div style="display:flex;gap:2px;">⭐⭐⭐⭐⭐</div><p style="font-size:.875rem;color:var(--text2);line-height:1.7;flex:1;">"The Boss Agent is a game changer. It routes me to the right tool every single time without me having to guess. My output quality doubled."</p><div style="display:flex;align-items:center;gap:.625rem;padding-top:.75rem;border-top:1px solid var(--border);"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#10A37F,#059669);display:flex;align-items:center;justify-content:center;color:white;font-size:.72rem;font-weight:700;flex-shrink:0;">AK</div><div><div style="font-size:.875rem;font-weight:600;color:var(--text);">Ali K.</div><div style="font-size:.78rem;color:var(--text2);">Freelancer & Consultant</div></div></div></div>
+      <div class="card fu d3" style="padding:1.5rem;display:flex;flex-direction:column;gap:.875rem;"><div style="display:flex;gap:2px;">⭐⭐⭐⭐⭐</div><p style="font-size:.875rem;color:var(--text2);line-height:1.7;flex:1;">"Saved me hours of prompt testing every week. I now see exactly why a prompt worked or failed and fix it immediately."</p><div style="display:flex;align-items:center;gap:.625rem;padding-top:.75rem;border-top:1px solid var(--border);"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#4f46e5);display:flex;align-items:center;justify-content:center;color:white;font-size:.72rem;font-weight:700;flex-shrink:0;">MR</div><div><div style="font-size:.875rem;font-weight:600;color:var(--text);">Maya R.</div><div style="font-size:.78rem;color:var(--text2);">Senior Developer</div></div></div></div>
     </div>
   </div>
 </section>
 
-<!-- ── JOIN FOR FREE ─────────────────────── -->
-<section id="join-waitlist" style="padding:6rem 1.5rem;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
-  <div style="max-width:540px;margin:0 auto;text-align:center;" class="fu">
-    <div class="gradient-bg" style="width:50px;height:50px;border-radius:.875rem;display:flex;align-items:center;justify-content:center;margin:0 auto 1.375rem;box-shadow:0 8px 24px rgba(16,163,127,.22);">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-    </div>
-    <h2 style="font-size:clamp(1.7rem,4vw,2.25rem);font-weight:800;color:var(--text);margin-bottom:.5rem;">Join for free</h2>
-    <p style="font-size:1rem;color:var(--muted);margin-bottom:.375rem;">First 20 users get a <strong style="color:#10A37F;">20% lifetime discount</strong>.</p>
-    <p style="font-size:.82rem;color:var(--muted);margin-bottom:1.875rem;">No spam. No credit card required.</p>
-
+<!-- ── JOIN FOR FREE ──────────────────────────────────────── -->
+<section id="join-waitlist" style="padding:5.5rem 1.5rem;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div style="max-width:520px;margin:0 auto;text-align:center;" class="fu">
+    <div class="g-bg" style="width:48px;height:48px;border-radius:.875rem;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:1.4rem;box-shadow:0 8px 24px rgba(16,163,127,.2);">✉️</div>
+    <h2 style="font-size:clamp(1.6rem,4vw,2.2rem);font-weight:800;color:var(--text);margin-bottom:.5rem;">Join for free</h2>
+    <p style="font-size:.95rem;color:var(--text2);margin-bottom:.375rem;">First 20 users get a <strong style="color:#10A37F;">20% lifetime discount</strong>.</p>
+    <p style="font-size:.82rem;color:var(--text2);margin-bottom:1.75rem;">No spam. No credit card required.</p>
     <form id="wlForm" onsubmit="handleWaitlist(event)" style="display:flex;flex-direction:column;gap:.75rem;">
       <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
-        <input id="wlEmail" type="email" placeholder="Enter your email address" required class="inp-inline" autocomplete="email" />
-        <button type="submit" id="wlBtn" class="btn-p pulse" style="border-radius:.875rem;padding:.72rem 1.375rem;font-size:.9rem;flex-shrink:0;">Join Waiting List</button>
+        <input id="wlEmail" type="email" placeholder="Enter your email address" required class="inp-inline" autocomplete="email"/>
+        <button type="submit" id="wlBtn" class="btn-p pulse" style="border-radius:.875rem;padding:.7rem 1.375rem;flex-shrink:0;">Join Waiting List</button>
       </div>
       <div id="wlOk"  class="msg-ok"></div>
       <div id="wlErr" class="msg-err"></div>
@@ -602,401 +624,582 @@
 
 </div><!-- /landingView -->
 
-<!-- ── FOOTER (always visible) ──────────── -->
+<!-- ── FOOTER ─────────────────────────────────────────────── -->
 <footer style="border-top:1px solid var(--border);background:var(--card);">
-  <div style="max-width:1180px;margin:0 auto;padding:3rem 1.5rem 1.75rem;">
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:2.25rem;margin-bottom:2.25rem;">
+  <div style="max-width:1160px;margin:0 auto;padding:2.75rem 1.5rem 1.625rem;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2rem;margin-bottom:2rem;">
       <div>
-        <a href="#home" onclick="showLanding()" style="display:flex;align-items:center;gap:.5rem;text-decoration:none;margin-bottom:.75rem;">
-          <div class="gradient-bg" style="width:27px;height:27px;border-radius:.5rem;display:flex;align-items:center;justify-content:center;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
-          <span style="font-weight:800;font-size:.9rem;color:var(--text);">ThoughtScope</span>
-        </a>
-        <p style="font-size:.82rem;color:var(--muted);line-height:1.65;max-width:200px;margin-bottom:1.125rem;">Unveiling the cognitive architecture behind AI — one conversation at a time.</p>
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem;">
+          <div class="g-bg" style="width:26px;height:26px;border-radius:.5rem;display:flex;align-items:center;justify-content:center;font-size:.8rem;">🧠</div>
+          <div><div style="font-weight:900;font-size:.9rem;color:var(--text);line-height:1.1;">MENTICS</div><div style="font-size:.6rem;color:var(--text2);letter-spacing:.06em;text-transform:uppercase;">deep research</div></div>
+        </div>
+        <p style="font-size:.82rem;color:var(--text2);line-height:1.65;max-width:190px;margin-bottom:1rem;">Unveiling the cognitive architecture behind AI — one conversation at a time.</p>
         <div style="display:flex;gap:.75rem;">
-          <a href="#" aria-label="Twitter" style="color:var(--muted);"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-          <a href="#" aria-label="GitHub"  style="color:var(--muted);"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+          <a href="#" aria-label="X" style="color:var(--text2);"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="#" aria-label="GitHub" style="color:var(--text2);"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
         </div>
       </div>
       <div>
-        <h4 style="font-weight:700;font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.875rem;">Product</h4>
+        <h4 style="font-weight:700;font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.875rem;">Product</h4>
         <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.5rem;">
-          <li><a href="#features" style="font-size:.875rem;color:var(--muted);text-decoration:none;">Features</a></li>
-          <li><a href="#pricing"  style="font-size:.875rem;color:var(--muted);text-decoration:none;">Pricing</a></li>
-          <li><a href="#"         style="font-size:.875rem;color:var(--muted);text-decoration:none;">Agents</a></li>
-          <li><a href="#"         style="font-size:.875rem;color:var(--muted);text-decoration:none;">API</a></li>
+          <li><a href="#features" style="font-size:.875rem;color:var(--text2);text-decoration:none;">Features</a></li>
+          <li><a href="#pricing"  style="font-size:.875rem;color:var(--text2);text-decoration:none;">Pricing</a></li>
+          <li><a href="#"         style="font-size:.875rem;color:var(--text2);text-decoration:none;">Agents</a></li>
+          <li><a href="#"         style="font-size:.875rem;color:var(--text2);text-decoration:none;">API</a></li>
         </ul>
       </div>
       <div>
-        <h4 style="font-weight:700;font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.875rem;">Resources</h4>
+        <h4 style="font-weight:700;font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.875rem;">Resources</h4>
         <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.5rem;">
-          <li><a href="#" style="font-size:.875rem;color:var(--muted);text-decoration:none;">Documentation</a></li>
-          <li><a href="#" style="font-size:.875rem;color:var(--muted);text-decoration:none;">Status</a></li>
-          <li><a href="#" style="font-size:.875rem;color:var(--muted);text-decoration:none;">Community</a></li>
-          <li><a href="#" style="font-size:.875rem;color:var(--muted);text-decoration:none;">Blog</a></li>
+          <li><a href="#" style="font-size:.875rem;color:var(--text2);text-decoration:none;">Documentation</a></li>
+          <li><a href="#" style="font-size:.875rem;color:var(--text2);text-decoration:none;">Status</a></li>
+          <li><a href="#" style="font-size:.875rem;color:var(--text2);text-decoration:none;">Community</a></li>
+          <li><a href="#" style="font-size:.875rem;color:var(--text2);text-decoration:none;">Blog</a></li>
         </ul>
       </div>
     </div>
     <div style="padding-top:1.375rem;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.875rem;">
-      <span style="font-size:.82rem;color:var(--muted);">© 2026 ThoughtScope. All rights reserved.</span>
-      <div style="display:flex;gap:1.125rem;">
-        <a href="#" style="font-size:.82rem;color:var(--muted);text-decoration:none;">Privacy Policy</a>
-        <a href="#" style="font-size:.82rem;color:var(--muted);text-decoration:none;">Terms of Service</a>
-      </div>
+      <span style="font-size:.82rem;color:var(--text2);">© 2026 Mentics. All rights reserved.</span>
+      <div style="display:flex;gap:1rem;"><a href="#" style="font-size:.82rem;color:var(--text2);text-decoration:none;">Privacy Policy</a><a href="#" style="font-size:.82rem;color:var(--text2);text-decoration:none;">Terms</a></div>
     </div>
   </div>
 </footer>
-
 </main>
+
 
 <!-- ╔══════════════════════════════════════════╗
      ║  JAVASCRIPT                             ║
      ╚══════════════════════════════════════════╝ -->
 <script>
-  // ── Supabase init ────────────────────────────────────────
-  // Replace SUPABASE_URL and SUPABASE_ANON_KEY with actual values
-  const SUPABASE_URL  = 'https://acdrbtuhxpskuuimevwu.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjZHJidHVoeHBza3V1aW1ldnd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMzU4NTMsImV4cCI6MjA5MDcxMTg1M30.jIxOnGza9D1nBbEqnmglIKSK0L5pbkqkLb1iCZOGQdM';
-  const { createClient } = window.supabase;
-  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// ── CONFIGURATION ──────────────────────────────────────────
+// REPLACE WITH SUPABASE URL AND KEY
+const SUPABASE_URL      = 'https://acdrbtuhxpskuuimevwu.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjZHJidHVoeHBza3V1aW1ldnd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMzU4NTMsImV4cCI6MjA5MDcxMTg1M30.jIxOnGza9D1nBbEqnmglIKSK0L5pbkqkLb1iCZOGQdM';
+// REPLACE WITH OPENROUTER API KEY
+const OPENROUTER_API_KEY = 'sk-or-v1-REPLACE_WITH_YOUR_KEY';
 
-  let currentUser = null;
-  let dashWlCode  = '';
+// ── Supabase init ───────────────────────────────────────────
+const { createClient } = window.supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // ── Auth functions ───────────────────────────────────────
-  async function signUp(email, password, fullName) {
-    const { data, error } = await sb.auth.signUp({
-      email, password,
-      options: { data: { full_name: fullName } }
-    });
-    return { data, error };
-  }
+let currentUser = null;
+let currentCredits = 5;
+let selectedCtx = 'Student';
+let wlCodeCache = '';
 
-  async function signIn(email, password) {
-    const { data, error } = await sb.auth.signInWithPassword({ email, password });
-    return { data, error };
-  }
+// ── Supabase helper functions ───────────────────────────────
 
-  async function signOut() { await sb.auth.signOut(); }
-
-  // ── Waiting list ─────────────────────────────────────────
-  async function joinWaitingList(email) {
-    const { error } = await sb.from('waiting_list').insert([{ email }]);
-    return { error };
-  }
-
-  async function getWaitingListStatus(email) {
-    const { data, error } = await sb
-      .from('waiting_list')
-      .select('position, discount_code')
-      .eq('email', email)
-      .single();
-    return { data, error };
-  }
-
-  // ── Profile ──────────────────────────────────────────────
-  async function getProfile(userId) {
-    const { data, error } = await sb.from('profiles').select('*').eq('id', userId).single();
-    return { data, error };
-  }
-
-  // ── Auth state change ────────────────────────────────────
-  sb.auth.onAuthStateChange(async (event, session) => {
-    if (session) {
-      currentUser = session.user;
-      updateHeaderAuth(currentUser);
-      if (event === 'SIGNED_IN') showDash();
-    } else {
-      currentUser = null;
-      updateHeaderAuth(null);
-    }
+async function signUp(email, password, fullName) {
+  const { data, error } = await sb.auth.signUp({
+    email, password,
+    options: { data: { full_name: fullName } }
   });
+  return { data, error };
+}
 
-  // Check session on load
-  (async function () {
-    const { data: { session } } = await sb.auth.getSession();
-    if (session) {
-      currentUser = session.user;
-      updateHeaderAuth(currentUser);
-      showDash();
+async function signIn(email, password) {
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  return { data, error };
+}
+
+async function signOut() { await sb.auth.signOut(); }
+
+async function joinWaitingList(email) {
+  const { error } = await sb.from('waiting_list').insert([{ email }]);
+  return { error };
+}
+
+async function getWaitingListStatus(email) {
+  const { data, error } = await sb
+    .from('waiting_list')
+    .select('position, discount_code')
+    .eq('email', email)
+    .single();
+  return { data, error };
+}
+
+async function getProfile(userId) {
+  const { data, error } = await sb.from('profiles').select('*').eq('id', userId).single();
+  return { data, error };
+}
+
+async function updateCredits(userId, newCredits) {
+  const { error } = await sb.from('profiles').update({ credits: newCredits }).eq('id', userId);
+  return { error };
+}
+
+// ── Auth state listener ─────────────────────────────────────
+sb.auth.onAuthStateChange(async (event, session) => {
+  if (session) {
+    currentUser = session.user;
+    updateHeaderAuth(true);
+    if (event === 'SIGNED_IN') showDash();
+  } else {
+    currentUser = null;
+    updateHeaderAuth(false);
+  }
+});
+
+// Check session on load
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    currentUser = session.user;
+    updateHeaderAuth(true);
+    showDash();
+  }
+})();
+
+// ── Update header based on auth state ──────────────────────
+function updateHeaderAuth(loggedIn) {
+  // Desktop
+  document.getElementById('authBtns').style.display = loggedIn ? 'none' : 'flex';
+  document.getElementById('userBtns').style.display = loggedIn ? 'flex' : 'none';
+  document.getElementById('navDash').style.display  = loggedIn ? '' : 'none';
+  // Mobile
+  document.getElementById('mAuthBtns').style.display = loggedIn ? 'none' : 'flex';
+  document.getElementById('mUserBtns').style.display = loggedIn ? 'flex' : 'none';
+  document.getElementById('mNavDash').style.display  = loggedIn ? '' : 'none';
+
+  if (loggedIn && currentUser) {
+    const name = currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'User';
+    const greet = 'Hello, ' + name.split(' ')[0] + ' 👋';
+    document.getElementById('userGreet').textContent  = greet;
+    document.getElementById('mUserGreet').textContent = greet;
+  }
+}
+
+// ── View switching ──────────────────────────────────────────
+function showDash() {
+  document.getElementById('dashView').style.display    = 'block';
+  document.getElementById('landingView').style.display = 'none';
+  populateDash();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  animateFu();
+}
+
+function showLanding() {
+  document.getElementById('dashView').style.display    = 'none';
+  document.getElementById('landingView').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Populate dashboard ──────────────────────────────────────
+async function populateDash() {
+  if (!currentUser) return;
+  const name  = currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'User';
+  document.getElementById('dashName').textContent = 'Hello, ' + name;
+
+  // Fetch profile
+  const { data: profile } = await getProfile(currentUser.id);
+  const plan    = profile?.plan    ?? 'free';
+  const credits = profile?.credits ?? 5;
+  const maxCred = { free: 5, pro: 100, business: Infinity }[plan] ?? 5;
+  currentCredits = credits;
+
+  document.getElementById('dashPlan').textContent      = plan.charAt(0).toUpperCase() + plan.slice(1);
+  document.getElementById('dashPlanBadge').textContent = plan.charAt(0).toUpperCase() + plan.slice(1) + ' Plan';
+  document.getElementById('dashCredits').textContent   = credits;
+  document.getElementById('dashMaxCreds').textContent  = maxCred === Infinity ? '/ ∞' : '/ ' + maxCred;
+
+  const pct = maxCred === Infinity ? 80 : Math.round((credits / maxCred) * 100);
+  document.getElementById('creditFill').style.width = pct + '%';
+
+  // Update analyze button state
+  document.getElementById('analyzeBtn').disabled =
+    document.getElementById('analysisInput').value.trim().length < 10 || credits <= 0;
+
+  // Fetch waiting list status
+  const email = currentUser.email || '';
+  const { data: wl } = await getWaitingListStatus(email);
+  if (wl) {
+    wlCodeCache = wl.discount_code || '';
+    document.getElementById('dashWlPos').textContent  = '#' + wl.position;
+    document.getElementById('dashWlCode').textContent = wlCodeCache;
+    document.getElementById('dashWlCard').style.display  = 'block';
+    document.getElementById('dashWlNudge').style.display = 'none';
+  } else {
+    document.getElementById('dashWlCard').style.display  = 'none';
+    document.getElementById('dashWlNudge').style.display = 'block';
+  }
+}
+
+// ── Context tab selector ────────────────────────────────────
+function setCtx(btn) {
+  document.querySelectorAll('.ctx-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  selectedCtx = btn.getAttribute('data-ctx');
+}
+
+// ── Input change handler ────────────────────────────────────
+function onInputChange() {
+  const text = document.getElementById('analysisInput').value.trim();
+  document.getElementById('analyzeBtn').disabled = text.length < 10 || currentCredits <= 0;
+  // Boss Agent detection
+  if (text.length > 15) {
+    const rec = detectCategory(text);
+    document.getElementById('bossRec').textContent = rec.agent;
+    document.getElementById('bossAgent').style.display = 'block';
+  } else {
+    document.getElementById('bossAgent').style.display = 'none';
+  }
+}
+
+// ── Boss Agent: category detection ─────────────────────────
+function detectCategory(text) {
+  const t = text.toLowerCase();
+  if (/code|debug|function|api|error|python|javascript|typescript|bug|syntax|compile/.test(t))
+    return { category: 'developer',        agent: '⚙️ Code Agent — Perfect for technical questions' };
+  if (/blog|content|article|write|seo|social media|post|caption|copy|headline/.test(t))
+    return { category: 'content creator',  agent: '✍️ Content Agent — Optimized for writing & creativity' };
+  if (/study|learn|exam|homework|explain|course|lecture|assignment|quiz|school/.test(t))
+    return { category: 'student',          agent: '📚 Study Agent — Tailored for learning & education' };
+  if (/research|analysis|data|statistic|paper|journal|findings|methodology|hypothesis/.test(t))
+    return { category: 'researcher',       agent: '🔬 Research Agent — Built for deep research & analysis' };
+  if (/market|campaign|customer|brand|ads|growth|sales|funnel|conversion|revenue/.test(t))
+    return { category: 'marketer',         agent: '📣 Marketing Agent — Focused on growth & engagement' };
+  if (/summarize|summary|key points|tldr|brief|overview|main idea/.test(t))
+    return { category: 'summarizer',       agent: '📋 Summary Agent — Expert at condensing information' };
+  return { category: 'general',            agent: '🤖 Boss Agent — General purpose AI analysis' };
+}
+
+// ── Main analysis function ──────────────────────────────────
+async function analyzeQuestion() {
+  const question = document.getElementById('analysisInput').value.trim();
+  if (!question || currentCredits <= 0) return;
+
+  const btn     = document.getElementById('analyzeBtn');
+  const output  = document.getElementById('analysisOutput');
+  const content = document.getElementById('analysisContent');
+
+  // Show loading state
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Analyzing…';
+  output.classList.add('show');
+  content.innerHTML = `
+    <div style="text-align:center;padding:2rem;color:var(--text2);">
+      <div class="spin" style="width:1.5rem;height:1.5rem;border-width:3px;margin:0 auto .875rem;display:block;"></div>
+      <p style="font-size:.875rem;">Analyzing your conversation…</p>
+    </div>`;
+
+  try {
+    const systemPrompt = `You are an expert AI thought analyzer. Your job is to analyze questions and ChatGPT responses to reveal hidden assumptions, missing information, and provide better answers. Be clear, concise, and genuinely helpful. Format your response in exactly 3 sections.`;
+
+    const userPrompt = `Analyze this question/conversation for a ${selectedCtx} user:
+
+---
+${question}
+---
+
+Provide your analysis in exactly this format:
+
+**What did ChatGPT assume?**
+[List 2-3 key assumptions made]
+
+**What information is missing?**
+[List 2-3 gaps or missing context]
+
+**Better answer for a ${selectedCtx} user:**
+[Provide an improved, more targeted answer]`;
+
+    // Call OpenRouter API (GPT-4o-mini)
+    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': window.location.origin,
+        'X-Title': 'Mentics Deep Research'
+      },
+      body: JSON.stringify({
+        model: 'openai/gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user',   content: userPrompt }
+        ],
+        max_tokens: 800,
+        temperature: 0.7
+      })
+    });
+
+    if (!res.ok) {
+      // If API key not set, show placeholder message
+      if (OPENROUTER_API_KEY.includes('REPLACE')) throw new Error('API_KEY_NOT_SET');
+      throw new Error('API request failed: ' + res.status);
     }
-  })();
 
-  // ── Header auth state ────────────────────────────────────
-  function updateHeaderAuth(user) {
-    const isIn = !!user;
-    // desktop
-    document.getElementById('authBtns').style.display  = isIn ? 'none'  : 'flex';
-    document.getElementById('userBtns').style.display  = isIn ? 'flex'  : 'none';
-    document.getElementById('navDash').style.display   = isIn ? ''      : 'none';
-    // mobile
-    document.getElementById('mAuthBtns').style.display = isIn ? 'none'  : 'flex';
-    document.getElementById('mUserBtns').style.display = isIn ? 'flex'  : 'none';
-    document.getElementById('mNavDash').style.display  = isIn ? ''      : 'none';
-    if (isIn) {
-      const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
-      const greet = 'Hello, ' + name.split(' ')[0];
-      document.getElementById('userGreet').textContent  = greet;
-      document.getElementById('mUserGreet').textContent = greet;
+    const json = await res.json();
+    const raw  = json.choices?.[0]?.message?.content || '';
+
+    // Parse and render the 3 sections
+    renderAnalysis(raw);
+
+    // Deduct 1 credit
+    const newCredits = Math.max(0, currentCredits - 1);
+    currentCredits = newCredits;
+    document.getElementById('dashCredits').textContent = newCredits;
+    if (currentUser) {
+      await updateCredits(currentUser.id, newCredits);
+      const maxCred = parseInt(document.getElementById('dashMaxCreds').textContent.replace('/ ', '')) || 5;
+      const pct = isNaN(maxCred) ? 80 : Math.round((newCredits / maxCred) * 100);
+      document.getElementById('creditFill').style.width = pct + '%';
+    }
+
+  } catch (err) {
+    if (err.message === 'API_KEY_NOT_SET') {
+      // Show demo output when API key not configured
+      renderAnalysisMock(question, selectedCtx);
+    } else {
+      content.innerHTML = `<div class="msg-err" style="display:block;">⚠️ Analysis failed: ${err.message}. Please check your OpenRouter API key.</div>`;
     }
   }
 
-  // ── View switching ───────────────────────────────────────
-  function showDash() {
-    document.getElementById('dashView').style.display    = 'block';
-    document.getElementById('landingView').style.display = 'none';
-    populateDash();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    animateFu();
+  btn.disabled = currentCredits <= 0;
+  btn.innerHTML = 'Analyze — Uses 1 credit';
+}
+
+// ── Render analysis from API response ──────────────────────
+function renderAnalysis(raw) {
+  const content = document.getElementById('analysisContent');
+  // Split by bold headers
+  const sections = raw.split(/\*\*(.+?)\*\*/g).filter(Boolean);
+  let html = '';
+  for (let i = 0; i < sections.length; i += 2) {
+    const heading = sections[i]?.trim();
+    const body    = sections[i + 1]?.trim() || '';
+    if (heading && body) {
+      const icons = { 'assume': '🔍', 'missing': '❓', 'better': '💡', 'answer': '💡' };
+      const icon = Object.entries(icons).find(([k]) => heading.toLowerCase().includes(k))?.[1] || '📌';
+      html += `<div class="analysis-section"><h4>${icon} ${heading}</h4><p>${body.replace(/\n/g,'<br>')}</p></div>`;
+    }
   }
-  function showLanding() {
-    document.getElementById('dashView').style.display    = 'none';
-    document.getElementById('landingView').style.display = 'block';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (!html) html = `<div class="analysis-section"><h4>📊 Analysis</h4><p>${raw.replace(/\n/g,'<br>')}</p></div>`;
+  content.innerHTML = html;
+}
+
+// ── Mock output when API key not configured ─────────────────
+function renderAnalysisMock(question, ctx) {
+  document.getElementById('analysisContent').innerHTML = `
+    <div style="padding:.75rem 1rem;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:.75rem;margin-bottom:1rem;font-size:.82rem;color:#93c5fd;">
+      ⚠️ Demo mode — Add your OpenRouter API key to get real AI analysis
+    </div>
+    <div class="analysis-section"><h4>🔍 What did ChatGPT assume?</h4><p>• The user has basic familiarity with the topic<br>• The question is being asked in isolation without prior context<br>• A general-purpose answer is sufficient for all users</p></div>
+    <div class="analysis-section"><h4>❓ What information is missing?</h4><p>• Your specific background and expertise level<br>• The exact use case or end goal you have in mind<br>• Whether you need a theoretical or practical answer</p></div>
+    <div class="analysis-section"><h4>💡 Better answer for a ${ctx} user:</h4><p>As a ${ctx}, you would benefit from a more targeted response that addresses your specific context. The AI's generic answer missed the nuances relevant to your workflow. A better approach would focus on practical application, specific examples from your domain, and actionable next steps tailored to your level of expertise.</p></div>`;
+}
+
+// ── Clear output ────────────────────────────────────────────
+function clearOutput() {
+  document.getElementById('analysisOutput').classList.remove('show');
+  document.getElementById('analysisContent').innerHTML = '';
+}
+
+// ── Copy discount code ──────────────────────────────────────
+function copyCode() {
+  if (!wlCodeCache) return;
+  navigator.clipboard.writeText(wlCodeCache).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+
+// ── Sign In handler ─────────────────────────────────────────
+async function handleSignIn(e) {
+  e.preventDefault();
+  const email = document.getElementById('siEmail').value.trim();
+  const pass  = document.getElementById('siPass').value;
+  const btn   = document.getElementById('siBtn');
+  const msg   = document.getElementById('siMsg');
+  msg.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Signing in…';
+  const { error } = await signIn(email, pass);
+  btn.disabled = false;
+  btn.innerHTML = 'Sign In';
+  if (error) {
+    msg.textContent = error.message === 'Invalid login credentials'
+      ? 'Incorrect email or password.' : error.message;
+    msg.style.display = 'block';
+  } else { closeModal(); }
+}
+
+// ── Sign Up handler ─────────────────────────────────────────
+async function handleSignUp(e) {
+  e.preventDefault();
+  const name  = document.getElementById('suName').value.trim();
+  const email = document.getElementById('suEmail').value.trim();
+  const pass  = document.getElementById('suPass').value;
+  const pass2 = document.getElementById('suPass2').value;
+  const btn   = document.getElementById('suBtn');
+  const msg   = document.getElementById('suMsg');
+  msg.style.display = 'none';
+
+  if (pass !== pass2) { msg.textContent = 'Passwords do not match.'; msg.style.display = 'block'; return; }
+  if (pass.length < 8){ msg.textContent = 'Password must be 8+ characters.'; msg.style.display = 'block'; return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Creating account…';
+  const { data, error } = await signUp(email, pass, name);
+  btn.disabled = false;
+  btn.innerHTML = 'Create Account';
+
+  if (error) { msg.textContent = error.message; msg.style.display = 'block'; return; }
+
+  // Create profile
+  if (data.user) {
+    await sb.from('profiles').upsert({
+      id: data.user.id, email, full_name: name, plan: 'free', credits: 5
+    });
   }
 
-  // ── Populate dashboard ───────────────────────────────────
-  async function populateDash() {
-    if (!currentUser) return;
-    const name    = currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'User';
-    const email   = currentUser.email || '';
-    const joined  = new Date(currentUser.created_at).toLocaleDateString('en-US',{month:'short',year:'numeric'});
+  if (data.session) {
+    closeModal();
+  } else {
+    // Email confirmation required
+    document.getElementById('suForm').style.display    = 'none';
+    document.getElementById('suVerifyEmail').textContent = email;
+    document.getElementById('suVerify').style.display  = 'block';
+    document.getElementById('suSwitch').style.display  = 'none';
+  }
+}
 
-    document.getElementById('dashName').textContent   = 'Hello, ' + name;
-    document.getElementById('dashEmail').textContent  = email;
-    document.getElementById('dashJoined').textContent = joined;
+// ── Forgot password ─────────────────────────────────────────
+async function handleForgotPassword() {
+  const email = document.getElementById('siEmail').value.trim();
+  const msg   = document.getElementById('siMsg');
+  if (!email) { msg.textContent = 'Enter your email first.'; msg.style.display = 'block'; msg.className = 'msg-err'; return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname
+  });
+  msg.textContent = error ? error.message : '✅ Reset link sent! Check your email.';
+  msg.className = error ? 'msg-err' : 'msg-ok';
+  msg.style.display = 'block';
+}
 
-    // Profile
-    const { data: profile } = await getProfile(currentUser.id);
-    const credits = profile?.credits ?? 5;
-    const maxCred = { free: 5, pro: 100, business: Infinity }[profile?.plan || 'free'] ?? 5;
-    document.getElementById('dashCredits').textContent = credits;
-    const pct = maxCred === Infinity ? 80 : Math.round((credits / maxCred) * 100);
-    document.getElementById('creditBar').style.width = pct + '%';
+// ── Sign Out ────────────────────────────────────────────────
+async function handleSignOut() { await signOut(); showLanding(); }
 
-    // Waiting list
+// ── Waiting list form ───────────────────────────────────────
+async function handleWaitlist(e) {
+  e.preventDefault();
+  const email = document.getElementById('wlEmail').value.trim();
+  const btn   = document.getElementById('wlBtn');
+  const okEl  = document.getElementById('wlOk');
+  const errEl = document.getElementById('wlErr');
+  okEl.style.display = errEl.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Joining…';
+
+  const { error } = await joinWaitingList(email);
+  btn.disabled = false;
+  btn.innerHTML = 'Join Waiting List';
+
+  if (!error) {
     const { data: wl } = await getWaitingListStatus(email);
-    if (wl) {
-      dashWlCode = wl.discount_code || '';
-      document.getElementById('dashWlPos').textContent  = '#' + wl.position;
-      document.getElementById('dashWlCode').textContent = dashWlCode;
-      document.getElementById('dashWlCard').style.display  = 'block';
-      document.getElementById('dashWlNudge').style.display = 'none';
+    if (wl?.position <= 20) {
+      okEl.textContent = `🎉 You're #${wl.position} on the list! Your 20% lifetime discount code: ${wl.discount_code}`;
+    } else if (wl?.position) {
+      okEl.textContent = `🎉 You're on the waiting list at position #${wl.position}. We'll notify you at launch!`;
     } else {
-      document.getElementById('dashWlCard').style.display  = 'none';
-      document.getElementById('dashWlNudge').style.display = 'block';
+      okEl.textContent = "🎉 You're on the waiting list! First 20 users get 20% off for life.";
     }
+    okEl.style.display = 'block';
+    document.getElementById('wlForm').reset();
+  } else {
+    errEl.textContent = error.code === '23505'
+      ? 'This email is already on the waiting list.'
+      : 'Something went wrong. Please try again.';
+    errEl.style.display = 'block';
   }
+}
 
-  function copyDashCode() {
-    if (!dashWlCode) return;
-    navigator.clipboard.writeText(dashWlCode).then(() => {
-      const btn = document.getElementById('dashCopyBtn');
-      btn.textContent = 'Copied!';
-      setTimeout(() => btn.textContent = 'Copy', 2000);
-    });
-  }
+// ── Modal ───────────────────────────────────────────────────
+function openModal(type) {
+  document.getElementById('modalOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  switchModal(type);
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+  document.getElementById('siForm').reset();
+  document.getElementById('suFormEl').reset();
+  document.getElementById('siMsg').style.display = 'none';
+  document.getElementById('suMsg').style.display = 'none';
+  document.getElementById('suForm').style.display   = 'block';
+  document.getElementById('suVerify').style.display = 'none';
+  document.getElementById('suSwitch').style.display = 'block';
+}
+function closeModalBg(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+function switchModal(t) {
+  document.getElementById('siPanel').style.display = t === 'signin' ? 'block' : 'none';
+  document.getElementById('suPanel').style.display = t === 'signup' ? 'block' : 'none';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  // ── Sign In handler ──────────────────────────────────────
-  async function handleSignIn(e) {
-    e.preventDefault();
-    const email = document.getElementById('siEmail').value.trim();
-    const pass  = document.getElementById('siPass').value;
-    const btn   = document.getElementById('siBtn');
-    const errEl = document.getElementById('siErr');
-    errEl.style.display = 'none';
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spin"></span>Signing in…';
+// ── Theme ───────────────────────────────────────────────────
+let isDark = localStorage.getItem('mn-theme') !== 'light';
 
-    const { error } = await signIn(email, pass);
-    btn.disabled = false;
-    btn.innerHTML = 'Sign In';
-
-    if (error) {
-      errEl.textContent = error.message === 'Invalid login credentials'
-        ? 'Incorrect email or password. Please try again.'
-        : error.message;
-      errEl.style.display = 'block';
-    } else {
-      closeModal();
-    }
-  }
-
-  // ── Sign Up handler ──────────────────────────────────────
-  async function handleSignUp(e) {
-    e.preventDefault();
-    const name  = document.getElementById('suName').value.trim();
-    const email = document.getElementById('suEmail').value.trim();
-    const pass  = document.getElementById('suPass').value;
-    const pass2 = document.getElementById('suPass2').value;
-    const btn   = document.getElementById('suBtn');
-    const errEl = document.getElementById('suErr');
-    errEl.style.display = 'none';
-
-    if (pass !== pass2) { errEl.textContent = 'Passwords do not match.'; errEl.style.display = 'block'; return; }
-    if (pass.length < 8) { errEl.textContent = 'Password must be at least 8 characters.'; errEl.style.display = 'block'; return; }
-
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spin"></span>Creating account…';
-
-    const { data, error } = await signUp(email, pass, name);
-    btn.disabled = false;
-    btn.innerHTML = 'Create Account';
-
-    if (error) {
-      errEl.textContent = error.message;
-      errEl.style.display = 'block';
-      return;
-    }
-
-    // Create profile entry
-    if (data.user) {
-      await sb.from('profiles').upsert({ id: data.user.id, email, full_name: name, plan: 'free', credits: 5 });
-    }
-
-    // Check if email confirmation is needed
-    if (data.session) {
-      // Auto-signed in (email confirmation disabled in Supabase)
-      closeModal();
-    } else {
-      // Show verify email message
-      document.getElementById('suFormView').style.display = 'none';
-      document.getElementById('suVerifyEmail').textContent = email;
-      document.getElementById('suVerifyView').style.display = 'block';
-      document.getElementById('suSwitch').style.display = 'none';
-    }
-  }
-
-  // ── Sign Out ─────────────────────────────────────────────
-  async function handleSignOut() {
-    await signOut();
-    showLanding();
-  }
-
-  // ── Waiting list form ────────────────────────────────────
-  async function handleWaitlist(e) {
-    e.preventDefault();
-    const email = document.getElementById('wlEmail').value.trim();
-    const btn   = document.getElementById('wlBtn');
-    const okEl  = document.getElementById('wlOk');
-    const errEl = document.getElementById('wlErr');
-    okEl.style.display = errEl.style.display = 'none';
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spin"></span>Joining…';
-
-    const { error } = await joinWaitingList(email);
-    btn.disabled = false;
-    btn.innerHTML = 'Join Waiting List';
-
-    if (!error) {
-      // Fetch position + discount
-      const { data: wl } = await getWaitingListStatus(email);
-      if (wl && wl.position && wl.position <= 20) {
-        okEl.textContent = `🎉 You're on the list at position #${wl.position}! Your 20% discount code: ${wl.discount_code}`;
-      } else if (wl && wl.position) {
-        okEl.textContent = `🎉 You're on the waiting list at position #${wl.position}! We'll notify you at launch.`;
-      } else {
-        okEl.textContent = "🎉 You're on the waiting list! First 20 users get 20% lifetime discount.";
-      }
-      okEl.style.display = 'block';
-      document.getElementById('wlForm').reset();
-    } else {
-      if (error.code === '23505') {
-        errEl.textContent = 'This email is already on the waiting list.';
-      } else {
-        errEl.textContent = 'Something went wrong. Please try again.';
-      }
-      errEl.style.display = 'block';
-    }
-  }
-
-  // ── Modal ────────────────────────────────────────────────
-  function openModal(type) {
-    const overlay = document.getElementById('modalOverlay');
-    overlay.classList.add('show');
-    document.body.style.overflow = 'hidden';
-    switchModal(type);
-  }
-  function closeModal() {
-    document.getElementById('modalOverlay').classList.remove('show');
-    document.body.style.overflow = '';
-    // Reset forms
-    document.getElementById('signinForm').reset();
-    document.getElementById('signupForm').reset();
-    document.getElementById('siErr').style.display = 'none';
-    document.getElementById('suErr').style.display = 'none';
-    document.getElementById('suFormView').style.display = 'block';
-    document.getElementById('suVerifyView').style.display = 'none';
-    document.getElementById('suSwitch').style.display = 'block';
-  }
-  function closeModalOnBg(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
-  function switchModal(type) {
-    document.getElementById('signinPanel').style.display = type === 'signin' ? 'block' : 'none';
-    document.getElementById('signupPanel').style.display = type === 'signup' ? 'block' : 'none';
-  }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-  // ── Theme ────────────────────────────────────────────────
-  const sunSVG = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>`;
-  const moonSVG = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
-  let isDark = localStorage.getItem('ts-theme') !== 'light';
-
-  function applyTheme() {
-    document.documentElement.classList.toggle('dark', isDark);
-    document.body.classList.toggle('light', !isDark);
-    document.getElementById('themeIcoD').innerHTML = isDark ? sunSVG : moonSVG;
-    document.getElementById('themeIcoM').innerHTML = isDark ? sunSVG : moonSVG;
-  }
-  function toggleTheme() {
-    isDark = !isDark;
-    localStorage.setItem('ts-theme', isDark ? 'dark' : 'light');
-    applyTheme();
-  }
+function applyTheme() {
+  document.documentElement.classList.toggle('dark', isDark);
+  document.body.classList.toggle('light', !isDark);
+  const ico = isDark ? '☀️' : '🌙';
+  document.getElementById('themeIcoD').textContent = ico;
+  document.getElementById('themeIcoM').textContent = ico;
+}
+function toggleTheme() {
+  isDark = !isDark;
+  localStorage.setItem('mn-theme', isDark ? 'dark' : 'light');
   applyTheme();
+}
+applyTheme();
 
-  // ── Mobile nav ───────────────────────────────────────────
-  let mNavOpen = false;
-  function toggleMobileNav() {
-    mNavOpen = !mNavOpen;
-    document.getElementById('mobileNav').classList.toggle('open', mNavOpen);
-    document.getElementById('hamIco').style.display   = mNavOpen ? 'none'  : 'block';
-    document.getElementById('closeIco').style.display = mNavOpen ? 'block' : 'none';
-  }
-  function closeMobileNav() {
-    mNavOpen = false;
-    document.getElementById('mobileNav').classList.remove('open');
-    document.getElementById('hamIco').style.display   = 'block';
-    document.getElementById('closeIco').style.display = 'none';
-  }
+// ── Mobile nav ──────────────────────────────────────────────
+let navOpen = false;
+function toggleNav() {
+  navOpen = !navOpen;
+  document.getElementById('mobileNav').classList.toggle('open', navOpen);
+  document.getElementById('hamIco').style.display = navOpen ? 'none'  : 'block';
+  document.getElementById('xIco').style.display   = navOpen ? 'block' : 'none';
+}
+function closeNav() {
+  navOpen = false;
+  document.getElementById('mobileNav').classList.remove('open');
+  document.getElementById('hamIco').style.display = 'block';
+  document.getElementById('xIco').style.display   = 'none';
+}
 
-  // ── Scroll helpers ───────────────────────────────────────
-  function scrollToJoin() {
-    if (document.getElementById('landingView').style.display === 'none') showLanding();
-    setTimeout(() => document.getElementById('join-waitlist').scrollIntoView({ behavior:'smooth' }), 50);
-  }
+// ── Scroll helpers ──────────────────────────────────────────
+function scrollToJoin() {
+  if (document.getElementById('landingView').style.display === 'none') showLanding();
+  setTimeout(() => document.getElementById('join-waitlist').scrollIntoView({ behavior: 'smooth' }), 50);
+}
 
-  // ── FAQ ──────────────────────────────────────────────────
-  function toggleFaq(btn) {
-    const item = btn.closest('.card');
-    const isOpen = item.classList.contains('faq-open');
-    document.querySelectorAll('.card.faq-open').forEach(el => el.classList.remove('faq-open'));
-    if (!isOpen) item.classList.add('faq-open');
-  }
+// ── FAQ accordion ───────────────────────────────────────────
+function toggleFaq(btn) {
+  const card = btn.closest('.card');
+  const isOpen = card.classList.contains('faq-open');
+  document.querySelectorAll('.card.faq-open').forEach(c => c.classList.remove('faq-open'));
+  if (!isOpen) card.classList.add('faq-open');
+}
 
-  // ── Fade-up observer ─────────────────────────────────────
-  function animateFu() {
-    document.querySelectorAll('.fu:not(.vis)').forEach(el => {
-      if (el.getBoundingClientRect().top < window.innerHeight * 0.92) el.classList.add('vis');
-    });
-  }
-  const ioObs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); ioObs.unobserve(e.target); } });
-  }, { threshold: 0.08 });
-  document.querySelectorAll('.fu').forEach(el => ioObs.observe(el));
+// ── Fade-up animation observer ──────────────────────────────
+function animateFu() {
+  document.querySelectorAll('.fu:not(.vis)').forEach(el => {
+    if (el.getBoundingClientRect().top < window.innerHeight * .92) el.classList.add('vis');
+  });
+}
+const ioObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); ioObs.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fu').forEach(el => ioObs.observe(el));
 
-  // Header shadow on scroll
-  window.addEventListener('scroll', () => {
-    document.getElementById('hdr').style.boxShadow = window.scrollY > 8 ? '0 1px 18px rgba(0,0,0,.18)' : 'none';
-  }, { passive: true });
+// ── Header shadow on scroll ─────────────────────────────────
+window.addEventListener('scroll', () => {
+  document.getElementById('hdr').style.boxShadow = window.scrollY > 8
+    ? '0 1px 16px rgba(0,0,0,.15)' : 'none';
+}, { passive: true });
 </script>
 </body>
 </html>
