@@ -823,57 +823,85 @@ async function updateCredits(userId, newCredits) {
   return { error };
 }
 
-// ── Auth state listener ─────────────────────────────────────
-sb.auth.onAuthStateChange(async (event, session) => {
-  if (session) {
-    currentUser = session.user;
-    updateHeaderAuth(true);
-    if (event === 'SIGNED_IN') showDash();
-  } else {
-    currentUser = null;
-    updateHeaderAuth(false);
-  }
-});
-
-// Check session on load
-(async () => {
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    currentUser = session.user;
-    updateHeaderAuth(true);
-    showDash();
-  }
-})();
+// ── Safe DOM helper — never throws on missing elements ───────
+function $id(id) { return document.getElementById(id); }
+function safeStyle(id, prop, val) {
+  const el = $id(id);
+  if (el) el.style[prop] = val;
+}
+function safeText(id, val) {
+  const el = $id(id);
+  if (el) el.textContent = val;
+}
 
 // ── Update header based on auth state ──────────────────────
 function updateHeaderAuth(loggedIn) {
-  // Desktop
-  document.getElementById('authBtns').style.display = loggedIn ? 'none' : 'flex';
-  document.getElementById('userBtns').style.display = loggedIn ? 'flex' : 'none';
-  // Mobile
-  document.getElementById('mAuthBtns').style.display = loggedIn ? 'none' : 'flex';
-  document.getElementById('mUserBtns').style.display = loggedIn ? 'flex' : 'none';
+  safeStyle('authBtns',  'display', loggedIn ? 'none' : 'flex');
+  safeStyle('userBtns',  'display', loggedIn ? 'flex' : 'none');
+  safeStyle('mAuthBtns', 'display', loggedIn ? 'none' : 'flex');
+  safeStyle('mUserBtns', 'display', loggedIn ? 'flex' : 'none');
 
   if (loggedIn && currentUser) {
-    const name = currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'User';
+    const name  = currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'User';
     const greet = 'Hello, ' + name.split(' ')[0] + ' 👋';
-    document.getElementById('userGreet').textContent  = greet;
-    document.getElementById('mUserGreet').textContent = greet;
+    safeText('userGreet',  greet);
+    safeText('mUserGreet', greet);
   }
 }
 
+// ── Auth bootstrap — runs once after DOM is guaranteed ready ─
+// Uses onAuthStateChange as the single source of truth.
+// INITIAL_SESSION handles page-load state, SIGNED_IN handles
+// fresh logins, SIGNED_OUT clears state — no duplicate calls.
+let _authBooted = false;
+sb.auth.onAuthStateChange(async (event, session) => {
+  if (event === 'INITIAL_SESSION') {
+    _authBooted = true;
+    if (session) {
+      currentUser = session.user;
+      updateHeaderAuth(true);
+      showDash();
+    } else {
+      currentUser = null;
+      updateHeaderAuth(false);
+    }
+  } else if (event === 'SIGNED_IN') {
+    currentUser = session?.user ?? null;
+    updateHeaderAuth(!!currentUser);
+    showDash();
+  } else if (event === 'SIGNED_OUT') {
+    currentUser = null;
+    updateHeaderAuth(false);
+    showLanding();
+  } else if (event === 'TOKEN_REFRESHED' && session) {
+    currentUser = session.user;
+  }
+
+  // Safety net: if INITIAL_SESSION never fired (older SDK), fall back
+  if (!_authBooted) {
+    _authBooted = true;
+    if (session) {
+      currentUser = session.user;
+      updateHeaderAuth(true);
+      showDash();
+    } else {
+      updateHeaderAuth(false);
+    }
+  }
+});
+
 // ── View switching ──────────────────────────────────────────
 function showDash() {
-  document.getElementById('dashView').style.display    = 'block';
-  document.getElementById('landingView').style.display = 'none';
+  safeStyle('dashView',    'display', 'block');
+  safeStyle('landingView', 'display', 'none');
   populateDash();
   window.scrollTo({ top: 0, behavior: 'smooth' });
   animateFu();
 }
 
 function showLanding() {
-  document.getElementById('dashView').style.display    = 'none';
-  document.getElementById('landingView').style.display = 'block';
+  safeStyle('dashView',    'display', 'none');
+  safeStyle('landingView', 'display', 'block');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1139,7 +1167,7 @@ async function handleForgotPassword() {
 }
 
 // ── Sign Out ────────────────────────────────────────────────
-async function handleSignOut() { await signOut(); showLanding(); }
+async function handleSignOut() { await signOut(); /* SIGNED_OUT event handles showLanding() */ }
 
 // ── Waiting list form ───────────────────────────────────────
 async function handleWaitlist(e) {
