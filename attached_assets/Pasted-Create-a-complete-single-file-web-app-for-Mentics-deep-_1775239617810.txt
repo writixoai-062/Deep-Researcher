@@ -1,0 +1,115 @@
+Create a complete single-file web app for "Mentics — deep research" with Gemini AI integration.
+
+## BRANDING:
+- Logo: 🧠 MENTICS with "deep research" below in small text
+- Tagline: "See how AI really thinks"
+
+## HEADER (Sticky):
+- Left: Logo area (🧠 MENTICS + "deep research" small below)
+- Center: Home, Dashboard, Features, About
+- Right: Language selector (🌐), Dark/Light toggle (🌙/☀️), "Join Waiting List" button, Sign In, Sign Up
+
+## DASHBOARD LINK BEHAVIOR:
+- If user is NOT logged in: Clicking "Dashboard" opens Sign In modal
+- If user IS logged in: Clicking "Dashboard" shows dashboard section
+- Store auth state in localStorage/session
+
+## AUTH MODALS (Popup):
+- Sign Up: Full Name, Email, Password, Confirm Password
+- Sign In: Email, Password
+- Forgot password link (sends reset email via Supabase)
+- Smooth switch between panels
+
+## GEMINI AI INTEGRATION:
+- Use @google/generative-ai library
+- API Key stored in Replit Secret: AIzaSyDRg8eOQTKU0M7UJNcLohlJvD8SQwyckQU
+- Model: gemini-1.5-flash (free tier, 60 requests/minute)
+
+## BACKEND API (Express server on port 8080):
+- Endpoint: POST /api/analyze
+- Body: { question, context }
+- Calls Gemini API with prompt:
+  "Analyze this question for [context] user. 
+   1. What assumptions did ChatGPT make?
+   2. What information is missing?
+   3. Give a better answer tailored for [context] user"
+- Returns: { success: true, analysis: text }
+
+## DASHBOARD (shown after login, same page):
+Layout: 2 columns
+
+LEFT COLUMN (Main Tool):
+- Card: "🎯 PASTE YOUR CHATGPT CONVERSATION"
+- Textarea: "Paste ChatGPT link or question here..."
+- Context selector: Student | Professional | Researcher | Curious | Technical
+- Button: [ANALYZE — Uses 1 credit]
+- Output area: Shows analysis from Gemini
+
+RIGHT COLUMN (User Info):
+- Welcome card: "Hello, [Name]"
+- Credits card: "X credits remaining" with progress bar
+- Plan card: Free / Pro / Business
+- Waiting list card: Position + Discount code (with copy button)
+
+## WAITING LIST SECTION (on homepage for non-logged in users):
+- Email input + "Join Waiting List" button
+- Shows: "First 20 users get 20% lifetime discount"
+
+## BOSS AGENT AUTO-DETECTION:
+- Analyzes user's question in real-time
+- Detects: content creator, developer, student, marketer, researcher
+- Shows: "🤖 Boss Agent recommends: [Agent Name]"
+
+## LANDING PAGE SECTIONS (for non-logged in users):
+- Hero section
+- Features (6 cards): AI Thought Analysis, Boss Agent, 10 Agents, Multi-Language, Smart Credits, Privacy First
+- How It Works (3 steps)
+- Pricing (Free $0, Pro $9.99, Business $29.99)
+- CTA section
+- FAQ (4 accordion questions)
+- Fake reviews (3 cards)
+- Join for Free section
+- Footer (3 columns)
+
+## MULTI-LANGUAGE SUPPORT (8 languages):
+- English, Urdu, Hindi, Arabic, Spanish, French, German, Roman Urdu
+- Language selector in header
+- All UI text changes based on selected language
+- AI analysis also responds in selected language
+
+## COLORS:
+DARK MODE:
+- Body: #0A0A0A, Cards: #141414, Borders: #2A2A2A
+- Primary button: #10A37F (Teal), hover #0E8C6D
+
+LIGHT MODE:
+- Body: #FFFFFF, Cards: #F9FAFB, Borders: #E5E7EB
+- Primary button: #3B82F6 (Blue), hover #2563EB
+
+## SUPABASE INTEGRATION:
+- Tables: waiting_list, profiles
+- Auth: signUp, signIn, signOut, resetPassword
+- Functions: joinWaitingList(), getWaitingListStatus(), getProfile(), updateCredits()
+
+## CREDITS SYSTEM:
+- Free users: 5 credits/month
+- Each analysis deducts 1 credit
+- Pro: 100 credits ($9.99)
+- Business: Unlimited ($29.99)
+
+## REQUIREMENTS:
+- No React — pure HTML/CSS/JS
+- Dark/Light mode with localStorage
+- Mobile responsive (hamburger menu)
+- All in one HTML file
+- Backend: Express server in separate file (api-server.js)
+
+## REPLIT SECRETS:
+- GEMINI_API_KEY (user will provide)
+- SUPABASE_URL (user will provide)
+- SUPABASE_ANON_KEY (user will provide)
+
+## IMPORTANT:
+- Dashboard link redirects to Sign In if not logged in
+- Gemini free tier works without credit card
+- Add comments in code
