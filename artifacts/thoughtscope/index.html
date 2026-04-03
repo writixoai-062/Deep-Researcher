@@ -3,9 +3,10 @@
      ║  MENTICS — Deep Research                        ║
      ║  Single-file app: HTML + Tailwind CDN + JS      ║
      ╠═══════════════════════════════════════════════════╣
-     ║  REPLACE:                                        ║
+     ║  CONFIG:                                         ║
      ║  SUPABASE_URL & SUPABASE_ANON_KEY (line ~680)   ║
-     ║  OPENROUTER_API_KEY (line ~683)                  ║
+     ║  OPENROUTER_API_KEY → stored as Replit secret,  ║
+     ║  used securely via /api-server/api/analyze       ║
      ╚═══════════════════════════════════════════════════╝ -->
 <html lang="en" class="dark scroll-smooth">
 <head>
@@ -675,8 +676,8 @@
 // REPLACE WITH SUPABASE URL AND KEY
 const SUPABASE_URL      = 'https://acdrbtuhxpskuuimevwu.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjZHJidHVoeHBza3V1aW1ldnd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMzU4NTMsImV4cCI6MjA5MDcxMTg1M30.jIxOnGza9D1nBbEqnmglIKSK0L5pbkqkLb1iCZOGQdM';
-// REPLACE WITH OPENROUTER API KEY
-const OPENROUTER_API_KEY = 'sk-or-v1-REPLACE_WITH_YOUR_KEY';
+// API proxy endpoint (key stays server-side)
+const ANALYZE_API = '/api-server/api/analyze';
 
 // ── Supabase init ───────────────────────────────────────────
 const { createClient } = window.supabase;
@@ -883,53 +884,22 @@ async function analyzeQuestion() {
     </div>`;
 
   try {
-    const systemPrompt = `You are an expert AI thought analyzer. Your job is to analyze questions and ChatGPT responses to reveal hidden assumptions, missing information, and provide better answers. Be clear, concise, and genuinely helpful. Format your response in exactly 3 sections.`;
-
-    const userPrompt = `Analyze this question/conversation for a ${selectedCtx} user:
-
----
-${question}
----
-
-Provide your analysis in exactly this format:
-
-**What did ChatGPT assume?**
-[List 2-3 key assumptions made]
-
-**What information is missing?**
-[List 2-3 gaps or missing context]
-
-**Better answer for a ${selectedCtx} user:**
-[Provide an improved, more targeted answer]`;
-
-    // Call OpenRouter API (GPT-4o-mini)
-    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    // Call the secure server-side proxy (OPENROUTER_API_KEY stays on the server)
+    const res = await fetch(ANALYZE_API, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': window.location.origin,
-        'X-Title': 'Mentics Deep Research'
-      },
-      body: JSON.stringify({
-        model: 'openai/gpt-4o-mini',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user',   content: userPrompt }
-        ],
-        max_tokens: 800,
-        temperature: 0.7
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question, context: selectedCtx })
     });
 
     if (!res.ok) {
-      // If API key not set, show placeholder message
-      if (OPENROUTER_API_KEY.includes('REPLACE')) throw new Error('API_KEY_NOT_SET');
-      throw new Error('API request failed: ' + res.status);
+      const errBody = await res.json().catch(() => ({}));
+      if (res.status === 503) throw new Error('API_KEY_NOT_SET');
+      if (res.status === 402) throw new Error('INSUFFICIENT_CREDITS');
+      throw new Error(errBody.error || 'API request failed: ' + res.status);
     }
 
     const json = await res.json();
-    const raw  = json.choices?.[0]?.message?.content || '';
+    const raw  = json.content || '';
 
     // Parse and render the 3 sections
     renderAnalysis(raw);
@@ -947,10 +917,11 @@ Provide your analysis in exactly this format:
 
   } catch (err) {
     if (err.message === 'API_KEY_NOT_SET') {
-      // Show demo output when API key not configured
       renderAnalysisMock(question, selectedCtx);
+    } else if (err.message === 'INSUFFICIENT_CREDITS') {
+      content.innerHTML = `<div class="msg-err" style="display:block;">💳 Your OpenRouter account has no credits. Top up at <a href="https://openrouter.ai/settings/credits" target="_blank" style="text-decoration:underline;">openrouter.ai/settings/credits</a> to enable AI analysis.</div>`;
     } else {
-      content.innerHTML = `<div class="msg-err" style="display:block;">⚠️ Analysis failed: ${err.message}. Please check your OpenRouter API key.</div>`;
+      content.innerHTML = `<div class="msg-err" style="display:block;">⚠️ Analysis failed: ${err.message}</div>`;
     }
   }
 
