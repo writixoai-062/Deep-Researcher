@@ -281,7 +281,6 @@
       <div id="authBtns" style="display:flex;align-items:center;gap:.5rem;">
         <button onclick="openModal('signin')" class="btn-g" data-i18n="sign_in">Sign In</button>
         <button onclick="openModal('signup')" class="btn-o" style="font-size:.82rem;padding:.5rem 1rem;" data-i18n="sign_up">Sign Up</button>
-        <button onclick="scrollToJoin()" class="btn-p pulse" style="font-size:.82rem;padding:.5rem 1.1rem;" data-i18n="join_wl">Join Waiting List</button>
       </div>
       <!-- Logged-in -->
       <div id="userBtns" style="display:none;align-items:center;gap:.75rem;">
@@ -326,7 +325,6 @@
       <div id="mAuthBtns" style="display:flex;flex-direction:column;gap:.375rem;">
         <button onclick="openModal('signin');closeNav()" class="btn-g" style="justify-content:flex-start;" data-i18n="sign_in">Sign In</button>
         <button onclick="openModal('signup');closeNav()" class="btn-o" data-i18n="sign_up">Sign Up</button>
-        <button onclick="scrollToJoin();closeNav()" class="btn-p pulse" data-i18n="join_wl">Join Waiting List</button>
       </div>
       <div id="mUserBtns" style="display:none;flex-direction:column;gap:.375rem;">
         <span id="mUserGreet" style="font-size:.875rem;font-weight:600;color:var(--text);padding:.375rem .75rem;"></span>
@@ -429,24 +427,6 @@
         <a href="#pricing" onclick="showLanding()" class="btn-p" style="display:flex;width:100%;justify-content:center;border-radius:.75rem;padding:.65rem;font-size:.85rem;">Upgrade Plan ↑</a>
       </div>
 
-      <!-- Waiting list card -->
-      <div class="card2" id="dashWlCard" style="padding:1.25rem;display:none;">
-        <p style="font-size:.75rem;font-weight:700;color:#10A37F;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;">Waiting List 🎉</p>
-        <p style="font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:.75rem;">Position <span id="dashWlPos" class="g-text">#—</span></p>
-        <div style="margin-bottom:.5rem;"><p style="font-size:.78rem;color:var(--text2);margin-bottom:.35rem;">Your discount code</p>
-          <div style="display:flex;gap:.5rem;align-items:center;">
-            <code id="dashWlCode" style="flex:1;padding:.4rem .75rem;background:rgba(16,163,127,.08);border:1px solid rgba(16,163,127,.18);border-radius:.5rem;font-size:.875rem;font-weight:700;color:#10A37F;font-family:monospace;"></code>
-            <button onclick="copyCode()" id="copyBtn" style="padding:.4rem .75rem;background:rgba(16,163,127,.1);border:1px solid rgba(16,163,127,.2);border-radius:.5rem;color:#6ee7b7;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s;">Copy</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Nudge join if not on waitlist -->
-      <div class="card2" id="dashWlNudge" style="padding:1.25rem;display:none;">
-        <p style="font-weight:700;color:var(--text);font-size:.9rem;margin-bottom:.35rem;">Get 20% off for life 🎁</p>
-        <p style="font-size:.8rem;color:var(--text2);margin-bottom:.875rem;">Join the waiting list to lock in your early discount.</p>
-        <button onclick="showLanding();setTimeout(scrollToJoin,50)" class="btn-p" style="width:100%;border-radius:.75rem;padding:.6rem;font-size:.85rem;">Join Waiting List →</button>
-      </div>
 
     </div>
   </div>
@@ -476,11 +456,11 @@
       Paste any ChatGPT conversation — get instant deep analysis of why AI gave that answer, what it assumed, and how to get a better one.
     </p>
     <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.875rem;margin-bottom:2.75rem;">
-      <button onclick="scrollToJoin()" class="btn-p pulse" style="font-size:1rem;padding:.875rem 2rem;">
-        Join Waiting List
+      <button onclick="openModal('signup')" class="btn-p pulse" style="font-size:1rem;padding:.875rem 2rem;">
+        Get Started Free
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
-      <button onclick="openModal('signup')" class="btn-o" style="font-size:1rem;padding:.875rem 2rem;">Get Started Free</button>
+      <button onclick="openModal('signin')" class="btn-o" style="font-size:1rem;padding:.875rem 2rem;">Sign In</button>
     </div>
     <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.5rem 1.25rem;font-size:.875rem;color:var(--text2);">
       <span>⭐ 1,000+ users</span>
@@ -574,7 +554,7 @@
           <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text);">✅ Priority support</li>
           <li style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:var(--text);">✅ PDF & JSON export</li>
         </ul>
-        <button onclick="scrollToJoin()" class="btn-p" style="border-radius:.875rem;padding:.7rem;">Get Started</button>
+        <button onclick="openModal('signup')" class="btn-p" style="border-radius:.875rem;padding:.7rem;">Get Started</button>
       </div>
       <!-- Business -->
       <div class="card fu d3" style="padding:1.75rem;display:flex;flex-direction:column;">
@@ -599,8 +579,8 @@
   <div style="max-width:600px;margin:0 auto;text-align:center;" class="fu">
     <h2 style="font-size:clamp(1.6rem,4vw,2.3rem);font-weight:800;color:var(--text);margin-bottom:.875rem;">Ready to think deeper?</h2>
     <p style="font-size:1rem;color:var(--text2);margin-bottom:2rem;">Join thousands of researchers, creators, and developers who use Mentics to understand AI on a deeper level.</p>
-    <button onclick="scrollToJoin()" class="btn-p pulse" style="font-size:1rem;padding:.875rem 2.25rem;">
-      Join Waiting List
+    <button onclick="openModal('signup')" class="btn-p pulse" style="font-size:1rem;padding:.875rem 2.25rem;">
+      Get Started Free
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
     </button>
   </div>
@@ -637,23 +617,6 @@
   </div>
 </section>
 
-<!-- ── JOIN FOR FREE ──────────────────────────────────────── -->
-<section id="join-waitlist" style="padding:5.5rem 1.5rem;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
-  <div style="max-width:520px;margin:0 auto;text-align:center;" class="fu">
-    <div class="g-bg" style="width:48px;height:48px;border-radius:.875rem;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:1.4rem;box-shadow:0 8px 24px rgba(16,163,127,.2);">✉️</div>
-    <h2 style="font-size:clamp(1.6rem,4vw,2.2rem);font-weight:800;color:var(--text);margin-bottom:.5rem;">Join for free</h2>
-    <p style="font-size:.95rem;color:var(--text2);margin-bottom:.375rem;">First 20 users get a <strong style="color:#10A37F;">20% lifetime discount</strong>.</p>
-    <p style="font-size:.82rem;color:var(--text2);margin-bottom:1.75rem;">No spam. No credit card required.</p>
-    <form id="wlForm" onsubmit="handleWaitlist(event)" style="display:flex;flex-direction:column;gap:.75rem;">
-      <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
-        <input id="wlEmail" type="email" placeholder="Enter your email address" required class="inp-inline" autocomplete="email"/>
-        <button type="submit" id="wlBtn" class="btn-p pulse" style="border-radius:.875rem;padding:.7rem 1.375rem;flex-shrink:0;">Join Waiting List</button>
-      </div>
-      <div id="wlOk"  class="msg-ok"></div>
-      <div id="wlErr" class="msg-err"></div>
-    </form>
-  </div>
-</section>
 
 </div><!-- /landingView -->
 
@@ -705,8 +668,8 @@
      ╚══════════════════════════════════════════╝ -->
 <script>
 // ── CONFIGURATION ──────────────────────────────────────────
-const SUPABASE_URL      = 'https://acdrbtuhxpskuuimevwu.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjZHJidHVoeHBza3V1aW1ldnd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMzU4NTMsImV4cCI6MjA5MDcxMTg1M30.jIxOnGza9D1nBbEqnmglIKSK0L5pbkqkLb1iCZOGQdM';
+const SUPABASE_URL      = 'https://eenljddhgzophmfrwmcf.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlbmxqZGRoZ3pvcGhtZnJ3bWNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MDEzMDksImV4cCI6MjA5MDk3NzMwOX0.z6xQz3J8PgC5-KtWviH0TufvakcCBp992PUMUC8WWfg';
 // Secure server-side proxy — GEMINI_API_KEY never leaves the server
 const ANALYZE_API = '/api-server/api/analyze';
 
@@ -717,20 +680,20 @@ const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let currentUser = null;
 let currentCredits = 5;
 let selectedCtx = 'Student';
-let wlCodeCache = '';
+
 let currentLang = localStorage.getItem('mn-lang') || 'en';
 let currentLangName = localStorage.getItem('mn-lang-name') || 'English';
 
 // ── i18n strings ────────────────────────────────────────────
 const I18N = {
-  en: { nav_home:'Home', nav_dashboard:'Dashboard', nav_features:'Features', nav_about:'About', sign_in:'Sign In', sign_up:'Sign Up', sign_out:'Sign Out', join_wl:'Join Waiting List', analyze_btn:'Analyze — Uses 1 credit', analyzing:'Analyzing…', paste_placeholder:'Paste ChatGPT link or your question + ChatGPT\'s answer here...', your_context:'Your context', analysis_results:'Analysis Results', credits_remaining:'Credits Remaining', current_plan:'Current Plan', upgrade_plan:'Upgrade Plan ↑', join_free:'Join for free', no_credits:'You have no credits left. Upgrade your plan to continue.' },
-  ur: { nav_home:'ہوم', nav_dashboard:'ڈیش بورڈ', nav_features:'خصوصیات', nav_about:'بارے میں', sign_in:'سائن ان', sign_up:'سائن اپ', sign_out:'سائن آوٹ', join_wl:'ویٹنگ لسٹ میں شامل ہوں', analyze_btn:'تجزیہ کریں — 1 کریڈٹ استعمال ہوگا', analyzing:'تجزیہ ہو رہا ہے…', paste_placeholder:'یہاں ChatGPT گفتگو پیسٹ کریں...', your_context:'آپ کا سیاق', analysis_results:'تجزیہ کے نتائج', credits_remaining:'باقی کریڈٹ', current_plan:'موجودہ پلان', upgrade_plan:'اپگریڈ کریں ↑', join_free:'مفت میں شامل ہوں', no_credits:'کریڈٹ ختم ہو گئے۔ جاری رکھنے کے لیے پلان اپگریڈ کریں۔' },
-  hi: { nav_home:'होम', nav_dashboard:'डैशबोर्ड', nav_features:'विशेषताएं', nav_about:'के बारे में', sign_in:'साइन इन', sign_up:'साइन अप', sign_out:'साइन आउट', join_wl:'प्रतीक्षा सूची में शामिल हों', analyze_btn:'विश्लेषण करें — 1 क्रेडिट', analyzing:'विश्लेषण हो रहा है…', paste_placeholder:'यहाँ ChatGPT वार्तालाप पेस्ट करें...', your_context:'आपका संदर्भ', analysis_results:'विश्लेषण परिणाम', credits_remaining:'शेष क्रेडिट', current_plan:'वर्तमान योजना', upgrade_plan:'अपग्रेड करें ↑', join_free:'मुफ्त में जुड़ें', no_credits:'क्रेडिट खत्म। जारी रखने के लिए प्लान अपग्रेड करें।' },
-  ar: { nav_home:'الرئيسية', nav_dashboard:'لوحة التحكم', nav_features:'الميزات', nav_about:'حول', sign_in:'تسجيل الدخول', sign_up:'إنشاء حساب', sign_out:'تسجيل الخروج', join_wl:'انضم لقائمة الانتظار', analyze_btn:'تحليل — يستخدم رصيداً', analyzing:'جارٍ التحليل…', paste_placeholder:'الصق محادثة ChatGPT هنا...', your_context:'سياقك', analysis_results:'نتائج التحليل', credits_remaining:'الرصيد المتبقي', current_plan:'الخطة الحالية', upgrade_plan:'ترقية الخطة ↑', join_free:'انضم مجاناً', no_credits:'نفدت رصيدك. قم بترقية خطتك للمتابعة.' },
-  es: { nav_home:'Inicio', nav_dashboard:'Panel', nav_features:'Características', nav_about:'Acerca de', sign_in:'Iniciar sesión', sign_up:'Registrarse', sign_out:'Cerrar sesión', join_wl:'Unirse a la lista de espera', analyze_btn:'Analizar — Usa 1 crédito', analyzing:'Analizando…', paste_placeholder:'Pega tu conversación de ChatGPT aquí...', your_context:'Tu contexto', analysis_results:'Resultados del análisis', credits_remaining:'Créditos restantes', current_plan:'Plan actual', upgrade_plan:'Mejorar plan ↑', join_free:'Únete gratis', no_credits:'Sin créditos. Mejora tu plan para continuar.' },
-  fr: { nav_home:'Accueil', nav_dashboard:'Tableau de bord', nav_features:'Fonctionnalités', nav_about:'À propos', sign_in:'Se connecter', sign_up:"S'inscrire", sign_out:'Se déconnecter', join_wl:"Rejoindre la liste d'attente", analyze_btn:'Analyser — Utilise 1 crédit', analyzing:'Analyse en cours…', paste_placeholder:'Collez votre conversation ChatGPT ici...', your_context:'Votre contexte', analysis_results:"Résultats de l'analyse", credits_remaining:'Crédits restants', current_plan:'Plan actuel', upgrade_plan:'Mettre à niveau ↑', join_free:'Rejoindre gratuitement', no_credits:'Plus de crédits. Mettez à niveau votre plan.' },
-  de: { nav_home:'Startseite', nav_dashboard:'Dashboard', nav_features:'Funktionen', nav_about:'Über uns', sign_in:'Anmelden', sign_up:'Registrieren', sign_out:'Abmelden', join_wl:'Warteliste beitreten', analyze_btn:'Analysieren — Verbraucht 1 Guthaben', analyzing:'Wird analysiert…', paste_placeholder:'ChatGPT-Gespräch hier einfügen...', your_context:'Ihr Kontext', analysis_results:'Analyseergebnisse', credits_remaining:'Verbleibende Guthaben', current_plan:'Aktueller Plan', upgrade_plan:'Plan upgraden ↑', join_free:'Kostenlos beitreten', no_credits:'Kein Guthaben mehr. Bitte upgraden.' },
-  ro: { nav_home:'Ghar', nav_dashboard:'Dashboard', nav_features:'Features', nav_about:'Bare mein', sign_in:'Sign In karo', sign_up:'Account banao', sign_out:'Sign Out karo', join_wl:'Waiting List mein aao', analyze_btn:'Tahleel karo — 1 credit lagega', analyzing:'Tahleel ho raha hai…', paste_placeholder:'ChatGPT conversation yahan paste karo...', your_context:'Tumhara context', analysis_results:'Tahleel ke nataij', credits_remaining:'Baqi credits', current_plan:'Mौjuda plan', upgrade_plan:'Plan upgrade karo ↑', join_free:'Muft mein shaamil ho', no_credits:'Credits khatam. Plan upgrade karo.' }
+  en: { nav_home:'Home', nav_dashboard:'Dashboard', nav_features:'Features', nav_about:'About', sign_in:'Sign In', sign_up:'Sign Up', sign_out:'Sign Out', analyze_btn:'Analyze — Uses 1 credit', analyzing:'Analyzing…', paste_placeholder:'Paste ChatGPT link or your question + ChatGPT\'s answer here...', your_context:'Your context', analysis_results:'Analysis Results', credits_remaining:'Credits Remaining', current_plan:'Current Plan', upgrade_plan:'Upgrade Plan ↑', no_credits:'You have no credits left. Upgrade your plan to continue.' },
+  ur: { nav_home:'ہوم', nav_dashboard:'ڈیش بورڈ', nav_features:'خصوصیات', nav_about:'بارے میں', sign_in:'سائن ان', sign_up:'سائن اپ', sign_out:'سائن آوٹ', analyze_btn:'تجزیہ کریں — 1 کریڈٹ استعمال ہوگا', analyzing:'تجزیہ ہو رہا ہے…', paste_placeholder:'یہاں ChatGPT گفتگو پیسٹ کریں...', your_context:'آپ کا سیاق', analysis_results:'تجزیہ کے نتائج', credits_remaining:'باقی کریڈٹ', current_plan:'موجودہ پلان', upgrade_plan:'اپگریڈ کریں ↑', no_credits:'کریڈٹ ختم ہو گئے۔ جاری رکھنے کے لیے پلان اپگریڈ کریں۔' },
+  hi: { nav_home:'होम', nav_dashboard:'डैशबोर्ड', nav_features:'विशेषताएं', nav_about:'के बारे में', sign_in:'साइन इन', sign_up:'साइन अप', sign_out:'साइन आउट', analyze_btn:'विश्लेषण करें — 1 क्रेडिट', analyzing:'विश्लेषण हो रहा है…', paste_placeholder:'यहाँ ChatGPT वार्तालाप पेस्ट करें...', your_context:'आपका संदर्भ', analysis_results:'विश्लेषण परिणाम', credits_remaining:'शेष क्रेडिट', current_plan:'वर्तमान योजना', upgrade_plan:'अपग्रेड करें ↑', no_credits:'क्रेडिट खत्म। जारी रखने के लिए प्लान अपग्रेड करें।' },
+  ar: { nav_home:'الرئيسية', nav_dashboard:'لوحة التحكم', nav_features:'الميزات', nav_about:'حول', sign_in:'تسجيل الدخول', sign_up:'إنشاء حساب', sign_out:'تسجيل الخروج', analyze_btn:'تحليل — يستخدم رصيداً', analyzing:'جارٍ التحليل…', paste_placeholder:'الصق محادثة ChatGPT هنا...', your_context:'سياقك', analysis_results:'نتائج التحليل', credits_remaining:'الرصيد المتبقي', current_plan:'الخطة الحالية', upgrade_plan:'ترقية الخطة ↑', no_credits:'نفدت رصيدك. قم بترقية خطتك للمتابعة.' },
+  es: { nav_home:'Inicio', nav_dashboard:'Panel', nav_features:'Características', nav_about:'Acerca de', sign_in:'Iniciar sesión', sign_up:'Registrarse', sign_out:'Cerrar sesión', analyze_btn:'Analizar — Usa 1 crédito', analyzing:'Analizando…', paste_placeholder:'Pega tu conversación de ChatGPT aquí...', your_context:'Tu contexto', analysis_results:'Resultados del análisis', credits_remaining:'Créditos restantes', current_plan:'Plan actual', upgrade_plan:'Mejorar plan ↑', no_credits:'Sin créditos. Mejora tu plan para continuar.' },
+  fr: { nav_home:'Accueil', nav_dashboard:'Tableau de bord', nav_features:'Fonctionnalités', nav_about:'À propos', sign_in:'Se connecter', sign_up:"S'inscrire", sign_out:'Se déconnecter', analyze_btn:'Analyser — Utilise 1 crédit', analyzing:'Analyse en cours…', paste_placeholder:'Collez votre conversation ChatGPT ici...', your_context:'Votre contexte', analysis_results:"Résultats de l'analyse", credits_remaining:'Crédits restants', current_plan:'Plan actuel', upgrade_plan:'Mettre à niveau ↑', no_credits:'Plus de crédits. Mettez à niveau votre plan.' },
+  de: { nav_home:'Startseite', nav_dashboard:'Dashboard', nav_features:'Funktionen', nav_about:'Über uns', sign_in:'Anmelden', sign_up:'Registrieren', sign_out:'Abmelden', analyze_btn:'Analysieren — Verbraucht 1 Guthaben', analyzing:'Wird analysiert…', paste_placeholder:'ChatGPT-Gespräch hier einfügen...', your_context:'Ihr Kontext', analysis_results:'Analyseergebnisse', credits_remaining:'Verbleibende Guthaben', current_plan:'Aktueller Plan', upgrade_plan:'Plan upgraden ↑', no_credits:'Kein Guthaben mehr. Bitte upgraden.' },
+  ro: { nav_home:'Ghar', nav_dashboard:'Dashboard', nav_features:'Features', nav_about:'Bare mein', sign_in:'Sign In karo', sign_up:'Account banao', sign_out:'Sign Out karo', analyze_btn:'Tahleel karo — 1 credit lagega', analyzing:'Tahleel ho raha hai…', paste_placeholder:'ChatGPT conversation yahan paste karo...', your_context:'Tumhara context', analysis_results:'Tahleel ke nataij', credits_remaining:'Baqi credits', current_plan:'Mौjuda plan', upgrade_plan:'Plan upgrade karo ↑', no_credits:'Credits khatam. Plan upgrade karo.' }
 };
 
 function t(key) {
@@ -798,20 +761,6 @@ async function signIn(email, password) {
 }
 
 async function signOut() { await sb.auth.signOut(); }
-
-async function joinWaitingList(email) {
-  const { error } = await sb.from('waiting_list').insert([{ email }]);
-  return { error };
-}
-
-async function getWaitingListStatus(email) {
-  const { data, error } = await sb
-    .from('waiting_list')
-    .select('position, discount_code')
-    .eq('email', email)
-    .single();
-  return { data, error };
-}
 
 async function getProfile(userId) {
   const { data, error } = await sb.from('profiles').select('*').eq('id', userId).single();
@@ -930,19 +879,6 @@ async function populateDash() {
   document.getElementById('analyzeBtn').disabled =
     document.getElementById('analysisInput').value.trim().length < 10 || credits <= 0;
 
-  // Fetch waiting list status
-  const email = currentUser.email || '';
-  const { data: wl } = await getWaitingListStatus(email);
-  if (wl) {
-    wlCodeCache = wl.discount_code || '';
-    document.getElementById('dashWlPos').textContent  = '#' + wl.position;
-    document.getElementById('dashWlCode').textContent = wlCodeCache;
-    document.getElementById('dashWlCard').style.display  = 'block';
-    document.getElementById('dashWlNudge').style.display = 'none';
-  } else {
-    document.getElementById('dashWlCard').style.display  = 'none';
-    document.getElementById('dashWlNudge').style.display = 'block';
-  }
 }
 
 // ── Context tab selector ────────────────────────────────────
@@ -1083,16 +1019,6 @@ function clearOutput() {
   document.getElementById('analysisContent').innerHTML = '';
 }
 
-// ── Copy discount code ──────────────────────────────────────
-function copyCode() {
-  if (!wlCodeCache) return;
-  navigator.clipboard.writeText(wlCodeCache).then(() => {
-    const btn = document.getElementById('copyBtn');
-    btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = 'Copy', 2000);
-  });
-}
-
 // ── Sign In handler ─────────────────────────────────────────
 async function handleSignIn(e) {
   e.preventDefault();
@@ -1169,40 +1095,6 @@ async function handleForgotPassword() {
 // ── Sign Out ────────────────────────────────────────────────
 async function handleSignOut() { await signOut(); /* SIGNED_OUT event handles showLanding() */ }
 
-// ── Waiting list form ───────────────────────────────────────
-async function handleWaitlist(e) {
-  e.preventDefault();
-  const email = document.getElementById('wlEmail').value.trim();
-  const btn   = document.getElementById('wlBtn');
-  const okEl  = document.getElementById('wlOk');
-  const errEl = document.getElementById('wlErr');
-  okEl.style.display = errEl.style.display = 'none';
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span>Joining…';
-
-  const { error } = await joinWaitingList(email);
-  btn.disabled = false;
-  btn.innerHTML = 'Join Waiting List';
-
-  if (!error) {
-    const { data: wl } = await getWaitingListStatus(email);
-    if (wl?.position <= 20) {
-      okEl.textContent = `🎉 You're #${wl.position} on the list! Your 20% lifetime discount code: ${wl.discount_code}`;
-    } else if (wl?.position) {
-      okEl.textContent = `🎉 You're on the waiting list at position #${wl.position}. We'll notify you at launch!`;
-    } else {
-      okEl.textContent = "🎉 You're on the waiting list! First 20 users get 20% off for life.";
-    }
-    okEl.style.display = 'block';
-    document.getElementById('wlForm').reset();
-  } else {
-    errEl.textContent = error.code === '23505'
-      ? 'This email is already on the waiting list.'
-      : 'Something went wrong. Please try again.';
-    errEl.style.display = 'block';
-  }
-}
-
 // ── Modal ───────────────────────────────────────────────────
 function openModal(type) {
   document.getElementById('modalOverlay').classList.add('show');
@@ -1257,12 +1149,6 @@ function closeNav() {
   document.getElementById('mobileNav').classList.remove('open');
   document.getElementById('hamIco').style.display = 'block';
   document.getElementById('xIco').style.display   = 'none';
-}
-
-// ── Scroll helpers ──────────────────────────────────────────
-function scrollToJoin() {
-  if (document.getElementById('landingView').style.display === 'none') showLanding();
-  setTimeout(() => document.getElementById('join-waitlist').scrollIntoView({ behavior: 'smooth' }), 50);
 }
 
 // ── FAQ accordion ───────────────────────────────────────────
