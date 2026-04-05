@@ -161,6 +161,31 @@
     /* ── Pricing popular border ────────────────────────── */
     .pop { border-color:#10A37F !important;box-shadow:0 0 36px rgba(16,163,127,.12); }
 
+    /* ── Agent grid ─────────────────────────────────────── */
+    .agent-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:.875rem; }
+    .agent-card { display:flex;flex-direction:column;gap:.625rem;padding:1.125rem;cursor:pointer;transition:transform .15s,box-shadow .15s; }
+    .agent-card:hover { transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.18); }
+    .agent-icon-box { width:40px;height:40px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0; }
+    .agent-use-btn { margin-top:auto;padding:.4rem .75rem;border-radius:.625rem;background:rgba(16,163,127,.1);border:1px solid rgba(16,163,127,.2);color:#10A37F;font-size:.78rem;font-weight:600;cursor:pointer;transition:background .15s; }
+    .agent-use-btn:hover { background:rgba(16,163,127,.18); }
+
+    /* ── Agent modal ─────────────────────────────────────── */
+    #agentModal { display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.65);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:1rem; }
+    #agentModal.show { display:flex; }
+    .agent-modal-box { background:var(--card);border:1px solid var(--border);border-radius:1.25rem;width:100%;max-width:560px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 28px 72px rgba(0,0,0,.45);overflow:hidden; }
+    .agent-modal-hdr { display:flex;align-items:center;justify-content:space-between;padding:1.375rem 1.5rem;border-bottom:1px solid var(--border);flex-shrink:0; }
+    .agent-modal-body { overflow-y:auto;padding:1.375rem 1.5rem;display:flex;flex-direction:column;gap:.875rem;flex:1; }
+    .agent-modal-ftr { padding:1rem 1.5rem 1.375rem;border-top:1px solid var(--border);flex-shrink:0; }
+    .agent-result { background:rgba(128,128,128,.04);border:1px solid var(--border);border-radius:.875rem;padding:1.125rem;font-size:.875rem;color:var(--text);line-height:1.75;white-space:pre-wrap;overflow-wrap:break-word; }
+    .agent-result strong, .agent-result b { color:var(--text);font-weight:700; }
+    .field-label { font-size:.78rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem;display:block; }
+    .agent-inp { width:100%;padding:.65rem .875rem;background:var(--inp-bg);border:1px solid var(--border);border-radius:.75rem;color:var(--text);font-size:.875rem;font-family:inherit;outline:none;transition:border-color .2s; }
+    .agent-inp:focus { border-color:var(--btn); }
+    .agent-sel { width:100%;padding:.65rem .875rem;background:var(--inp-bg);border:1px solid var(--border);border-radius:.75rem;color:var(--text);font-size:.875rem;font-family:inherit;outline:none;appearance:none;cursor:pointer;transition:border-color .2s; }
+    .agent-sel:focus { border-color:var(--btn); }
+    .agent-ta { width:100%;padding:.75rem .875rem;background:var(--inp-bg);border:1px solid var(--border);border-radius:.75rem;color:var(--text);font-size:.875rem;font-family:inherit;outline:none;resize:vertical;min-height:90px;line-height:1.6;transition:border-color .2s; }
+    .agent-ta:focus { border-color:var(--btn); }
+
     /* ── Responsive ─────────────────────────────────────── */
     @media (min-width:768px) {
       .md-flex  { display:flex !important; }
@@ -431,6 +456,121 @@
     </div>
   </div>
 </section>
+
+<!-- ── 10 Agents Section ──────────────────────────────────── -->
+<section style="max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+    <div>
+      <h3 style="font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:.2rem;">🤖 AI Agents</h3>
+      <p style="font-size:.8rem;color:var(--text2);">10 specialized agents — each uses 1 credit</p>
+    </div>
+    <span style="font-size:.75rem;color:var(--text2);background:rgba(16,163,127,.08);border:1px solid rgba(16,163,127,.15);padding:.25rem .75rem;border-radius:9999px;">✨ Powered by Gemini</span>
+  </div>
+  <div class="agent-grid">
+
+    <!-- 1: Content Writer -->
+    <div class="card agent-card" onclick="openAgent('content')">
+      <div class="agent-icon-box g-bg">📝</div>
+      <div>
+        <p style="font-size:.875rem;font-weight:700;color:var(--text);margin-bottom:.2rem;">Content Writer</p>
+        <p style="font-size:.75rem;color:var(--text2);line-height:1.5;">Blog, Twitter, LinkedIn & Instagram copy</p>
+      </div>
+      <button class="agent-use-btn" onclick="event.stopPropagation();openAgent('content')">Use Agent →</button>
+    </div>
+
+    <!-- 2: Code Agent -->
+    <div class="card agent-card" onclick="openAgent('code')">
+      <div class="agent-icon-box g-bg">💻</div>
+      <div>
+        <p style="font-size:.875rem;font-weight:700;color:var(--text);margin-bottom:.2rem;">Code Agent</p>
+        <p style="font-size:.75rem;color:var(--text2);line-height:1.5;">Clean code with explanation in your language</p>
+      </div>
+      <button class="agent-use-btn" onclick="event.stopPropagation();openAgent('code')">Use Agent →</button>
+    </div>
+
+    <!-- 3: Prompt Engineer -->
+    <div class="card agent-card" onclick="openAgent('prompt')">
+      <div class="agent-icon-box g-bg">🎨</div>
+      <div>
+        <p style="font-size:.875rem;font-weight:700;color:var(--text);margin-bottom:.2rem;">Prompt Engineer</p>
+        <p style="font-size:.75rem;color:var(--text2);line-height:1.5;">3 optimized prompts for Midjourney, DALL-E, GPT</p>
+      </div>
+      <button class="agent-use-btn" onclick="event.stopPropagation();openAgent('prompt')">Use Agent →</button>
+    </div>
+
+    <!-- 4: Hook Builder -->
+    <div class="card agent-card" onclick="openAgent('hook')">
+      <div class="agent-icon-box g-bg">🎣</div>
+      <div>
+        <p style="font-size:.875rem;font-weight:700;color:var(--text);margin-bottom:.2rem;">Hook Builder</p>
+        <p style="font-size:.75rem;color:var(--text2);line-height:1.5;">5 viral hooks for any platform</p>
+      </div>
+      <button class="agent-use-btn" onclick="event.stopPropagation();openAgent('hook')">Use Agent →</button>
+    </div>
+
+    <!-- 5: Language Bridge -->
+    <div class="card agent-card" onclick="openAgent('translate')">
+      <div class="agent-icon-box g-bg">🌐</div>
+      <div>
+        <p style="font-size:.875rem;font-weight:700;color:var(--text);margin-bottom:.2rem;">Language Bridge</p>
+        <p style="font-size:.75rem;color:var(--text2);line-height:1.5;">Translate preserving tone & context</p>
+      </div>
+      <button class="agent-use-btn" onclick="event.stopPropagation();openAgent('translate')">Use Agent →</button>
+    </div>
+
+    <!-- 6: Editor Agent -->
+    <div class="card agent-card" onclick="openAgent('editor')">
+      <div class="agent-icon-box g-bg">✍️</div>
+      <div>
+        <p style="font-size:.875rem;font-weight:700;color:var(--text);margin-bottom:.2rem;">Editor Agent</p>
+        <p style="font-size:.75rem;color:var(--text2);line-height:1.5;">Improve text with changes explained</p>
+      </div>
+      <button class="agent-use-btn" onclick="event.stopPropagation();openAgent('editor')">Use Agent →</button>
+    </div>
+
+    <!-- 7: Research Agent -->
+    <div class="card agent-card" onclick="openAgent('research')">
+      <div class="agent-icon-box g-bg">📚</div>
+      <div>
+        <p style="font-size:.875rem;font-weight:700;color:var(--text);margin-bottom:.2rem;">Research Agent</p>
+        <p style="font-size:.75rem;color:var(--text2);line-height:1.5;">Key findings, stats & sources</p>
+      </div>
+      <button class="agent-use-btn" onclick="event.stopPropagation();openAgent('research')">Use Agent →</button>
+    </div>
+
+    <!-- 8: Marketing Agent -->
+    <div class="card agent-card" onclick="openAgent('marketing')">
+      <div class="agent-icon-box g-bg">🎯</div>
+      <div>
+        <p style="font-size:.875rem;font-weight:700;color:var(--text);margin-bottom:.2rem;">Marketing Agent</p>
+        <p style="font-size:.75rem;color:var(--text2);line-height:1.5;">Strategy, ad copy & campaign ideas</p>
+      </div>
+      <button class="agent-use-btn" onclick="event.stopPropagation();openAgent('marketing')">Use Agent →</button>
+    </div>
+
+    <!-- 9: Data Analyst -->
+    <div class="card agent-card" onclick="openAgent('data')">
+      <div class="agent-icon-box g-bg">📊</div>
+      <div>
+        <p style="font-size:.875rem;font-weight:700;color:var(--text);margin-bottom:.2rem;">Data Analyst</p>
+        <p style="font-size:.75rem;color:var(--text2);line-height:1.5;">Insights, trends & recommendations</p>
+      </div>
+      <button class="agent-use-btn" onclick="event.stopPropagation();openAgent('data')">Use Agent →</button>
+    </div>
+
+    <!-- 10: Tutor Agent -->
+    <div class="card agent-card" onclick="openAgent('tutor')">
+      <div class="agent-icon-box g-bg">🎓</div>
+      <div>
+        <p style="font-size:.875rem;font-weight:700;color:var(--text);margin-bottom:.2rem;">Tutor Agent</p>
+        <p style="font-size:.75rem;color:var(--text2);line-height:1.5;">Simple explanations with practice questions</p>
+      </div>
+      <button class="agent-use-btn" onclick="event.stopPropagation();openAgent('tutor')">Use Agent →</button>
+    </div>
+
+  </div>
+</section>
+
 </div><!-- /dashView -->
 
 
@@ -662,6 +802,38 @@
 </footer>
 </main>
 
+
+<!-- ── Agent Modal ─────────────────────────────────────────── -->
+<div id="agentModal" onclick="closeAgentModal(event)">
+  <div class="agent-modal-box" onclick="event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="agent-modal-hdr">
+      <div style="display:flex;align-items:center;gap:.75rem;">
+        <span id="agentModalIcon" style="font-size:1.6rem;"></span>
+        <div>
+          <h3 id="agentModalTitle" style="font-size:1rem;font-weight:800;color:var(--text);line-height:1.2;"></h3>
+          <p style="font-size:.75rem;color:var(--text2);margin-top:.15rem;">Uses 1 credit per run</p>
+        </div>
+      </div>
+      <button onclick="_closeAgentModal()" style="background:transparent;border:none;cursor:pointer;font-size:1.2rem;color:var(--text2);padding:.25rem;border-radius:.5rem;line-height:1;" aria-label="Close">✕</button>
+    </div>
+
+    <!-- Dynamic body (form + result) -->
+    <div id="agentModalBody" class="agent-modal-body"></div>
+
+    <!-- Error message -->
+    <div id="agentErr" class="msg-err" style="margin:0 1.5rem .75rem;"></div>
+
+    <!-- Footer with run button -->
+    <div class="agent-modal-ftr">
+      <button id="agentRunBtn" onclick="runAgent()" class="btn-p" style="width:100%;padding:.8rem;border-radius:.875rem;font-size:.9rem;">
+        Run Agent — 1 credit
+      </button>
+    </div>
+
+  </div>
+</div>
 
 <!-- ╔══════════════════════════════════════════╗
      ║  JAVASCRIPT                             ║
@@ -1149,6 +1321,197 @@ function closeNav() {
   document.getElementById('mobileNav').classList.remove('open');
   document.getElementById('hamIco').style.display = 'block';
   document.getElementById('xIco').style.display   = 'none';
+}
+
+// ── Agent definitions ──────────────────────────────────────
+const AGENT_DEFS = {
+  content:   { icon:'📝', name:'Content Writer Agent',   color:'#10A37F' },
+  code:      { icon:'💻', name:'Code Agent',              color:'#3B82F6' },
+  prompt:    { icon:'🎨', name:'Prompt Engineer Agent',   color:'#8B5CF6' },
+  hook:      { icon:'🎣', name:'Hook Builder Agent',      color:'#F59E0B' },
+  translate: { icon:'🌐', name:'Language Bridge Agent',   color:'#06B6D4' },
+  editor:    { icon:'✍️', name:'Editor Agent',            color:'#EC4899' },
+  research:  { icon:'📚', name:'Research Agent',          color:'#10A37F' },
+  marketing: { icon:'🎯', name:'Marketing Agent',         color:'#EF4444' },
+  data:      { icon:'📊', name:'Data Analyst Agent',      color:'#F97316' },
+  tutor:     { icon:'🎓', name:'Tutor Agent',             color:'#3B82F6' },
+};
+
+let activeAgentId = null;
+
+// ── Build form HTML for each agent ─────────────────────────
+function agentFormHTML(id) {
+  const inp = (label, ph, key, type='text') =>
+    `<div><label class="field-label">${label}</label><input class="agent-inp" type="${type}" id="af-${key}" placeholder="${ph}" autocomplete="off" /></div>`;
+  const sel = (label, key, opts) =>
+    `<div><label class="field-label">${label}</label><select class="agent-sel" id="af-${key}">${opts.map(o=>`<option>${o}</option>`).join('')}</select></div>`;
+  const ta = (label, ph, key, rows=3) =>
+    `<div><label class="field-label">${label}</label><textarea class="agent-ta" id="af-${key}" placeholder="${ph}" rows="${rows}"></textarea></div>`;
+
+  switch (id) {
+    case 'content':
+      return inp('Topic','What is your content about?','topic')
+           + sel('Platform','platform',['Blog','Twitter / X','LinkedIn','Instagram'])
+           + sel('Tone','tone',['Professional','Entertaining','Persuasive','Informative','Casual'])
+           + sel('Length','length',['Short (~300 words)','Medium (~600 words)','Long (~1200 words)']);
+    case 'code':
+      return sel('Programming Language','language',['Python','JavaScript','TypeScript','Java','C++','Go','Rust','PHP','Swift','Kotlin','SQL','Bash'])
+           + ta('Task Description','Describe what you want the code to do…','task',4);
+    case 'prompt':
+      return ta('What do you want to create?','Describe the image or text you want to generate with AI…','description',4);
+    case 'hook':
+      return inp('Topic','What is your content about?','topic')
+           + sel('Platform','platform',['TikTok','YouTube','Instagram','LinkedIn','Blog','Twitter / X']);
+    case 'translate':
+      return ta('Text to Translate','Paste the text you want translated…','text',4)
+           + sel('From Language','sourceLang',['Auto-detect','English','Urdu','Hindi','Arabic','Spanish','French','German','Roman Urdu','Chinese','Japanese','Korean','Portuguese','Russian'])
+           + sel('To Language','targetLang',['English','Urdu','Hindi','Arabic','Spanish','French','German','Roman Urdu','Chinese','Japanese','Korean','Portuguese','Russian']);
+    case 'editor':
+      return ta('Text to Edit','Paste your text here…','text',5)
+           + sel('Editing Style','style',['Professional','Friendly','Formal','Casual','Academic','Persuasive']);
+    case 'research':
+      return inp('Research Topic','What do you want researched?','topic');
+    case 'marketing':
+      return inp('Product / Service','What are you marketing?','product')
+           + inp('Target Audience','Who is your ideal customer?','audience');
+    case 'data':
+      return ta('Data Description','Describe your data or paste a summary/CSV snippet…','data',5);
+    case 'tutor':
+      return inp('Topic to Learn','What subject or concept?','topic')
+           + sel('Learner Level','level',['Child (6–10)','Teen (11–17)','Adult','University Student','Professional']);
+    default:
+      return '<p style="color:var(--text2);font-size:.875rem;">Unknown agent.</p>';
+  }
+}
+
+// ── Collect inputs from the active agent form ───────────────
+function collectAgentInputs(id) {
+  const val = key => {
+    const el = document.getElementById('af-' + key);
+    return el ? el.value.trim() : '';
+  };
+  switch (id) {
+    case 'content':   return { topic: val('topic'), platform: val('platform'), tone: val('tone'), length: val('length') };
+    case 'code':      return { language: val('language'), task: val('task') };
+    case 'prompt':    return { description: val('description') };
+    case 'hook':      return { topic: val('topic'), platform: val('platform') };
+    case 'translate': return { text: val('text'), sourceLang: val('sourceLang'), targetLang: val('targetLang') };
+    case 'editor':    return { text: val('text'), style: val('style') };
+    case 'research':  return { topic: val('topic') };
+    case 'marketing': return { product: val('product'), audience: val('audience') };
+    case 'data':      return { data: val('data') };
+    case 'tutor':     return { topic: val('topic'), level: val('level') };
+    default:          return {};
+  }
+}
+
+// ── Validate required fields ────────────────────────────────
+function validateAgentInputs(id, inputs) {
+  const required = {
+    content: ['topic'], code: ['task'], prompt: ['description'],
+    hook: ['topic'], translate: ['text'], editor: ['text'],
+    research: ['topic'], marketing: ['product','audience'],
+    data: ['data'], tutor: ['topic']
+  };
+  const fields = required[id] || [];
+  return fields.every(f => inputs[f] && inputs[f].length >= 2);
+}
+
+// ── Open agent modal ────────────────────────────────────────
+function openAgent(id) {
+  if (!currentUser) { openModal('signin'); return; }
+  activeAgentId = id;
+  const def = AGENT_DEFS[id];
+  safeText('agentModalIcon', def.icon);
+  safeText('agentModalTitle', def.name);
+  const body = document.getElementById('agentModalBody');
+  if (body) {
+    body.innerHTML = agentFormHTML(id) + `<div id="agentResultWrap" style="display:none;"><div class="agent-result" id="agentResultContent"></div></div>`;
+  }
+  const errEl = document.getElementById('agentErr');
+  if (errEl) errEl.style.display = 'none';
+  const runBtn = document.getElementById('agentRunBtn');
+  if (runBtn) { runBtn.disabled = false; runBtn.innerHTML = 'Run Agent — 1 credit'; }
+  document.getElementById('agentModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+// ── Close agent modal ───────────────────────────────────────
+function closeAgentModal(e) {
+  if (e && e.target !== document.getElementById('agentModal')) return;
+  _closeAgentModal();
+}
+function _closeAgentModal() {
+  document.getElementById('agentModal').classList.remove('show');
+  document.body.style.overflow = '';
+  activeAgentId = null;
+}
+
+// ── Run agent ───────────────────────────────────────────────
+async function runAgent() {
+  if (!activeAgentId || !currentUser) return;
+  if (currentCredits <= 0) {
+    const e = document.getElementById('agentErr');
+    if (e) { e.textContent = t('no_credits'); e.style.display = 'block'; }
+    return;
+  }
+
+  const inputs = collectAgentInputs(activeAgentId);
+  if (!validateAgentInputs(activeAgentId, inputs)) {
+    const e = document.getElementById('agentErr');
+    if (e) { e.textContent = 'Please fill in all required fields.'; e.style.display = 'block'; }
+    return;
+  }
+
+  const errEl = document.getElementById('agentErr');
+  if (errEl) errEl.style.display = 'none';
+
+  const btn = document.getElementById('agentRunBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Thinking…'; }
+
+  // Hide previous result
+  const wrap = document.getElementById('agentResultWrap');
+  if (wrap) wrap.style.display = 'none';
+
+  try {
+    const resp = await fetch('/api-server/api/agent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ agentId: activeAgentId, inputs, language: currentLangName })
+    });
+    const data = await resp.json();
+
+    if (!resp.ok) throw new Error(data.error || 'Agent error');
+
+    // Deduct credit
+    currentCredits = Math.max(0, currentCredits - 1);
+    await updateCredits(currentUser.id, currentCredits);
+    safeText('dashCredits', currentCredits);
+
+    // Render result
+    const content = document.getElementById('agentResultContent');
+    if (content) content.innerHTML = renderAgentMarkdown(data.content || '');
+    if (wrap) {
+      wrap.style.display = 'block';
+      setTimeout(() => wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80);
+    }
+  } catch (err) {
+    const e = document.getElementById('agentErr');
+    if (e) { e.textContent = err.message || 'Something went wrong.'; e.style.display = 'block'; }
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Run Agent — 1 credit'; }
+  }
+}
+
+// ── Render agent markdown (bold + newlines) ─────────────────
+function renderAgentMarkdown(text) {
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/`{3}[\w]*\n?([\s\S]*?)`{3}/g,'<pre style="background:rgba(128,128,128,.08);padding:.75rem;border-radius:.5rem;overflow-x:auto;font-size:.8rem;line-height:1.5;white-space:pre-wrap;">$1</pre>')
+    .replace(/`([^`]+)`/g,'<code style="background:rgba(128,128,128,.1);padding:.1rem .35rem;border-radius:.35rem;font-size:.82rem;">$1</code>')
+    .replace(/\n/g,'<br>');
 }
 
 // ── FAQ accordion ───────────────────────────────────────────

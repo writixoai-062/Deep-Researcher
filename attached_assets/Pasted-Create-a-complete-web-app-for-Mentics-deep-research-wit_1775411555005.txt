@@ -1,0 +1,114 @@
+Create a complete web app for "Mentics — deep research" with 10 AI agents and multi-language support.
+
+## BRANDING:
+- Name: MENTICS
+- Tagline: "deep research" (small below logo)
+- Main tagline: "See how AI really thinks"
+
+## HEADER:
+- Left: Logo + "MENTICS" with "deep research" below
+- Center: Home, Dashboard, Features, About
+- Right: Language selector (🌐), Dark/Light toggle, Sign In, Sign Up
+
+## MULTI-LANGUAGE SUPPORT (for ALL agents and main tool):
+Supported languages: English, Urdu, Hindi, Arabic, Spanish, French, German, Roman Urdu
+
+Each agent's output MUST be in user's selected language.
+Language selector in header → changes entire UI + agent responses.
+
+## 10 AGENTS (Dashboard after login):
+
+### Agent Layout:
+Show 10 agent cards in responsive grid (2 rows x 5 columns on desktop, scroll on mobile)
+
+Each card has:
+- Icon
+- Name
+- Short description (1 line)
+- "Use Agent" button
+
+### Agent 1: 📝 Content Writer Agent
+- Input: Topic, Tone, Length, Platform (Blog/Twitter/LinkedIn/Instagram)
+- Output: Ready-to-use content in user's language
+
+### Agent 2: 💻 Code Agent
+- Input: Programming language, Task description
+- Output: Code with explanation in user's language
+
+### Agent 3: 🎨 Prompt Engineer Agent
+- Input: What image/text user wants to generate
+- Output: 3 optimized prompts for Midjourney/DALL-E/ChatGPT in user's language
+
+### Agent 4: 🎣 Hook Builder Agent
+- Input: Topic, Platform (TikTok/YouTube/Instagram/Blog)
+- Output: 5 viral hooks in user's language
+
+### Agent 5: 🌐 Language Bridge Agent
+- Input: Text, Source language, Target language
+- Output: Translated text preserving tone and context
+
+### Agent 6: ✍️ Editor Agent
+- Input: Text to edit, Style (Professional/Friendly/Formal)
+- Output: Improved text with changes explained
+
+### Agent 7: 📚 Research Agent
+- Input: Research topic
+- Output: Summary with key findings, statistics, sources (in user's language)
+
+### Agent 8: 🎯 Marketing Agent
+- Input: Product/Service, Target audience
+- Output: Marketing strategy, ad copy, campaign ideas (in user's language)
+
+### Agent 9: 📊 Data Analyst Agent
+- Input: Data description or CSV upload
+- Output: Insights, trends, recommendations (in user's language)
+
+### Agent 10: 🎓 Tutor Agent
+- Input: Topic, Age level (Child/Teen/Adult)
+- Output: Simple explanation with examples and practice questions (in user's language)
+
+## MAIN TOOL (Left column in dashboard):
+- Textarea: "Paste your ChatGPT conversation or question..."
+- Context selector: Student | Professional | Researcher | Curious | Technical
+- Language selector (same as header, syncs)
+- Analyze button
+- Output: AI analysis in selected language (what ChatGPT assumed, what's missing, better answer)
+
+## BOSS AGENT:
+- Real-time detection of user's question
+- Detects: content creator, developer, student, marketer, researcher
+- Shows: "🤖 Boss Agent recommends: [Agent Name]"
+
+## CREDITS SYSTEM:
+- Free: 5 credits/month
+- Each agent usage = 1 credit
+- Each main tool analysis = 1 credit
+- Pro: 100 credits ($9.99)
+- Business: Unlimited ($29.99)
+
+## GEMINI AI INTEGRATION:
+- Use Gemini API (gemini-1.5-flash)
+- All agents and main tool call Gemini
+- Pass language parameter: "Respond in [user's language]"
+
+## DASHBOARD LAYOUT:
+Left column: Main Tool (textarea + context + analyze)
+Right column: User info (credits, plan, name)
+Below: 10 Agent Cards
+
+## AUTH:
+- Sign Up, Sign In, Forgot password (Supabase)
+- Auto-create profile on signup
+
+## COLORS:
+Dark mode: bg #0A0A0A, cards #141414, primary #10A37F
+Light mode: bg white, cards #F9FAFB, primary #3B82F6
+
+## REQUIREMENTS:
+- No React — pure HTML/CSS/JS
+- Dark/Light mode with localStorage
+- Mobile responsive
+- All in one HTML file
+- Supabase + Gemini API integration
+
+Generate complete code.
