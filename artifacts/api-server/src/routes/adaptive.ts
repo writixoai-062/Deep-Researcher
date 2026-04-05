@@ -178,4 +178,85 @@ router.post("/adaptive/deep", async (req: Request, res: Response) => {
   }
 });
 
+// POST /api/adaptive/compare
+// Returns a side-by-side options comparison table for the user's situation
+router.post("/adaptive/compare", async (req: Request, res: Response) => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    res.status(503).json({ error: "GEMINI_API_KEY not configured." });
+    return;
+  }
+
+  const { question, category, answers, language } = req.body as {
+    question?: string;
+    category?: string;
+    answers?: Record<string, string | string[]>;
+    language?: string;
+  };
+
+  if (!question) {
+    res.status(400).json({ error: "question is required." });
+    return;
+  }
+
+  const lang = typeof language === "string" && language.trim() ? language.trim() : "English";
+  const langNote = lang !== "English" ? `\n\nIMPORTANT: Respond entirely in ${lang}. All text including option names must be in ${lang}.` : "";
+
+  const answersText = answers
+    ? Object.entries(answers)
+        .map(([q, a]) => `• ${q}: ${Array.isArray(a) ? a.join(", ") : a}`)
+        .join("\n")
+    : "No specific preferences provided.";
+
+  const categoryMetrics: Record<string, string[]> = {
+    "Business/Startup":   ["Startup Cost", "Time to First Revenue", "Risk Level", "Income Potential (Year 1)", "Skills Required", "Scalability"],
+    "Career/Job":         ["Time Investment", "Difficulty Level", "Average Salary Increase", "Job Market Demand", "Networking Required", "Timeline to Goal"],
+    "Tech/Code":          ["Learning Curve", "Development Time", "Cost", "Community Support", "Job Market", "Scalability"],
+    "Health/Fitness":     ["Time per Day", "Cost", "Difficulty", "Results Timeline", "Equipment Needed", "Sustainability"],
+    "Learning/Education": ["Time to Competency", "Cost", "Difficulty", "Job Demand", "Certification Available", "Practical Projects"],
+    "Finance/Money":      ["Risk Level", "Expected Return", "Liquidity", "Time Horizon", "Minimum Investment", "Complexity"],
+    "Creative":           ["Startup Cost", "Time to Monetize", "Audience Building Time", "Income Potential", "Skills Required", "Platforms"],
+    "Relationship/Life":  ["Effort Required", "Time Investment", "Expected Outcome", "Difficulty", "Support Needed", "Timeline"],
+    "General":            ["Cost", "Time Required", "Risk Level", "Expected Outcome", "Difficulty", "Recommendation"],
+  };
+
+  const metrics = categoryMetrics[category as string] || categoryMetrics["General"];
+
+  const prompt =
+    `You are a strategic consultant comparing options for a client.\n\n` +
+    `CLIENT QUESTION: "${question}"\n` +
+    `CATEGORY: ${category || "General"}\n` +
+    `CLIENT PROFILE:\n${answersText}\n\n` +
+    `Generate a comparison of 3-4 distinct approaches/options the client could take.\n\n` +
+    `Metrics to compare: ${metrics.join(", ")}\n\n` +
+    `Respond with ONLY valid JSON (no markdown, no code blocks):\n` +
+    `{\n` +
+    `  "title": "Comparison: [short description]",\n` +
+    `  "options": [\n` +
+    `    { "name": "Option A Name", "emoji": "🏪", "tagline": "One sentence description" },\n` +
+    `    { "name": "Option B Name", "emoji": "💻", "tagline": "One sentence description" }\n` +
+    `  ],\n` +
+    `  "metrics": [\n` +
+    `    { "metric": "${metrics[0]}", "values": ["Value for A", "Value for B", ...] },\n` +
+    `    { "metric": "${metrics[1]}", "values": ["Value for A", "Value for B", ...] }\n` +
+    `  ],\n` +
+    `  "recommendation": "Based on their profile: [specific recommendation with reasoning]",\n` +
+    `  "winner": "Option A Name"\n` +
+    `}` +
+    langNote;
+
+  try {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const result = await model.generateContent(prompt);
+    let text = result.response.text().trim();
+    text = text.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/i, "");
+    const parsed = JSON.parse(text);
+    res.json(parsed);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    res.status(502).json({ error: "Failed to generate comparison", details: message });
+  }
+});
+
 export default router;

@@ -18,6 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -226,6 +227,31 @@
     .adpt-step-dot.todo { background:var(--border);color:var(--text2); }
     .adpt-step-line { flex:1;height:1px;background:var(--border); }
 
+    /* ── Templates grid ──────────────────────────────────── */
+    .tpl-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:.875rem; }
+    @media (max-width:900px) { .tpl-grid { grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:540px) { .tpl-grid { grid-template-columns:1fr; } }
+    .tpl-card { padding:1rem;border-radius:1rem;border:1px solid var(--border);background:var(--card);cursor:pointer;transition:border-color .15s,transform .15s;display:flex;flex-direction:column;gap:.5rem; }
+    .tpl-card:hover { border-color:rgba(16,163,127,.4);transform:translateY(-1px); }
+    .tpl-card .tpl-ico { font-size:1.35rem; }
+    .tpl-card .tpl-title { font-size:.82rem;font-weight:700;color:var(--text);line-height:1.4; }
+    .tpl-card .tpl-tag { font-size:.72rem;color:var(--btn);background:rgba(16,163,127,.08);padding:.15rem .5rem;border-radius:.35rem;width:fit-content;font-weight:600; }
+    .tpl-card .tpl-btn { margin-top:auto;font-size:.75rem;font-weight:600;color:var(--btn);background:transparent;border:1px solid rgba(16,163,127,.25);border-radius:.5rem;padding:.35rem .625rem;cursor:pointer;transition:background .15s;font-family:inherit;text-align:left; }
+    .tpl-card .tpl-btn:hover { background:rgba(16,163,127,.1); }
+
+    /* ── Comparison table ─────────────────────────────────── */
+    .cmp-table { width:100%;border-collapse:collapse;font-size:.82rem; }
+    .cmp-table th { padding:.6rem .875rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text2);background:rgba(128,128,128,.05);border-bottom:1px solid var(--border); }
+    .cmp-table td { padding:.625rem .875rem;border-bottom:1px solid var(--border);color:var(--text);line-height:1.5; }
+    .cmp-table tr:last-child td { border-bottom:none; }
+    .cmp-table td:first-child { font-weight:600;color:var(--text2);font-size:.78rem;white-space:nowrap; }
+    .cmp-winner-col { background:rgba(16,163,127,.04); }
+    .cmp-winner-header { color:var(--btn) !important; }
+    .cmp-badge { display:inline-block;padding:.15rem .5rem;border-radius:.35rem;font-size:.7rem;font-weight:700; }
+    .cmp-badge.low { background:rgba(16,163,127,.12);color:#6ee7b7; }
+    .cmp-badge.med { background:rgba(234,179,8,.12);color:#fde68a; }
+    .cmp-badge.high { background:rgba(239,68,68,.12);color:#fca5a5; }
+
     /* ── History items ─────────────────────────────────── */
     .hist-item { padding:.6rem .75rem;border-radius:.625rem;border:1px solid var(--border);cursor:pointer;transition:background .15s,border-color .15s;margin-bottom:.4rem; }
     .hist-item:hover { background:rgba(16,163,127,.06);border-color:rgba(16,163,127,.2); }
@@ -319,6 +345,7 @@
     <nav id="deskNav" style="display:none;gap:.2rem;align-items:center;" class="md-flex">
       <button onclick="showLanding()" class="nav-a" data-i18n="nav_home">Home</button>
       <button onclick="navDashClick()" class="nav-a" data-i18n="nav_dashboard">Dashboard</button>
+      <button onclick="navTemplatesClick()" class="nav-a">Templates</button>
       <button onclick="navHistoryClick()" class="nav-a">History</button>
       <a href="#features" class="nav-a" data-i18n="nav_features">Features</a>
       <a href="#faq"      class="nav-a" data-i18n="nav_about">About</a>
@@ -376,6 +403,7 @@
     <div style="padding:.875rem 1.5rem;display:flex;flex-direction:column;gap:.35rem;">
       <button onclick="showLanding();closeNav()" class="nav-a" style="text-align:left;padding:.625rem .75rem;" data-i18n="nav_home">Home</button>
       <button onclick="navDashClick();closeNav()" class="nav-a" style="text-align:left;padding:.625rem .75rem;" data-i18n="nav_dashboard">Dashboard</button>
+      <button onclick="navTemplatesClick();closeNav()" class="nav-a" style="text-align:left;padding:.625rem .75rem;">Templates</button>
       <button onclick="navHistoryClick();closeNav()" class="nav-a" style="text-align:left;padding:.625rem .75rem;">History</button>
       <a href="#features" onclick="closeNav()" class="nav-a" style="padding:.625rem .75rem;" data-i18n="nav_features">Features</a>
       <a href="#faq"      onclick="closeNav()" class="nav-a" style="padding:.625rem .75rem;" data-i18n="nav_about">About</a>
@@ -499,15 +527,18 @@
               <button onclick="resetAdaptive()" style="margin-left:auto;font-size:.75rem;color:var(--text2);background:transparent;border:none;cursor:pointer;text-decoration:underline;">← Change question</button>
             </div>
             <div id="adaptQuestionsArea"></div>
-            <div style="display:flex;gap:.625rem;margin-top:.875rem;">
-              <button id="adaptAnswerBtn" onclick="getUniqueAnswer()" class="btn-p" style="flex:1;padding:.7rem;border-radius:.875rem;font-size:.82rem;">
-                📝 Get Unique Answer
+            <div style="display:flex;gap:.5rem;margin-top:.875rem;flex-wrap:wrap;">
+              <button id="adaptAnswerBtn" onclick="getUniqueAnswer()" class="btn-p" style="flex:1;min-width:120px;padding:.65rem;border-radius:.875rem;font-size:.8rem;">
+                📝 Unique Answer
               </button>
-              <button id="adaptDeepBtn" onclick="getDeepAnalysis()" class="btn-o" style="flex:1;padding:.7rem;border-radius:.875rem;font-size:.82rem;">
+              <button id="adaptDeepBtn" onclick="getDeepAnalysis()" class="btn-o" style="flex:1;min-width:120px;padding:.65rem;border-radius:.875rem;font-size:.8rem;">
                 📊 Deep Analysis
               </button>
+              <button id="adaptCompareBtn" onclick="getComparison()" class="btn-o" style="flex:1;min-width:120px;padding:.65rem;border-radius:.875rem;font-size:.8rem;">
+                ⚖️ Compare Options
+              </button>
             </div>
-            <p style="font-size:.73rem;color:var(--text2);margin-top:.5rem;text-align:center;">Each action uses 1 credit — answer all questions for best results</p>
+            <p style="font-size:.73rem;color:var(--text2);margin-top:.5rem;text-align:center;">Each action uses 1 credit — answer questions above for best results</p>
           </div>
 
         </div>
@@ -573,14 +604,31 @@
 
       <!-- Adaptive Q&A: Deep Analysis output -->
       <div id="deepOutput" class="card" style="display:none;padding:1.5rem;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
           <div style="display:flex;align-items:center;gap:.5rem;">
             <span style="font-size:1rem;">📊</span>
             <h3 style="font-weight:700;font-size:.95rem;color:var(--text);">Complete Deep Analysis</h3>
           </div>
-          <button onclick="clearAdaptive()" style="font-size:.75rem;color:var(--text2);background:transparent;border:none;cursor:pointer;">Clear</button>
+          <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
+            <button onclick="exportToPDF()" class="btn-o" style="font-size:.75rem;padding:.4rem .75rem;border-radius:.625rem;">📥 Export PDF</button>
+            <button onclick="clearAdaptive()" style="font-size:.75rem;color:var(--text2);background:transparent;border:none;cursor:pointer;">Clear</button>
+          </div>
         </div>
-        <div id="deepContent"></div>
+        <div id="deepPdfTarget">
+          <div id="deepContent"></div>
+        </div>
+      </div>
+
+      <!-- Adaptive Q&A: Comparison output -->
+      <div id="compareOutput" class="card" style="display:none;padding:1.5rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+          <div style="display:flex;align-items:center;gap:.5rem;">
+            <span style="font-size:1rem;">⚖️</span>
+            <h3 style="font-weight:700;font-size:.95rem;color:var(--text);">Options Comparison</h3>
+          </div>
+          <button onclick="safeStyle('compareOutput','display','none')" style="font-size:.75rem;color:var(--text2);background:transparent;border:none;cursor:pointer;">Clear</button>
+        </div>
+        <div id="compareContent"></div>
       </div>
 
     </div>
@@ -733,6 +781,85 @@
         <p style="font-size:.75rem;color:var(--text2);line-height:1.5;">Simple explanations with practice questions</p>
       </div>
       <button class="agent-use-btn" onclick="event.stopPropagation();openAgent('tutor')">Use Agent →</button>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ── TEMPLATES SECTION ── -->
+<section id="templatesSection" style="max-width:1200px;margin:0 auto;padding:1.5rem;display:none;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem;">
+    <div>
+      <h3 style="font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:.2rem;">📚 Templates Library</h3>
+      <p style="font-size:.8rem;color:var(--text2);">Ready-made prompts — click to launch instantly</p>
+    </div>
+    <button onclick="hideTemplates()" style="font-size:.8rem;color:var(--text2);background:transparent;border:1px solid var(--border);border-radius:.5rem;padding:.35rem .75rem;cursor:pointer;">← Back to Dashboard</button>
+  </div>
+  <div class="tpl-grid">
+
+    <div class="tpl-card" onclick="useTemplate('How to start a profitable e-commerce business from scratch?','Business/Startup')">
+      <div class="tpl-ico">🛒</div>
+      <div class="tpl-tag">Business</div>
+      <div class="tpl-title">Start an E-commerce Business</div>
+      <p style="font-size:.75rem;color:var(--text2);line-height:1.55;">Complete business plan for online selling from zero budget</p>
+      <button class="tpl-btn">Use Template →</button>
+    </div>
+
+    <div class="tpl-card" onclick="useTemplate('How to create a 6-month career roadmap to go from junior to senior developer?','Career/Job')">
+      <div class="tpl-ico">🚀</div>
+      <div class="tpl-tag">Career</div>
+      <div class="tpl-title">Junior → Senior Dev Roadmap</div>
+      <p style="font-size:.75rem;color:var(--text2);line-height:1.55;">6-month structured roadmap with milestones and skills to master</p>
+      <button class="tpl-btn">Use Template →</button>
+    </div>
+
+    <div class="tpl-card" onclick="useTemplate('How to learn Python programming in 3 months from complete zero?','Learning/Education')">
+      <div class="tpl-ico">🐍</div>
+      <div class="tpl-tag">Learning</div>
+      <div class="tpl-title">Learn Python in 3 Months</div>
+      <p style="font-size:.75rem;color:var(--text2);line-height:1.55;">Full curriculum from zero to job-ready with projects and resources</p>
+      <button class="tpl-btn">Use Template →</button>
+    </div>
+
+    <div class="tpl-card" onclick="useTemplate('How to get fit and lose weight in 30 days with no gym equipment?','Health/Fitness')">
+      <div class="tpl-ico">💪</div>
+      <div class="tpl-tag">Health</div>
+      <div class="tpl-title">Get Fit in 30 Days</div>
+      <p style="font-size:.75rem;color:var(--text2);line-height:1.55;">Complete home workout and nutrition plan — no gym required</p>
+      <button class="tpl-btn">Use Template →</button>
+    </div>
+
+    <div class="tpl-card" onclick="useTemplate('How to start freelancing online from zero with no experience and no portfolio?','Business/Startup')">
+      <div class="tpl-ico">💼</div>
+      <div class="tpl-tag">Business</div>
+      <div class="tpl-title">Start Freelancing from Zero</div>
+      <p style="font-size:.75rem;color:var(--text2);line-height:1.55;">Step-by-step guide to land first clients with no portfolio</p>
+      <button class="tpl-btn">Use Template →</button>
+    </div>
+
+    <div class="tpl-card" onclick="useTemplate('How to launch a successful Shopify dropshipping store with a $500 budget?','Business/Startup')">
+      <div class="tpl-ico">🏪</div>
+      <div class="tpl-tag">Business</div>
+      <div class="tpl-title">Shopify Store with $500</div>
+      <p style="font-size:.75rem;color:var(--text2);line-height:1.55;">Complete dropshipping setup, product research, and marketing</p>
+      <button class="tpl-btn">Use Template →</button>
+    </div>
+
+    <div class="tpl-card" onclick="useTemplate('How to switch careers from marketing to tech and get my first developer job?','Career/Job')">
+      <div class="tpl-ico">🔄</div>
+      <div class="tpl-tag">Career</div>
+      <div class="tpl-title">Marketing → Tech Career Switch</div>
+      <p style="font-size:.75rem;color:var(--text2);line-height:1.55;">Full transition plan — skills, portfolio, networking, first job</p>
+      <button class="tpl-btn">Use Template →</button>
+    </div>
+
+    <div class="tpl-card" onclick="useTemplate('How to save $10,000 in 6 months on a regular salary?','Finance/Money')">
+      <div class="tpl-ico">💰</div>
+      <div class="tpl-tag">Finance</div>
+      <div class="tpl-title">Save $10,000 in 6 Months</div>
+      <p style="font-size:.75rem;color:var(--text2);line-height:1.55;">Budget plan, saving strategies, and investment basics</p>
+      <button class="tpl-btn">Use Template →</button>
     </div>
 
   </div>
@@ -1489,6 +1616,7 @@ function switchMode(mode) {
     safeStyle('adaptiveEmptyState', 'display', 'none');
     safeStyle('adaptiveOutput',     'display', 'none');
     safeStyle('deepOutput',         'display', 'none');
+    safeStyle('compareOutput',      'display', 'none');
   } else {
     // Adaptive mode
     safeStyle('analysisEmptyState', 'display', 'none');
@@ -1813,9 +1941,196 @@ function resetAdaptive() {
 function clearAdaptive() {
   safeStyle('adaptiveOutput',     'display', 'none');
   safeStyle('deepOutput',         'display', 'none');
+  safeStyle('compareOutput',      'display', 'none');
   safeStyle('adaptiveEmptyState', 'display', 'block');
   document.getElementById('adaptiveContent').innerHTML = '';
   document.getElementById('deepContent').innerHTML     = '';
+  document.getElementById('compareContent').innerHTML  = '';
+}
+
+// ── Templates ────────────────────────────────────────────────
+function navTemplatesClick() {
+  if (!currentUser) { openModal('signin'); return; }
+  showDash();
+  // Show templates section, hide everything else in dash
+  safeStyle('templatesSection', 'display', 'block');
+  window.scrollTo({ top: document.getElementById('templatesSection').offsetTop - 80, behavior: 'smooth' });
+}
+
+function hideTemplates() {
+  safeStyle('templatesSection', 'display', 'none');
+}
+
+function useTemplate(text, suggestedCategory) {
+  // Navigate to dashboard
+  showDash();
+  safeStyle('templatesSection', 'display', 'none');
+  // Switch to adaptive mode
+  switchMode('adaptive');
+  // Scroll to top of dashboard
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Fill the question
+  const input = document.getElementById('adaptInput');
+  if (!input) return;
+  input.value = text;
+  onAdaptInputChange();
+  // Auto-trigger question generation after a tiny delay
+  setTimeout(() => generateQuestions(), 150);
+}
+
+// ── PDF Export ───────────────────────────────────────────────
+function exportToPDF() {
+  if (typeof html2pdf === 'undefined') {
+    alert('PDF export library is loading. Please try again in a moment.');
+    return;
+  }
+
+  const target = document.getElementById('deepPdfTarget');
+  if (!target) return;
+
+  const category = adaptCategory || 'Analysis';
+  const question = adaptQuestion  || 'Deep Research';
+  const dateStr  = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  const userName = currentUser ? (document.getElementById('userGreet')?.textContent || 'User').replace(/^Hi,\s*/i,'') : 'Guest';
+
+  // Build a print-friendly wrapper
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'font-family:Arial,sans-serif;color:#111;padding:24px;max-width:800px;';
+  wrapper.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #10A37F;padding-bottom:16px;margin-bottom:20px;">
+      <div>
+        <div style="font-size:20px;font-weight:900;color:#10A37F;letter-spacing:-.5px;">🧠 MENTICS</div>
+        <div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:1px;">Deep Research Report</div>
+      </div>
+      <div style="text-align:right;font-size:12px;color:#666;">
+        <div>${dateStr}</div>
+        <div>Prepared for: ${userName}</div>
+        <div style="margin-top:4px;font-weight:600;color:#10A37F;">${category}</div>
+      </div>
+    </div>
+    <div style="background:#f0fdf4;border-left:4px solid #10A37F;padding:12px 16px;border-radius:6px;margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#10A37F;margin-bottom:4px;">Research Question</div>
+      <div style="font-size:14px;font-weight:600;color:#111;">${escHtml(question)}</div>
+    </div>
+    ${target.innerHTML}
+    <div style="margin-top:32px;border-top:1px solid #ddd;padding-top:12px;font-size:10px;color:#999;text-align:center;">
+      Generated by Mentics Deep Research · mentics.app · ${dateStr}
+    </div>
+  `;
+
+  // Light up the content colors for PDF
+  wrapper.querySelectorAll('.deep-section h3').forEach(h => { h.style.color = '#111'; h.style.borderBottom = '1px solid #ddd'; h.style.paddingBottom = '6px'; h.style.marginBottom = '8px'; });
+  wrapper.querySelectorAll('.deep-section p, .deep-section li').forEach(el => { el.style.color = '#333'; });
+  wrapper.querySelectorAll('.adpt-section').forEach(el => { el.style.background = '#f0fdf4'; el.style.borderLeft = '3px solid #10A37F'; el.style.color = '#111'; el.style.padding = '10px 12px'; el.style.marginBottom = '10px'; el.style.borderRadius = '4px'; });
+  wrapper.querySelectorAll('h4').forEach(h => { h.style.color = '#111'; });
+
+  html2pdf().set({
+    margin:       [10, 10, 15, 10],
+    filename:     `Mentics-${category.replace(/\W+/g,'-')}-${Date.now()}.pdf`,
+    html2canvas:  { scale: 2, useCORS: true, logging: false },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak:    { mode: ['avoid-all','css','legacy'] }
+  }).from(wrapper).save();
+}
+
+// ── Comparison Mode ──────────────────────────────────────────
+async function getComparison() {
+  if (currentCredits <= 0) { alert('No credits left. Upgrade your plan to continue.'); return; }
+  const btn = document.getElementById('adaptCompareBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Comparing…';
+
+  safeStyle('adaptiveEmptyState', 'display', 'none');
+  safeStyle('compareOutput',      'display', 'block');
+  document.getElementById('compareContent').innerHTML = `
+    <div style="text-align:center;padding:2rem;color:var(--text2);">
+      <div class="spin" style="width:1.5rem;height:1.5rem;border-width:3px;margin:0 auto .875rem;display:block;"></div>
+      <p style="font-size:.875rem;">Generating comparison table…</p>
+    </div>`;
+
+  try {
+    const res = await fetch('/api-server/api/adaptive/compare', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question: adaptQuestion,
+        category: adaptCategory,
+        answers:  adaptAnswers,
+        language: currentLangName
+      })
+    });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      throw new Error(e.error || 'Request failed');
+    }
+    const data = await res.json();
+    renderComparison(data);
+    setAdaptStep(3);
+    deductCredit();
+  } catch (err) {
+    document.getElementById('compareContent').innerHTML =
+      `<div class="msg-err" style="display:block;">⚠️ ${err.message}</div>`;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '⚖️ Compare Options';
+}
+
+function renderComparison(data) {
+  if (!data || !data.options || !data.metrics) {
+    document.getElementById('compareContent').innerHTML = '<p style="color:var(--text2);">No comparison data returned.</p>';
+    return;
+  }
+
+  const winnerName = data.winner || '';
+  const winnerIdx  = data.options.findIndex(o => o.name === winnerName);
+
+  // Build header row
+  const optHeaders = data.options.map((o, i) => {
+    const isWinner = i === winnerIdx;
+    return `<th class="${isWinner ? 'cmp-winner-col cmp-winner-header' : ''}" style="text-align:left;">
+      <div style="display:flex;flex-direction:column;gap:2px;">
+        <span style="font-size:1rem;">${o.emoji || ''}</span>
+        <span>${escHtml(o.name)}</span>
+        ${isWinner ? '<span style="font-size:.68rem;background:rgba(16,163,127,.15);color:#6ee7b7;padding:1px 5px;border-radius:.3rem;margin-top:2px;font-weight:700;">⭐ RECOMMENDED</span>' : ''}
+      </div>
+    </th>`;
+  }).join('');
+
+  // Build metric rows
+  const metricRows = data.metrics.map(m => {
+    const cells = data.options.map((_, i) => {
+      const isWinner = i === winnerIdx;
+      const val = m.values[i] || '—';
+      // Auto-badge low/med/high values
+      let display = escHtml(val);
+      const lv = val.toLowerCase();
+      if (/\blow\b/.test(lv)) display = `<span class="cmp-badge low">${escHtml(val)}</span>`;
+      else if (/\bmedium\b|\bmod/.test(lv)) display = `<span class="cmp-badge med">${escHtml(val)}</span>`;
+      else if (/\bhigh\b/.test(lv)) display = `<span class="cmp-badge high">${escHtml(val)}</span>`;
+      return `<td class="${isWinner ? 'cmp-winner-col' : ''}">${display}</td>`;
+    }).join('');
+    return `<tr><td>${escHtml(m.metric)}</td>${cells}</tr>`;
+  }).join('');
+
+  const optTaglines = data.options.map((o, i) =>
+    `<div style="margin-bottom:.375rem;"><strong style="color:var(--text)">${o.emoji || ''} ${escHtml(o.name)}</strong> <span style="font-size:.78rem;color:var(--text2);">— ${escHtml(o.tagline || '')}</span></div>`
+  ).join('');
+
+  document.getElementById('compareContent').innerHTML = `
+    <p style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:.625rem;">${escHtml(data.title || 'Options Comparison')}</p>
+    <div style="margin-bottom:.875rem;">${optTaglines}</div>
+    <div style="overflow-x:auto;">
+      <table class="cmp-table">
+        <thead><tr><th style="text-align:left;">Metric</th>${optHeaders}</tr></thead>
+        <tbody>${metricRows}</tbody>
+      </table>
+    </div>
+    <div class="adpt-section" style="margin-top:1rem;">
+      <h4>🎯 Our Recommendation</h4>
+      <p>${escHtml(data.recommendation || '')}</p>
+    </div>
+  `;
 }
 
 // ── Supabase: history helpers ────────────────────────────────
