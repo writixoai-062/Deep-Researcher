@@ -199,6 +199,33 @@
       .dash-grid { grid-template-columns: 1fr !important; }
     }
 
+    /* ── Mode tabs ─────────────────────────────────────── */
+    .mode-tab { flex:1;padding:.7rem .5rem;font-size:.82rem;font-weight:600;border:none;border-bottom:2px solid transparent;background:transparent;cursor:pointer;color:var(--text2);transition:all .15s;font-family:inherit;letter-spacing:.01em; }
+    .mode-tab.active { color:var(--btn);border-bottom-color:var(--btn);background:rgba(16,163,127,.04); }
+    .mode-tab:hover:not(.active) { color:var(--text);background:rgba(128,128,128,.05); }
+
+    /* ── Adaptive Q&A option buttons ────────────────────── */
+    .opt-btn { padding:.4rem .75rem;border-radius:.5rem;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.8rem;cursor:pointer;transition:all .15s;font-family:inherit;white-space:nowrap; }
+    .opt-btn.selected { border-color:var(--btn);background:rgba(16,163,127,.1);color:#6ee7b7;font-weight:600; }
+    .opt-btn:hover:not(.selected) { border-color:rgba(16,163,127,.35);color:var(--text); }
+
+    /* ── Adaptive output sections ───────────────────────── */
+    .adpt-section { padding:.875rem 1rem;background:rgba(16,163,127,.04);border-left:3px solid var(--btn);border-radius:0 .75rem .75rem 0;margin-bottom:.875rem; }
+    .adpt-section h4 { font-size:.875rem;font-weight:700;color:var(--text);margin-bottom:.375rem; }
+    .adpt-section p { font-size:.845rem;color:var(--text);line-height:1.75; }
+    .deep-section { margin-bottom:1.25rem; }
+    .deep-section h3 { font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:.5rem;padding-bottom:.4rem;border-bottom:1px solid var(--border); }
+    .deep-section p, .deep-section li { font-size:.845rem;color:var(--text);line-height:1.75; }
+    .deep-section ul, .deep-section ol { padding-left:1.25rem;margin:.35rem 0; }
+
+    /* ── Adaptive step indicator ────────────────────────── */
+    .adpt-steps { display:flex;align-items:center;gap:.375rem;margin-bottom:1rem; }
+    .adpt-step-dot { width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;transition:all .2s; }
+    .adpt-step-dot.done { background:var(--btn);color:#fff; }
+    .adpt-step-dot.active { background:rgba(16,163,127,.15);color:var(--btn);border:2px solid var(--btn); }
+    .adpt-step-dot.todo { background:var(--border);color:var(--text2); }
+    .adpt-step-line { flex:1;height:1px;background:var(--border); }
+
     /* ── History items ─────────────────────────────────── */
     .hist-item { padding:.6rem .75rem;border-radius:.625rem;border:1px solid var(--border);cursor:pointer;transition:background .15s,border-color .15s;margin-bottom:.4rem; }
     .hist-item:hover { background:rgba(16,163,127,.06);border-color:rgba(16,163,127,.2); }
@@ -399,41 +426,91 @@
   <!-- 3-column dashboard grid -->
   <div class="dash-grid" style="display:grid;grid-template-columns:1fr;gap:1.25rem;align-items:start;">
 
-    <!-- ── LEFT: Analysis tool ── -->
+    <!-- ── LEFT: Tabbed tool ── -->
     <div>
-      <div class="card" style="padding:1.5rem;">
-        <div style="display:flex;align-items:center;gap:.625rem;margin-bottom:1.125rem;">
-          <div class="g-bg" style="width:34px;height:34px;border-radius:.625rem;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;">🎯</div>
-          <div>
-            <h3 style="font-weight:800;font-size:.95rem;color:var(--text);letter-spacing:.02em;">PASTE YOUR CHATGPT CONVERSATION</h3>
-            <p style="font-size:.78rem;color:var(--text2);">Analyze the reasoning behind any AI response</p>
+      <div class="card" style="padding:0;overflow:hidden;">
+
+        <!-- Mode tab bar -->
+        <div style="display:flex;border-bottom:1px solid var(--border);">
+          <button id="tabAnalyze"  class="mode-tab active" onclick="switchMode('analyze')">🔍 Analyze AI</button>
+          <button id="tabAdaptive" class="mode-tab"        onclick="switchMode('adaptive')">💡 Ask Anything</button>
+        </div>
+
+        <!-- ─── MODE 1: Analyze ChatGPT conversation ─── -->
+        <div id="modeAnalyze" style="padding:1.5rem;">
+          <div style="display:flex;align-items:center;gap:.625rem;margin-bottom:1.125rem;">
+            <div class="g-bg" style="width:34px;height:34px;border-radius:.625rem;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;">🎯</div>
+            <div>
+              <h3 style="font-weight:800;font-size:.95rem;color:var(--text);letter-spacing:.02em;">PASTE YOUR CHATGPT CONVERSATION</h3>
+              <p style="font-size:.78rem;color:var(--text2);">Analyze the reasoning behind any AI response</p>
+            </div>
           </div>
-        </div>
-
-        <!-- Textarea -->
-        <textarea id="analysisInput" class="textarea-field" placeholder="Paste ChatGPT link or your question + ChatGPT's answer here..." style="margin-bottom:1rem;" oninput="onInputChange()"></textarea>
-
-        <!-- Context selector -->
-        <div style="margin-bottom:1rem;">
-          <p style="font-size:.78rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Your context</p>
-          <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
-            <button class="ctx-tab active" data-ctx="Student"      onclick="setCtx(this)">🎓 Student</button>
-            <button class="ctx-tab"        data-ctx="Professional" onclick="setCtx(this)">💼 Professional</button>
-            <button class="ctx-tab"        data-ctx="Researcher"   onclick="setCtx(this)">🔬 Researcher</button>
-            <button class="ctx-tab"        data-ctx="Curious"      onclick="setCtx(this)">💡 Curious</button>
-            <button class="ctx-tab"        data-ctx="Technical"    onclick="setCtx(this)">⚙️ Technical</button>
+          <textarea id="analysisInput" class="textarea-field" placeholder="Paste ChatGPT link or your question + ChatGPT's answer here..." style="margin-bottom:1rem;" oninput="onInputChange()"></textarea>
+          <div style="margin-bottom:1rem;">
+            <p style="font-size:.78rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">Your context</p>
+            <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
+              <button class="ctx-tab active" data-ctx="Student"      onclick="setCtx(this)">🎓 Student</button>
+              <button class="ctx-tab"        data-ctx="Professional" onclick="setCtx(this)">💼 Professional</button>
+              <button class="ctx-tab"        data-ctx="Researcher"   onclick="setCtx(this)">🔬 Researcher</button>
+              <button class="ctx-tab"        data-ctx="Curious"      onclick="setCtx(this)">💡 Curious</button>
+              <button class="ctx-tab"        data-ctx="Technical"    onclick="setCtx(this)">⚙️ Technical</button>
+            </div>
           </div>
+          <div id="bossAgent" class="card2" style="padding:.75rem 1rem;margin-bottom:1rem;background:rgba(16,163,127,.06);border-color:rgba(16,163,127,.2);">
+            <p style="font-size:.82rem;color:var(--text2);">🤖 Boss Agent recommends: <strong id="bossRec" style="color:#10A37F;"></strong></p>
+          </div>
+          <button id="analyzeBtn" onclick="analyzeQuestion()" class="btn-p" style="width:100%;padding:.8rem;border-radius:.875rem;font-size:.9rem;" disabled>
+            Analyze — Uses 1 credit
+          </button>
         </div>
 
-        <!-- Boss Agent recommendation -->
-        <div id="bossAgent" class="card2" style="padding:.75rem 1rem;margin-bottom:1rem;background:rgba(16,163,127,.06);border-color:rgba(16,163,127,.2);">
-          <p style="font-size:.82rem;color:var(--text2);">🤖 Boss Agent recommends: <strong id="bossRec" style="color:#10A37F;"></strong></p>
-        </div>
+        <!-- ─── MODE 2: Adaptive Q&A ─── -->
+        <div id="modeAdaptive" style="padding:1.5rem;display:none;">
 
-        <!-- Analyze button -->
-        <button id="analyzeBtn" onclick="analyzeQuestion()" class="btn-p" style="width:100%;padding:.8rem;border-radius:.875rem;font-size:.9rem;" disabled>
-          Analyze — Uses 1 credit
-        </button>
+          <!-- Step indicator -->
+          <div class="adpt-steps">
+            <div id="adotS1" class="adpt-step-dot active">1</div>
+            <div class="adpt-step-line"></div>
+            <div id="adotS2" class="adpt-step-dot todo">2</div>
+            <div class="adpt-step-line"></div>
+            <div id="adotS3" class="adpt-step-dot todo">3</div>
+          </div>
+
+          <!-- Step 1: Question input -->
+          <div id="adaptStep1">
+            <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.875rem;">
+              <div class="g-bg" style="width:28px;height:28px;border-radius:.5rem;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;">💡</div>
+              <div>
+                <p style="font-size:.82rem;font-weight:700;color:var(--text);">Ask Anything</p>
+                <p style="font-size:.74rem;color:var(--text2);">Business · Career · Tech · Health · Finance · Learning</p>
+              </div>
+            </div>
+            <textarea id="adaptInput" class="textarea-field" placeholder="What would you like to know? e.g. How to start a profitable online business with $500?" style="margin-bottom:.875rem;min-height:100px;" oninput="onAdaptInputChange()"></textarea>
+            <button id="adaptContinueBtn" onclick="generateQuestions()" class="btn-p" style="width:100%;padding:.8rem;border-radius:.875rem;font-size:.875rem;" disabled>
+              Continue — Personalize my answer →
+            </button>
+          </div>
+
+          <!-- Step 2: Clarifying questions -->
+          <div id="adaptStep2" style="display:none;">
+            <div id="adaptCategoryBadge" style="display:flex;align-items:center;gap:.375rem;margin-bottom:.875rem;">
+              <span id="adaptCategoryEmoji" style="font-size:1.1rem;"></span>
+              <span id="adaptCategoryName" style="font-size:.8rem;font-weight:700;color:var(--btn);"></span>
+              <button onclick="resetAdaptive()" style="margin-left:auto;font-size:.75rem;color:var(--text2);background:transparent;border:none;cursor:pointer;text-decoration:underline;">← Change question</button>
+            </div>
+            <div id="adaptQuestionsArea"></div>
+            <div style="display:flex;gap:.625rem;margin-top:.875rem;">
+              <button id="adaptAnswerBtn" onclick="getUniqueAnswer()" class="btn-p" style="flex:1;padding:.7rem;border-radius:.875rem;font-size:.82rem;">
+                📝 Get Unique Answer
+              </button>
+              <button id="adaptDeepBtn" onclick="getDeepAnalysis()" class="btn-o" style="flex:1;padding:.7rem;border-radius:.875rem;font-size:.82rem;">
+                📊 Deep Analysis
+              </button>
+            </div>
+            <p style="font-size:.73rem;color:var(--text2);margin-top:.5rem;text-align:center;">Each action uses 1 credit — answer all questions for best results</p>
+          </div>
+
+        </div>
       </div>
     </div>
 
@@ -456,7 +533,7 @@
         <div id="analysisContent"></div>
       </div>
 
-      <!-- Post-analysis actions -->
+      <!-- Post-analysis actions (Analyze AI mode) -->
       <div id="postAnalysis" style="display:none;">
         <div class="card2" style="padding:1rem;">
           <p style="font-size:.75rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.625rem;">What's next?</p>
@@ -470,6 +547,40 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Adaptive Q&A empty state (shown in adaptive mode before answer) -->
+      <div id="adaptiveEmptyState" class="card2" style="display:none;padding:2.5rem 1.25rem;text-align:center;">
+        <div style="font-size:2.5rem;margin-bottom:.875rem;">💡</div>
+        <p style="font-size:.875rem;font-weight:600;color:var(--text);margin-bottom:.35rem;">Personalized answers await</p>
+        <p style="font-size:.8rem;color:var(--text2);line-height:1.65;">Type your question on the left, answer 2-4 quick questions, then get a tailored answer or full deep analysis.</p>
+      </div>
+
+      <!-- Adaptive Q&A: Unique Answer output -->
+      <div id="adaptiveOutput" class="card" style="display:none;padding:1.5rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+          <div style="display:flex;align-items:center;gap:.5rem;">
+            <span style="font-size:1rem;">📝</span>
+            <h3 style="font-weight:700;font-size:.95rem;color:var(--text);">Your Personalized Answer</h3>
+          </div>
+          <div style="display:flex;gap:.5rem;align-items:center;">
+            <button onclick="getDeepAnalysis()" class="btn-o" style="font-size:.75rem;padding:.4rem .75rem;border-radius:.625rem;">📊 Deep Analysis</button>
+            <button onclick="clearAdaptive()" style="font-size:.75rem;color:var(--text2);background:transparent;border:none;cursor:pointer;">Clear</button>
+          </div>
+        </div>
+        <div id="adaptiveContent"></div>
+      </div>
+
+      <!-- Adaptive Q&A: Deep Analysis output -->
+      <div id="deepOutput" class="card" style="display:none;padding:1.5rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+          <div style="display:flex;align-items:center;gap:.5rem;">
+            <span style="font-size:1rem;">📊</span>
+            <h3 style="font-weight:700;font-size:.95rem;color:var(--text);">Complete Deep Analysis</h3>
+          </div>
+          <button onclick="clearAdaptive()" style="font-size:.75rem;color:var(--text2);background:transparent;border:none;cursor:pointer;">Clear</button>
+        </div>
+        <div id="deepContent"></div>
       </div>
 
     </div>
@@ -1349,6 +1460,362 @@ function clearOutput() {
   safeStyle('agentSuggestion', 'display', 'none');
   lastAnalysisQuestion = '';
   lastAnalysisRaw      = '';
+}
+
+// ══════════════════════════════════════════════════════════════
+// ADAPTIVE Q&A
+// ══════════════════════════════════════════════════════════════
+
+// ── State ───────────────────────────────────────────────────
+let currentMode      = 'analyze';   // 'analyze' | 'adaptive'
+let adaptCategory    = '';
+let adaptCategoryEmoji = '';
+let adaptQuestions   = [];          // [{id, question, options}]
+let adaptAnswers     = {};          // { question_text: selected_option }
+let adaptQuestion    = '';          // the original user question
+
+// ── Mode tab switching ───────────────────────────────────────
+function switchMode(mode) {
+  currentMode = mode;
+  document.getElementById('tabAnalyze') .classList.toggle('active', mode === 'analyze');
+  document.getElementById('tabAdaptive').classList.toggle('active', mode === 'adaptive');
+  safeStyle('modeAnalyze',  'display', mode === 'analyze'  ? 'block' : 'none');
+  safeStyle('modeAdaptive', 'display', mode === 'adaptive' ? 'block' : 'none');
+
+  if (mode === 'analyze') {
+    // Restore analyze-mode middle column state
+    const hasOutput = document.getElementById('analysisOutput').classList.contains('show');
+    safeStyle('analysisEmptyState', 'display', hasOutput ? 'none' : 'block');
+    safeStyle('adaptiveEmptyState', 'display', 'none');
+    safeStyle('adaptiveOutput',     'display', 'none');
+    safeStyle('deepOutput',         'display', 'none');
+  } else {
+    // Adaptive mode
+    safeStyle('analysisEmptyState', 'display', 'none');
+    safeStyle('postAnalysis',       'display', 'none');
+    // Show adaptive empty state or output depending on state
+    const hasAdaptiveOutput = document.getElementById('adaptiveOutput').style.display !== 'none';
+    const hasDeepOutput     = document.getElementById('deepOutput').style.display     !== 'none';
+    if (!hasAdaptiveOutput && !hasDeepOutput) {
+      safeStyle('adaptiveEmptyState', 'display', 'block');
+    }
+  }
+}
+
+// ── Input change (adaptive mode) ─────────────────────────────
+function onAdaptInputChange() {
+  const text = document.getElementById('adaptInput').value.trim();
+  document.getElementById('adaptContinueBtn').disabled = text.length < 8;
+}
+
+// ── Step indicator updater ───────────────────────────────────
+function setAdaptStep(step) {
+  ['S1','S2','S3'].forEach((s, i) => {
+    const el = document.getElementById('adot' + s);
+    if (!el) return;
+    el.className = 'adpt-step-dot ' + (i + 1 < step ? 'done' : i + 1 === step ? 'active' : 'todo');
+  });
+}
+
+// ── Step 1 → 2: Generate clarifying questions ────────────────
+async function generateQuestions() {
+  const q = document.getElementById('adaptInput').value.trim();
+  if (!q || q.length < 8) return;
+  adaptQuestion = q;
+
+  const btn = document.getElementById('adaptContinueBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Analyzing…';
+
+  try {
+    const res = await fetch('/api-server/api/adaptive/questions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: q, language: currentLangName })
+    });
+
+    if (!res.ok) throw new Error('Failed to analyze question');
+    const data = await res.json();
+
+    adaptCategory      = data.category      || 'General';
+    adaptCategoryEmoji = data.categoryEmoji || '💡';
+    adaptQuestions     = data.questions     || [];
+    adaptAnswers       = {};
+
+    // Show category badge
+    document.getElementById('adaptCategoryEmoji').textContent = adaptCategoryEmoji;
+    document.getElementById('adaptCategoryName').textContent  = adaptCategory;
+
+    // Build questions UI
+    renderAdaptiveQuestions();
+
+    // Switch to step 2
+    safeStyle('adaptStep1', 'display', 'none');
+    safeStyle('adaptStep2', 'display', 'block');
+    setAdaptStep(2);
+
+    // Show adaptive empty state in middle
+    safeStyle('adaptiveEmptyState', 'display', 'block');
+    safeStyle('adaptiveOutput',     'display', 'none');
+    safeStyle('deepOutput',         'display', 'none');
+
+  } catch (err) {
+    alert('Could not analyze question: ' + err.message);
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Continue — Personalize my answer →';
+}
+
+// ── Render clarifying questions with option buttons ──────────
+function renderAdaptiveQuestions() {
+  const container = document.getElementById('adaptQuestionsArea');
+  container.innerHTML = adaptQuestions.map((q, qi) => `
+    <div style="margin-bottom:.875rem;">
+      <p style="font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:.45rem;">${qi + 1}. ${escHtml(q.question)}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:.375rem;" id="optGroup_${qi}">
+        ${q.options.map((opt, oi) => `
+          <button class="opt-btn" id="opt_${qi}_${oi}"
+            onclick="selectOption(${qi}, ${oi})">
+            ${escHtml(opt)}
+          </button>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Toggle option selection (uses index to avoid quoting issues) ─
+function selectOption(qIdx, oIdx) {
+  const q = adaptQuestions[qIdx];
+  if (!q) return;
+  // Deselect all options in this group
+  q.options.forEach((_, i) => {
+    const el = document.getElementById(`opt_${qIdx}_${i}`);
+    if (el) el.classList.remove('selected');
+  });
+  // Select clicked option
+  const clicked = document.getElementById(`opt_${qIdx}_${oIdx}`);
+  if (clicked) clicked.classList.add('selected');
+  // Store using question text as key, option value as value
+  adaptAnswers[q.question] = q.options[oIdx];
+}
+
+// ── Step 2 → 3: Get Unique Answer ───────────────────────────
+async function getUniqueAnswer() {
+  if (currentCredits <= 0) { alert('No credits left. Upgrade your plan to continue.'); return; }
+  const btn = document.getElementById('adaptAnswerBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Generating…';
+
+  // Show loading in middle column
+  safeStyle('adaptiveEmptyState', 'display', 'none');
+  safeStyle('adaptiveOutput',     'display', 'block');
+  safeStyle('deepOutput',         'display', 'none');
+  document.getElementById('adaptiveContent').innerHTML = `
+    <div style="text-align:center;padding:2rem;color:var(--text2);">
+      <div class="spin" style="width:1.5rem;height:1.5rem;border-width:3px;margin:0 auto .875rem;display:block;"></div>
+      <p style="font-size:.875rem;">Crafting your personalized answer…</p>
+    </div>`;
+
+  try {
+    const res = await fetch('/api-server/api/adaptive/answer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question: adaptQuestion,
+        category: adaptCategory,
+        answers:  adaptAnswers,
+        language: currentLangName
+      })
+    });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      throw new Error(e.error || 'Request failed');
+    }
+    const { content } = await res.json();
+    renderAdaptiveAnswer(content);
+    setAdaptStep(3);
+    deductCredit();
+  } catch (err) {
+    document.getElementById('adaptiveContent').innerHTML =
+      `<div class="msg-err" style="display:block;">⚠️ ${err.message}</div>`;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '📝 Get Unique Answer';
+}
+
+// ── Step 2 → 3: Deep Analysis ────────────────────────────────
+async function getDeepAnalysis() {
+  if (currentCredits <= 0) { alert('No credits left. Upgrade your plan to continue.'); return; }
+  const btn = document.getElementById('adaptDeepBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Generating…';
+
+  safeStyle('adaptiveEmptyState', 'display', 'none');
+  safeStyle('deepOutput',         'display', 'block');
+  document.getElementById('deepContent').innerHTML = `
+    <div style="text-align:center;padding:2rem;color:var(--text2);">
+      <div class="spin" style="width:1.5rem;height:1.5rem;border-width:3px;margin:0 auto .875rem;display:block;"></div>
+      <p style="font-size:.875rem;">Building your complete analysis — this may take 10-20 seconds…</p>
+    </div>`;
+
+  try {
+    const res = await fetch('/api-server/api/adaptive/deep', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question: adaptQuestion,
+        category: adaptCategory,
+        answers:  adaptAnswers,
+        language: currentLangName
+      })
+    });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      throw new Error(e.error || 'Request failed');
+    }
+    const { content } = await res.json();
+    renderDeepAnalysis(content);
+    setAdaptStep(3);
+    deductCredit();
+  } catch (err) {
+    document.getElementById('deepContent').innerHTML =
+      `<div class="msg-err" style="display:block;">⚠️ ${err.message}</div>`;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '📊 Deep Analysis';
+}
+
+// ── Render personalized answer ───────────────────────────────
+function renderAdaptiveAnswer(raw) {
+  const content = document.getElementById('adaptiveContent');
+  // Parse sections marked with emoji headers
+  const lines  = raw.split('\n');
+  let html = '';
+  let buffer = [];
+  let currentHead = null;
+
+  const flush = () => {
+    if (currentHead !== null) {
+      const body = buffer.join('\n').trim();
+      html += `<div class="adpt-section"><h4>${currentHead}</h4><p>${
+        body.replace(/\n/g,'<br>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      }</p></div>`;
+      buffer = [];
+    } else if (buffer.length) {
+      html += `<p style="font-size:.845rem;color:var(--text);line-height:1.75;margin-bottom:.5rem;">${
+        buffer.join('<br>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      }</p>`;
+      buffer = [];
+    }
+  };
+
+  for (const line of lines) {
+    const l = line.trim();
+    // Detect emoji headers (📝, ✅, 💡, 📌, 3-STEP, etc.)
+    if (/^(📝|✅|💡|📌|🔑|⚡|🎯|✨)/.test(l) || /^\d+-STEP|^NEXT STEPS|^UNIQUE TIPS|^ACTION PLAN/i.test(l)) {
+      flush();
+      currentHead = l.replace(/\*\*/g,'');
+    } else if (l) {
+      buffer.push(l);
+    } else {
+      if (buffer.length > 0 && !currentHead) flush();
+    }
+  }
+  flush();
+
+  if (!html) {
+    html = `<div class="adpt-section"><h4>📝 Your Answer</h4><p>${
+      raw.replace(/\n/g,'<br>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    }</p></div>`;
+  }
+
+  content.innerHTML = html;
+}
+
+// ── Render deep analysis (markdown-style sections) ───────────
+function renderDeepAnalysis(raw) {
+  const content = document.getElementById('deepContent');
+  const lines   = raw.split('\n');
+  let html = '';
+  let inSection = false;
+  let sectionBuf = [];
+  let sectionHead = '';
+
+  const flushSection = () => {
+    if (sectionHead) {
+      const body = sectionBuf
+        .join('\n')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^[-•]\s+(.+)/gm, '<li>$1</li>')
+        .replace(/^(\d+)\.\s+(.+)/gm, '<li>$2</li>');
+      const wrapped = body.includes('<li>') ? body.replace(/(<li>.*?<\/li>\s*)+/gs, m => `<ul>${m}</ul>`) : body;
+      html += `<div class="deep-section"><h3>${sectionHead}</h3><p>${
+        wrapped.replace(/\n/g, '<br>').replace(/<br><ul>/g,'<ul>').replace(/<\/ul><br>/g,'</ul>')
+      }</p></div>`;
+      sectionBuf = [];
+      sectionHead = '';
+    } else if (sectionBuf.length) {
+      html += `<p style="font-size:.845rem;color:var(--text);line-height:1.75;margin-bottom:.5rem;">${
+        sectionBuf.join('<br>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      }</p>`;
+      sectionBuf = [];
+    }
+  };
+
+  for (const line of lines) {
+    const l = line.trim();
+    if (/^##\s+/.test(l)) {
+      flushSection();
+      sectionHead = l.replace(/^##\s+/, '');
+    } else {
+      sectionBuf.push(l);
+    }
+  }
+  flushSection();
+
+  if (!html) {
+    html = `<div class="deep-section"><h3>📊 Full Analysis</h3><p>${
+      raw.replace(/\n/g,'<br>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    }</p></div>`;
+  }
+
+  content.innerHTML = html;
+}
+
+// ── Deduct credit (shared helper for adaptive) ───────────────
+async function deductCredit() {
+  const newCredits = Math.max(0, currentCredits - 1);
+  currentCredits = newCredits;
+  document.getElementById('dashCredits').textContent = newCredits;
+  if (currentUser) {
+    await updateCredits(currentUser.id, newCredits);
+    const maxCred = parseInt(document.getElementById('dashMaxCreds').textContent.replace('/ ','')) || 5;
+    const pct = isNaN(maxCred) ? 80 : Math.round((newCredits / maxCred) * 100);
+    document.getElementById('creditFill').style.width = pct + '%';
+  }
+}
+
+// ── Reset adaptive flow ──────────────────────────────────────
+function resetAdaptive() {
+  adaptQuestion    = '';
+  adaptCategory    = '';
+  adaptQuestions   = [];
+  adaptAnswers     = {};
+  safeStyle('adaptStep1', 'display', 'block');
+  safeStyle('adaptStep2', 'display', 'none');
+  setAdaptStep(1);
+  clearAdaptive();
+}
+
+function clearAdaptive() {
+  safeStyle('adaptiveOutput',     'display', 'none');
+  safeStyle('deepOutput',         'display', 'none');
+  safeStyle('adaptiveEmptyState', 'display', 'block');
+  document.getElementById('adaptiveContent').innerHTML = '';
+  document.getElementById('deepContent').innerHTML     = '';
 }
 
 // ── Supabase: history helpers ────────────────────────────────

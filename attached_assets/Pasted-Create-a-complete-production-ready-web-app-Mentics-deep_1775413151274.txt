@@ -1,0 +1,195 @@
+Create a complete production-ready web app "Mentics — deep research" with ALL features below.
+
+## 🧠 BRANDING
+- Name: MENTICS
+- Tagline: "deep research" (small below logo)
+- Main tagline: "Ask anything. Get personalized answers. Deep analysis included."
+- Favicon: 🧠
+
+## 🎨 COLORS (Professional Enterprise)
+Dark Mode: bg #0A0A0A, cards #141414, borders #2A2A2A, primary #10A37F
+Light Mode: bg #FFFFFF, cards #F9FAFB, borders #E5E7EB, primary #3B82F6
+Buttons: Gradient from #10A37F to #3B82F6, hover opacity 90%
+Typography: Inter font, clean spacing, professional
+
+## 📱 HEADER (Sticky, backdrop blur)
+- Left: 🧠 MENTICS + "deep research" below
+- Center: Home | Dashboard | Templates | History | About
+- Right: Language Selector (🌐) | Dark/Light Toggle (🌙/☀️) | User Menu (👤)
+
+## 🌐 MULTI-LANGUAGE (8 languages)
+English, Urdu, Hindi, Arabic, Spanish, French, German, Roman Urdu
+ALL UI text + ALL AI responses in selected language.
+
+## 🔥 CORE FEATURE: ADAPTIVE Q&A
+
+### Step 1: User asks anything
+Textarea: "What would you like to know? (Business, Career, Tech, Health, Learning, Creative, Finance, Relationship...)"
+
+### Step 2: AI detects category & shows dynamic questions
+Based on category, show 2-4 questions with clickable option buttons.
+
+CATEGORIES with questions:
+
+BUSINESS:
+- What type? (E-commerce/Freelancing/Agency/SaaS/Content/Physical)
+- Budget? (Under $500/$500-$5k/$5k-$50k/$50k+)
+- Experience? (Beginner/Some/Experienced)
+- Timeline? (Immediate/3 months/6 months/1 year)
+
+CAREER:
+- Current role? (Entry/Mid/Senior/Manager/Executive)
+- Target role? (Same field/Switch field/Promotion)
+- Timeline? (Immediate/3 months/6 months/1 year)
+- Learning time? (Full-time/Part-time/Weekends)
+
+TECH/CODE:
+- Language/Framework? (Python/JS/Java/React/Node/etc)
+- Experience? (Beginner/Intermediate/Expert)
+- Project type? (Web app/Mobile/API/Script/Fullstack)
+- Deadline? (1 week/1 month/3 months/Flexible)
+
+HEALTH:
+- Goal? (Weight loss/Muscle gain/Fitness/Health issue)
+- Current status? (Sedentary/Light active/Active/Very active)
+- Time available? (15min/30min/1hr/2hr+ per day)
+- Equipment? (None/Basic/Gym/Home gym)
+
+LEARNING:
+- Topic? (Any subject)
+- Current level? (Beginner/Intermediate/Advanced)
+- Goal? (Job/Hobby/Certification/Project)
+- Time per week? (2-5hrs/5-10hrs/10-20hrs/20+hrs)
+
+CREATIVE:
+- Type? (Writing/Design/Video/Music/Art)
+- Style? (Professional/Funny/Emotional/Educational)
+- Audience? (General/Youth/Professional/Niche)
+- Purpose? (Social media/Blog/Portfolio/Client work)
+
+FINANCE:
+- Goal? (Save money/Invest/Debt free/Passive income)
+- Current situation? (Student/Employed/Self-employed/Retired)
+- Risk tolerance? (Low/Medium/High)
+- Timeline? (3 months/1 year/5 years/10+ years)
+
+RELATIONSHIP:
+- Situation? (Family/Friends/Romantic/Work)
+- Goal? (Improve/Fix conflict/Set boundaries/Communicate better)
+- Urgency? (Low/Medium/High)
+
+### Step 3: TWO ACTION BUTTONS
+
+BUTTON 1: [✨ GET UNIQUE ANSWER]
+- Personalized, actionable answer based on user's inputs
+- NOT generic — tailored specifically
+- Format: 3-5 actionable steps + 3 UNIQUE TIPS (not generic) + Next steps
+
+BUTTON 2: [📊 DEEP ANALYSIS]
+- Complete comprehensive output based on category:
+  * Business → Complete business plan (8 sections)
+  * Career → 6-month roadmap with milestones
+  * Tech → Complete solution (architecture + code + deployment)
+  * Health → Complete wellness plan (diet + exercise + habits)
+  * Learning → Complete curriculum (roadmap + resources + projects)
+  * Creative → Complete creative strategy (concept + execution + distribution)
+  * Finance → Complete financial plan (budget + investment + timeline)
+  * Relationship → Complete action plan (steps + communication + boundaries)
+
+### Step 4: UNIQUE TIPS (ALWAYS show 3)
+After any answer, show: 💡 PRO TIPS (3 actionable, non-generic tips that most people miss)
+
+## 🤖 10 AI AGENTS
+Grid layout (2x5 desktop, scroll mobile). Each card: Icon + Name + Description + [Use] button.
+
+1. 📝 Content Writer — Blog posts, scripts, social media
+2. 💻 Code Agent — Generate, debug, explain code
+3. 🎨 Prompt Engineer — Optimize AI prompts (Midjourney/DALL-E/ChatGPT)
+4. 🎣 Hook Builder — Viral hooks for TikTok/YouTube/Instagram
+5. 🌐 Language Bridge — Translate with context & tone
+6. ✍️ Editor Agent — Improve writing style & grammar
+7. 📚 Research Agent — Deep research with citations & sources
+8. 🎯 Marketing Agent — Ad copy, campaigns, strategy
+9. 📊 Data Analyst — Insights from data (paste or upload CSV)
+10. 🎓 Tutor Agent — Explain complex topics simply
+
+## 📚 TEMPLATES LIBRARY
+Show 8 templates on dashboard with [Use Template] button:
+1. "Generate a complete business plan for e-commerce"
+2. "Create a 6-month career roadmap from junior to senior"
+3. "Learn Python in 3 months from zero"
+4. "Get fit in 30 days with no equipment"
+5. "Start freelancing from zero with no experience"
+6. "Launch a Shopify store with $500 budget"
+7. "Switch career from marketing to tech"
+8. "Save $10,000 in 6 months"
+
+## 📊 COMPARISON MODE
+Button: [Compare Options]
+Shows side-by-side table with:
+- Category-specific metrics (Cost, Time, Risk, Income potential, Skills needed)
+- Recommendation based on user's inputs
+
+## 📥 EXPORT TO PDF
+Button after any Deep Analysis: [📥 Export as PDF]
+Uses html2pdf.js library — professional formatting with logo, date, user name.
+
+## 💾 HISTORY (Supabase table: analysis_history)
+- Columns: id, user_id, question, category, answers, analysis, language, created_at
+- Dashboard right column shows last 5 saved analyses
+- Click to reload
+- "View All History" page with search & filter
+
+## 🔁 FOLLOW-UP QUESTIONS
+After any answer, show: [💬 Ask follow-up] button
+Opens modal: "What else would you like to know?"
+Gemini answers in context of previous analysis
+Costs 1 credit
+
+## 💳 CREDITS SYSTEM
+- Free: 5 credits/month (1 analysis = 1 credit, 1 follow-up = 1 credit, 1 agent = 1 credit)
+- Pro: $9.99/month — 100 credits
+- Business: $29.99/month — Unlimited credits
+- Dashboard right column shows credits with progress bar
+
+## 🤖 BOSS AGENT
+Real-time detection while user types:
+- Detects: content creator | developer | student | marketer | researcher | business owner
+- Shows: "🤖 Boss Agent recommends: [Agent Name]"
+- Click to use that agent with pre-filled context
+
+## 🔐 SUPABASE AUTH
+- Sign Up, Sign In, Forgot password
+- Auto-create profile on signup (trigger: on_auth_user_created)
+- Profiles table: id, email, full_name, plan, credits, credits_reset_date
+
+## 🤖 GEMINI API
+- Model: gemini-1.5-flash
+- All AI calls use Gemini
+- Language parameter: "Respond in [user's selected language]"
+- API key from Replit Secret: GEMINI_API_KEY
+
+## 📦 DEPENDENCIES (CDN)
+- Tailwind CSS
+- Google Fonts (Inter)
+- html2pdf.js (for PDF export)
+- Supabase JS SDK
+
+## 📱 RESPONSIVE
+- Desktop: 3 columns
+- Tablet: 2 columns
+- Mobile: 1 column + hamburger menu
+
+## ✅ REQUIREMENTS
+- No React — pure HTML/CSS/JS
+- Dark/Light mode with localStorage
+- All features working, no placeholders
+- Professional, polished, production-ready
+- Single HTML file
+
+## 🔑 PLACEHOLDERS (user will replace)
+- SUPABASE_URL = "YOUR_URL"
+- SUPABASE_ANON_KEY = "YOUR_KEY"
+- GEMINI_API_KEY from Replit Secrets
+
+Generate complete, working HTML code with ALL features.

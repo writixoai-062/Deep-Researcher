@@ -1,0 +1,121 @@
+Create a complete professional web app for "Mentics — deep research" with Adaptive Q&A and Deep Analysis.
+
+## BRANDING:
+- Name: MENTICS
+- Tagline: "deep research" (small below logo)
+- Main tagline: "Ask anything. Get personalized answers. Deep analysis included."
+- Professional, enterprise-grade, premium UI
+
+## HEADER:
+- Left: Logo + "MENTICS" with "deep research" below
+- Center: Home, Dashboard, Features, History, About
+- Right: Language selector (🌐 8 languages), Dark/Light toggle, User menu
+
+## MAIN FEATURE: ADAPTIVE Q&A + DEEP ANALYSIS
+
+### HOW IT WORKS:
+
+#### Step 1: User asks any question
+Textarea: "What would you like to know? (Business, Career, Tech, Health, Learning, etc.)"
+
+#### Step 2: AI analyzes question and generates dynamic questions
+Based on question category, AI asks 2-4 clarifying questions with options.
+
+CATEGORIES:
+- Business/Startup → Type, Budget, Experience, Timeline
+- Career/Job → Current role, Target role, Skills, Timeline
+- Tech/Code → Language, Experience, Project type, Deadline
+- Health/Fitness → Goal, Current status, Time available, Constraints
+- Learning/Education → Topic, Current level, Goal, Time per week
+- Creative → Type, Style, Purpose, Audience
+- Finance/Money → Goal, Current situation, Risk tolerance, Timeline
+- Relationship → Situation, Goal, Constraints
+
+#### Step 3: User selects options
+Each question has clickable option buttons (not just dropdowns)
+
+#### Step 4: Two action buttons
+
+BUTTON 1: [GET UNIQUE ANSWER]
+- Generates personalized, actionable answer based on user's inputs
+- NOT generic AI answer — tailored specifically to user's situation
+- Includes: 3-5 actionable tips, resources, next steps
+- Format: Clean, scannable, professional
+
+BUTTON 2: [DEEP ANALYSIS]
+- Generates complete comprehensive output based on category:
+  * Business → Complete business plan (Market research, Setup, Marketing, Finance, Timeline)
+  * Career → 6-month career roadmap (Skills, Networking, Applications, Interviews)
+  * Tech → Complete solution (Architecture, Code, Deployment, Best practices)
+  * Health → Complete wellness plan (Diet, Exercise, Habits, Tracking)
+  * Learning → Complete curriculum (Roadmap, Resources, Projects, Timeline)
+  * Creative → Complete creative strategy (Concept, Execution, Distribution)
+
+#### Step 5: Unique Tips Section
+After both answers, show:
+💡 PRO TIPS (3 unique, actionable tips that most people miss)
+
+## EXAMPLE OUTPUT FOR BUSINESS QUESTION:
+
+User: "How to start an online business?"
+User selects: E-commerce, Under $500, Beginner
+
+GET UNIQUE ANSWER:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📝 YOUR PERSONALIZED ANSWER
+
+With your budget of $500 and beginner level, here's your fastest path:
+
+✅ START WITH: Dropshipping + TikTok Organic (No ad spend)
+
+3-STEP ACTION PLAN:
+1. Week 1: Find 3 winning products (Use TikTok search)
+2. Week 2: Set up Shopify ($1 trial for 3 months)
+3. Week 3: Create 10 TikTok videos per day (Free traffic)
+
+💡 UNIQUE TIPS (Not generic):
+• Don't run Facebook ads with $500 — you'll lose money
+• Focus on 1 product, not 10 products
+• Your first sale will come from TikTok, not ads
+
+📌 NEXT STEPS:
+1. Watch "TikTok organic dropshipping" on YouTube
+2. Find products using TikTok search
+3. Start today — don't wait
+
+[DEEP ANALYSIS BUTTON] → Full business plan
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEEP ANALYSIS OUTPUT (When clicked):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 COMPLETE BUSINESS PLAN
+
+1. MARKET RESEARCH (Week 1)
+   - Top 5 products under $20
+   - Competitor analysis (pricing, ads, website)
+   - Target audience identification
+
+2. STORE SETUP (Week 2)
+   - Shopify step-by-step
+   - Product import from CJ Dropshipping
+   - Store design (free themes)
+
+3. MARKETING STRATEGY (Week 3-4)
+   - TikTok organic strategy (10 videos/day)
+   - Influencer outreach (micro-influencers)
+   - Email marketing setup
+
+4. FINANCIAL PROJECTION
+   - Month 1: Break even ($0-500)
+   - Month 2: $500-1000
+   - Month 3: $1000-3000
+
+5. 30-DAY ACTION PLAN
+   - Daily checklist
+   - Tools and resources
+   - Common mistakes to avoid
+
+6. RISKS & MITIGATION
+   - Shipping delays → Use CJ Dropshipping
+   - Payment holds → Have backup payment provider
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
