@@ -1,0 +1,124 @@
+Create a complete professional web app for "Mentics — deep research" with all premium features.
+
+## BRANDING:
+- Name: MENTICS
+- Tagline: "deep research" (small below logo)
+- Main tagline: "See how AI really thinks"
+- Professional, clean, enterprise-grade UI
+
+## HEADER (Sticky):
+- Left: Logo + "MENTICS" with "deep research" below
+- Center: Home, Dashboard, Features, History, About
+- Right: Language selector (🌐), Dark/Light toggle, User menu (Profile | History | Logout)
+
+## MULTI-LANGUAGE SUPPORT (8 languages):
+English, Urdu, Hindi, Arabic, Spanish, French, German, Roman Urdu
+ALL outputs in selected language.
+
+## DASHBOARD LAYOUT (3 columns on desktop):
+┌─────────────────────────────────────────────────────────────────────┐
+│ LEFT COLUMN (35%)        │ MIDDLE COLUMN (40%)    │ RIGHT (25%)    │
+│                          │                        │                │
+│ 📝 MAIN TOOL             │ 💡 ANALYSIS OUTPUT     │ 👤 USER INFO   │
+│                          │                        │                │
+│ Textarea:                │ • What ChatGPT assumed │ • Credits: 5   │
+│ "Paste your question..." │ • What's missing       │ • Plan: Free   │
+│                          │ • Better answer        │ • Upgrade      │
+│ Context selector         │                        │                │
+│ [Analyze] button         │ [Ask Follow-up]        │ 📜 HISTORY     │
+│                          │ [Try Agent]            │ • Last 5 saved │
+│ 🤖 BOSS AGENT            │                        │                │
+│ "Recommends: [Agent]"    │                        │                │
+└─────────────────────────────────────────────────────────────────────┘
+
+## FEATURE 1: REAL-TIME ANALYSIS
+- As user types, show live suggestions (debounce 1 second)
+- Optional: Auto-analyze after user stops typing
+
+## FEATURE 2: FOLLOW-UP QUESTIONS
+- After analysis, show "Ask follow-up" button
+- Opens modal: "What else would you like to know?"
+- Gemini answers in context of previous analysis
+- Follow-up also costs 1 credit
+
+## FEATURE 3: SAVE TO HISTORY
+- Save each analysis to Supabase (table: analysis_history)
+- Columns: id, user_id, question, analysis, context, language, created_at
+- Show last 5 in dashboard right column
+- "View All History" page with search and filter
+- Click on history item to reload analysis
+
+## FEATURE 4: AGENT SUGGESTION AFTER ANALYSIS
+- After analysis, show "💡 Based on your question, try [Agent Name]"
+- Button: "Try [Agent Name]"
+- Opens agent modal with question pre-filled
+
+## FEATURE 5: 10 AGENTS (Professional Cards)
+Grid layout (2x5 on desktop, scroll on mobile)
+
+Each agent card shows:
+- Icon (professional SVG)
+- Name
+- Short description
+- "Use" button
+
+## AGENTS LIST:
+1. 📝 Content Writer — Blog posts, scripts, captions
+2. 💻 Code Agent — Generate, debug, explain code
+3. 🎨 Prompt Engineer — Optimize AI prompts
+4. 🎣 Hook Builder — Viral hooks for any platform
+5. 🌐 Language Bridge — Translate with context
+6. ✍️ Editor Agent — Improve writing style
+7. 📚 Research Agent — Deep research with citations
+8. 🎯 Marketing Agent — Ad copy, campaigns, strategy
+9. 📊 Data Analyst — Insights from data
+10. 🎓 Tutor Agent — Explain complex topics simply
+
+## BOSS AGENT:
+- Real-time detection of user's question
+- Detects: content creator, developer, student, marketer, researcher
+- Shows recommendation card above agents
+
+## CREDITS SYSTEM:
+- Free: 5 credits/month
+- Main analysis: 1 credit
+- Follow-up: 1 credit
+- Agent usage: 1 credit
+- Pro: 100 credits ($9.99/month)
+- Business: Unlimited ($29.99/month)
+
+## GEMINI API INTEGRATION:
+- Model: gemini-1.5-flash
+- All agents + main tool + follow-up use Gemini
+- Language parameter passed: "Respond in [user's language]"
+
+## SUPABASE TABLES:
+- profiles (id, email, full_name, plan, credits, credits_reset_date)
+- analysis_history (id, user_id, question, analysis, context, language, created_at)
+
+## AUTH:
+- Sign Up, Sign In, Forgot password
+- Auto-create profile on signup
+- Email confirmation OFF (testing)
+
+## HISTORY PAGE:
+- Separate page/section showing all user's analyses
+- Search by keyword
+- Filter by date
+- Click to reload analysis
+
+## COLORS (Professional):
+Dark mode: bg #0A0A0A, cards #141414, primary #10A37F
+Light mode: bg #FFFFFF, cards #F9FAFB, primary #3B82F6
+Buttons: Gradient from #10A37F to #3B82F6
+Typography: Inter font, clean spacing
+
+## REQUIREMENTS:
+- No React — pure HTML/CSS/JS
+- Dark/Light mode with localStorage
+- Fully mobile responsive
+- Professional card shadows, hover effects
+- Smooth animations
+- All in one HTML file
+
+Generate complete code with all features.
