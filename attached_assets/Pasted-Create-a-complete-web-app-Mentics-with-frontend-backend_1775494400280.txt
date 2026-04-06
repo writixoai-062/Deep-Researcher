@@ -1,0 +1,56 @@
+Create a complete web app "Mentics" with frontend + backend in ONE project.
+
+## WHAT TO BUILD:
+
+### Backend (api-server.js):
+- Express server on port 8080
+- Gemini API integration (gemini-1.5-flash)
+- LemonSqueezy checkout endpoint: /api/create-checkout
+- LemonSqueezy webhook endpoint: /api/webhook
+- Analyze endpoint: /api/analyze
+
+### Frontend (index.html):
+- ChatGPT-style layout: Left sidebar + Right main area
+- Supabase auth (Sign up, Sign in, Forgot password)
+- Dark/Light mode toggle
+- Multi-language (8 languages: English, Urdu, Hindi, Arabic, Spanish, French, German, Roman Urdu)
+
+### LEFT SIDEBAR:
+- Logo: 🧠 MENTICS (deep research below)
+- New Chat button
+- How to Use section (Quick start guide)
+- Agents list (10 agents with short descriptions)
+- Templates list (8 templates)
+- History (Today, Yesterday, Last 7 days)
+- Profile section (Credits, Upgrade button)
+
+### RIGHT MAIN AREA:
+- TOP: "How AI Works" square box showing 4 steps
+- MIDDLE: Chat area (User question → AI answer → Deep Analysis)
+- BOTTOM: Action buttons (Template, Compare, PDF, Share) + Features section
+
+### FEATURES INCLUDED:
+- Adaptive Q&A (AI asks questions before answering)
+- Deep Analysis (Complete business plan / roadmap)
+- 10 AI Agents (Content, Code, Prompt, Hook, Language, Editor, Research, Marketing, Data, Tutor)
+- 8 Templates (Business, Career, Learning, Health, Finance, Freelancing, Shopify, Career Switch)
+- Compare Mode (Side-by-side comparison)
+- Export to PDF (html2pdf.js)
+- Credits system (Free: 5 credits, Pro: 100 credits, Business: Unlimited)
+- LemonSqueezy payments (Pro $9.99, Business $29.99)
+
+### LEMONSQUEEZY CREDITS (use these IDs):
+- Store ID: 317490
+- Pro Variant ID: 1492101
+- Business Variant ID: 1492105
+
+### API KEY (user will add to Replit Secrets):
+- LEMONSQUEEZY_API_KEY= eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5NGQ1OWNlZi1kYmI4LTRlYTUtYjE3OC1kMjU0MGZjZDY5MTkiLCJqdGkiOiI5MWIzZjI5NmRmMWYwYjY1N2ZlMzFkNmI5YWI4NmU0OWYyZDU3ZDhhY2Q5NGY1M2VlMjgyYzgwNjlhMmQxNDM5MDBjMTJiNzg3ZjQ3OWM5YyIsImlhdCI6MTc3NTQxNDE1OC4zNTE5NjEsIm5iZiI6MTc3NTQxNDE1OC4zNTE5NjUsImV4cCI6MTc5MTE1ODQwMC4wNDQ2NjYsInN1YiI6IjY3MTM0NjEiLCJzY29wZXMiOltdfQ.E6WvVB5BN3uk4eGCWVnS4M7hXJDNp7WPeeIo_Ac-5RTN92MSLvyng57ujYFlDQwmlQSfBxormrtTCYB2L75ROKLB33lRFF177ftfbH9DYR0QzLMGbhJcgoTpKrbSFg9ScWqZZr4oe_NTmy6NGIRNbU0I6ErWD1jLT5v-OrJAQApaHnpFe5JFXk4vFVWenu5ILmwP5yBP5Sy6FxMTqUE03G_-lEoHfFUGzcoPpxPXsFYQkrpjaLvj9jzQEDNlsxtN3bsKVkHx998WFTVXSU4kVuGYMVED98shhtglW6Irw7is4pdnkoH-RADdLxop7bbBzXENLPdUvIh-qelXpZf6No_OduK0az8VtnHxRZlzRg20TqnlqPKhrMqAIZCBLnPnsI7Y0PuCnca8iMTLnl0bV74ppH6gUTIrV4Vb0U82N6PD_swUJTyPadnM6cqbl_xCrCW_BOZJoD3OfeuXDCsQ1U8lVLr8pWP9VdILih34JDXs90PelFCpYkxhCPTsSqFtZPzEZGBIYuj4xUyR66-ZV4u6rKj5XzFbNlb9kiHi9ezWmTvgxazj7N507pyCKHchzc9MHw-Ik8OcL9e2Nq_mrKwHfWIskq2aHLdUDeFiYD-6DBNnujUc7XmNQ14l5vN4RjNHltlTCBAOLGPcxlEwp_-MseGYFd6j7XyJQhfc-28
+
+### REQUIREMENTS:
+- Single HTML file + api-server.js
+- No React — pure HTML/CSS/JS
+- Mobile responsive
+- All features working together
+
+Generate complete code now.
