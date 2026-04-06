@@ -189,25 +189,48 @@
 
     /* ── Sidebar nav buttons ──────────────────────────────── */
     .sidebar-agent-btn {
-      display:grid;grid-template-columns:auto 1fr;align-items:center;gap:.4rem;
+      display:grid;grid-template-columns:1.25rem 1fr;align-items:center;gap:.4rem;
       width:100%;text-align:left;background:transparent;border:none;cursor:pointer;
       padding:.3rem .45rem;border-radius:.45rem;font-family:inherit;
       color:var(--text2);font-size:.75rem;transition:background .12s,color .12s;
     }
     .sidebar-agent-btn:hover { background:rgba(16,163,127,.08);color:var(--text); }
-    .sidebar-agent-btn span { font-weight:600;color:var(--text);font-size:.76rem;white-space:nowrap; }
-    .sidebar-agent-btn small { display:block;font-size:.68rem;color:var(--text2);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .sidebar-agent-btn span { font-weight:600;color:var(--text);font-size:.75rem;white-space:nowrap; }
+    .sidebar-agent-btn small { display:block;font-size:.67rem;color:var(--text2);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
 
     .sidebar-tpl-btn {
       display:block;width:100%;text-align:left;background:transparent;border:none;cursor:pointer;
-      padding:.3rem .45rem;border-radius:.45rem;font-size:.75rem;color:var(--text2);
+      padding:.28rem .45rem;border-radius:.45rem;font-size:.74rem;color:var(--text2);
       font-family:inherit;transition:background .12s,color .12s;
       white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
     }
     .sidebar-tpl-btn:hover { background:rgba(16,163,127,.08);color:var(--text); }
 
-    .dash-sidebar { width:256px;flex-shrink:0;border-right:1px solid var(--border);overflow-y:auto;background:var(--card);display:flex;flex-direction:column; }
-    .dash-main { flex:1;min-width:0;overflow-y:auto;padding:1.5rem;background:var(--bg); }
+    /* Sidebar collapsible sections */
+    .sb-section { }
+    .sb-hdr {
+      display:flex;align-items:center;justify-content:space-between;
+      width:100%;background:transparent;border:none;cursor:pointer;font-family:inherit;
+      padding:.45rem .875rem;font-size:.78rem;font-weight:700;color:var(--text);
+      transition:background .12s;text-align:left;
+    }
+    .sb-hdr:hover { background:rgba(128,128,128,.06); }
+    .sb-step {
+      display:flex;align-items:center;gap:.45rem;padding:.25rem .45rem;border-radius:.4rem;
+      background:rgba(16,163,127,.05);margin-bottom:.2rem;font-size:.72rem;color:var(--text2);
+    }
+    /* Sidebar history groups */
+    .sb-hist-group { font-size:.65rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;padding:.35rem .45rem .1rem;opacity:.7; }
+    .sb-hist-item {
+      display:block;width:100%;text-align:left;background:transparent;border:none;cursor:pointer;
+      padding:.28rem .45rem;border-radius:.4rem;font-size:.73rem;color:var(--text2);
+      font-family:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      transition:background .12s,color .12s;
+    }
+    .sb-hist-item:hover { background:rgba(16,163,127,.08);color:var(--text); }
+
+    .dash-sidebar { width:258px;flex-shrink:0;border-right:1px solid var(--border);background:var(--card);display:flex;flex-direction:column;overflow:hidden;height:calc(100vh - 64px);position:sticky;top:64px; }
+    .dash-main { flex:1;min-width:0;padding:1.5rem;background:var(--bg); }
     .sq-grid-2 { display:grid;grid-template-columns:1fr 1fr;gap:.5rem; }
     .sq-cell { background:rgba(16,163,127,.07);border:1px solid rgba(16,163,127,.15);border-radius:.625rem;padding:.6rem .75rem; }
     .sq-cell-title { font-size:.72rem;font-weight:700;color:var(--btn);margin-bottom:.15rem; }
@@ -467,110 +490,129 @@
 <div style="display:flex;min-height:calc(100vh - 64px);">
 
   <!-- ══════════ LEFT SIDEBAR ══════════ -->
-  <aside class="dash-sidebar">
+  <aside class="dash-sidebar" id="dashSidebar">
+
+    <!-- Logo -->
+    <div style="padding:.875rem .875rem .625rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.625rem;">
+      <div class="g-bg" style="width:32px;height:32px;border-radius:.625rem;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">🧠</div>
+      <div>
+        <p style="font-size:.9rem;font-weight:900;color:var(--text);letter-spacing:.02em;line-height:1;">MENTICS</p>
+        <p style="font-size:.62rem;color:var(--btn);font-weight:600;letter-spacing:.05em;text-transform:uppercase;">Deep Research</p>
+      </div>
+    </div>
 
     <!-- New Chat -->
-    <div style="padding:.875rem .875rem .5rem;">
-      <button onclick="clearOutput();clearAdaptive();switchMode('adaptive')" class="btn-p" style="width:100%;border-radius:.875rem;padding:.6rem .875rem;font-size:.85rem;font-weight:700;border:none;cursor:pointer;">
-        ✏️ New Chat
+    <div style="padding:.75rem .875rem .375rem;">
+      <button onclick="clearOutput();clearAdaptive();switchMode('adaptive');sidebarShowMain();" class="btn-p" style="width:100%;border-radius:.875rem;padding:.6rem .875rem;font-size:.85rem;font-weight:700;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.4rem;">
+        <span>✏️</span> New Chat
       </button>
     </div>
 
-    <!-- HOW TO USE -->
-    <div style="padding:.625rem .875rem 0;">
-      <p style="font-size:.67rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem;">📘 HOW TO USE</p>
-      <div style="display:flex;flex-direction:column;gap:.25rem;">
-        <div style="display:flex;align-items:center;gap:.45rem;padding:.3rem .45rem;border-radius:.45rem;background:rgba(16,163,127,.06);">
-          <span style="font-size:.75rem;">1️⃣</span>
-          <span style="font-size:.73rem;color:var(--text2);">Type your question</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:.45rem;padding:.3rem .45rem;border-radius:.45rem;background:rgba(16,163,127,.06);">
-          <span style="font-size:.75rem;">2️⃣</span>
-          <span style="font-size:.73rem;color:var(--text2);">Pick your context</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:.45rem;padding:.3rem .45rem;border-radius:.45rem;background:rgba(16,163,127,.06);">
-          <span style="font-size:.75rem;">3️⃣</span>
-          <span style="font-size:.73rem;color:var(--text2);">Answer AI questions</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:.45rem;padding:.3rem .45rem;border-radius:.45rem;background:rgba(16,163,127,.06);">
-          <span style="font-size:.75rem;">4️⃣</span>
-          <span style="font-size:.73rem;color:var(--text2);">Get deep analysis</span>
+    <!-- Scrollable nav area -->
+    <div style="flex:1;overflow-y:auto;padding:.25rem 0;">
+
+      <!-- HOW TO USE (collapsible) -->
+      <div class="sb-section">
+        <button class="sb-hdr" onclick="toggleSbSection('sbHowTo','sbHowToIcon')">
+          <span>📘 How to Use</span>
+          <span id="sbHowToIcon" style="transition:transform .2s;">▾</span>
+        </button>
+        <div id="sbHowTo" style="padding:0 .875rem .25rem;">
+          <div class="sb-step"><span>1️⃣</span><span>Type your question</span></div>
+          <div class="sb-step"><span>2️⃣</span><span>Pick your context</span></div>
+          <div class="sb-step"><span>3️⃣</span><span>Answer AI questions</span></div>
+          <div class="sb-step"><span>4️⃣</span><span>Get deep analysis</span></div>
         </div>
       </div>
-    </div>
 
-    <div style="height:1px;background:var(--border);margin:.625rem .875rem;"></div>
+      <div style="height:1px;background:var(--border);margin:.1rem .875rem;"></div>
 
-    <!-- AGENTS list -->
-    <div style="padding:0 .875rem;">
-      <p style="font-size:.67rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.35rem;">🤖 AGENTS</p>
-      <div style="display:flex;flex-direction:column;">
-        <button onclick="openAgent('content')" class="sidebar-agent-btn">📝<div><span>Content Writer</span><small>Blog, Twitter, LinkedIn copy</small></div></button>
-        <button onclick="openAgent('code')" class="sidebar-agent-btn">💻<div><span>Code Agent</span><small>Code with explanation</small></div></button>
-        <button onclick="openAgent('prompt')" class="sidebar-agent-btn">🎨<div><span>Prompt Engineer</span><small>Optimized AI prompts</small></div></button>
-        <button onclick="openAgent('hook')" class="sidebar-agent-btn">🎣<div><span>Hook Builder</span><small>Viral hooks for any platform</small></div></button>
-        <button onclick="openAgent('translate')" class="sidebar-agent-btn">🌐<div><span>Language Bridge</span><small>Translate tone & context</small></div></button>
-        <button onclick="openAgent('editor')" class="sidebar-agent-btn">✍️<div><span>Editor Agent</span><small>Improve text, explained</small></div></button>
-        <button onclick="openAgent('research')" class="sidebar-agent-btn">📚<div><span>Research Agent</span><small>Key findings & sources</small></div></button>
-        <button onclick="openAgent('marketing')" class="sidebar-agent-btn">🎯<div><span>Marketing Agent</span><small>Strategy & ad copy</small></div></button>
-        <button onclick="openAgent('data')" class="sidebar-agent-btn">📊<div><span>Data Analyst</span><small>Insights & trends</small></div></button>
-        <button onclick="openAgent('tutor')" class="sidebar-agent-btn">🎓<div><span>Tutor Agent</span><small>Simple explanations</small></div></button>
-      </div>
-    </div>
-
-    <div style="height:1px;background:var(--border);margin:.625rem .875rem;"></div>
-
-    <!-- TEMPLATES list -->
-    <div style="padding:0 .875rem;">
-      <p style="font-size:.67rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.35rem;">📚 TEMPLATES</p>
-      <div style="display:flex;flex-direction:column;">
-        <button class="sidebar-tpl-btn" onclick="useTemplate('How to start a profitable e-commerce business from scratch?','Business/Startup')">🛒 E-commerce Business</button>
-        <button class="sidebar-tpl-btn" onclick="useTemplate('How to create a 6-month career roadmap to go from junior to senior developer?','Career/Job')">🚀 Junior → Senior Dev</button>
-        <button class="sidebar-tpl-btn" onclick="useTemplate('How to create a healthy morning routine that improves productivity and mental clarity?','Health/Wellness')">🌅 Morning Routine</button>
-        <button class="sidebar-tpl-btn" onclick="useTemplate('How to invest $1000 wisely as a beginner in 2025?','Finance/Money')">💰 Invest $1000</button>
-        <button class="sidebar-tpl-btn" onclick="useTemplate('How to learn a new skill 10x faster using the Feynman Technique?','Education/Learning')">🧠 Learn 10x Faster</button>
-        <button class="sidebar-tpl-btn" onclick="useTemplate('How to build a personal brand on social media from zero followers?','Marketing/Social')">🌟 Build Personal Brand</button>
-        <button class="sidebar-tpl-btn" onclick="useTemplate('How to build AI-powered side projects and monetize them in 2025?','Technology/AI')">🤖 AI Side Projects</button>
-        <button class="sidebar-tpl-btn" onclick="useTemplate('How to negotiate a 30% salary increase in my next job offer?','Career/Negotiation')">💼 Negotiate Salary</button>
-      </div>
-    </div>
-
-    <!-- Spacer -->
-    <div style="flex:1;min-height:1rem;"></div>
-
-    <div style="height:1px;background:var(--border);margin:.5rem .875rem;"></div>
-
-    <!-- Credits -->
-    <div style="padding:.5rem .875rem;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem;">
-        <p style="font-size:.67rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;">Credits</p>
-        <span style="font-size:.8rem;font-weight:800;color:var(--text);"><span id="dashCredits">5</span><span style="color:var(--text2);font-weight:400;font-size:.74rem;">/<span id="dashMaxCreds">5</span></span></span>
-      </div>
-      <div class="credit-bar"><div id="creditFill" class="credit-fill g-bg" style="width:100%;"></div></div>
-      <p style="font-size:.68rem;color:var(--text2);margin-top:.2rem;">Resets monthly</p>
-    </div>
-
-    <!-- Profile + Plan -->
-    <div style="padding:.5rem .875rem;">
-      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;">
-        <div class="g-bg" style="width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;">👤</div>
-        <div style="min-width:0;">
-          <p id="dashName" style="font-size:.78rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;">Loading…</p>
-          <span id="dashPlanBadge" style="font-size:.67rem;font-weight:700;background:rgba(16,163,127,.12);border:1px solid rgba(16,163,127,.2);color:#6ee7b7;padding:.1rem .4rem;border-radius:9999px;">Free Plan</span>
+      <!-- AGENTS (collapsible) -->
+      <div class="sb-section">
+        <button class="sb-hdr" onclick="toggleSbSection('sbAgents','sbAgentsIcon')">
+          <span>🤖 Agents <span style="font-size:.65rem;opacity:.6;font-weight:500;">(10)</span></span>
+          <span id="sbAgentsIcon" style="transition:transform .2s;">▾</span>
+        </button>
+        <div id="sbAgents" style="padding:0 .5rem .25rem;">
+          <button onclick="openAgent('content')" class="sidebar-agent-btn">📝<div><span>Content Writer</span><small>Blog & social copy</small></div></button>
+          <button onclick="openAgent('code')" class="sidebar-agent-btn">💻<div><span>Code Agent</span><small>Code with explanation</small></div></button>
+          <button onclick="openAgent('prompt')" class="sidebar-agent-btn">🎨<div><span>Prompt Engineer</span><small>Optimized prompts</small></div></button>
+          <button onclick="openAgent('hook')" class="sidebar-agent-btn">🎣<div><span>Hook Builder</span><small>Viral hooks</small></div></button>
+          <button onclick="openAgent('translate')" class="sidebar-agent-btn">🌐<div><span>Language Bridge</span><small>Translate & preserve tone</small></div></button>
+          <button onclick="openAgent('editor')" class="sidebar-agent-btn">✍️<div><span>Editor Agent</span><small>Improve text</small></div></button>
+          <button onclick="openAgent('research')" class="sidebar-agent-btn">📚<div><span>Research Agent</span><small>Findings & sources</small></div></button>
+          <button onclick="openAgent('marketing')" class="sidebar-agent-btn">🎯<div><span>Marketing Agent</span><small>Strategy & ad copy</small></div></button>
+          <button onclick="openAgent('data')" class="sidebar-agent-btn">📊<div><span>Data Analyst</span><small>Insights & trends</small></div></button>
+          <button onclick="openAgent('tutor')" class="sidebar-agent-btn">🎓<div><span>Tutor Agent</span><small>Simple explanations</small></div></button>
         </div>
       </div>
-      <button onclick="showLanding();setTimeout(()=>document.getElementById('pricing')?.scrollIntoView({behavior:'smooth'}),100)" class="btn-p" style="width:100%;border-radius:.75rem;padding:.5rem;font-size:.77rem;border:none;cursor:pointer;font-weight:700;">⬆️ Upgrade Plan</button>
-    </div>
 
-    <!-- History -->
-    <div style="padding:.5rem .875rem .875rem;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem;">
-        <p style="font-size:.67rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;">📜 History</p>
-        <button onclick="navHistoryClick()" style="font-size:.68rem;color:var(--btn);background:transparent;border:none;cursor:pointer;">View All →</button>
+      <div style="height:1px;background:var(--border);margin:.1rem .875rem;"></div>
+
+      <!-- TEMPLATES (collapsible) -->
+      <div class="sb-section">
+        <button class="sb-hdr" onclick="toggleSbSection('sbTemplates','sbTemplatesIcon')">
+          <span>📚 Templates <span style="font-size:.65rem;opacity:.6;font-weight:500;">(8)</span></span>
+          <span id="sbTemplatesIcon" style="transition:transform .2s;">▾</span>
+        </button>
+        <div id="sbTemplates" style="padding:0 .5rem .25rem;">
+          <button class="sidebar-tpl-btn" onclick="useTemplate('How to start a profitable e-commerce business from scratch?','Business/Startup')">🛒 E-commerce Business</button>
+          <button class="sidebar-tpl-btn" onclick="useTemplate('How to create a 6-month career roadmap to go from junior to senior developer?','Career/Job')">🚀 Junior → Senior Dev</button>
+          <button class="sidebar-tpl-btn" onclick="useTemplate('How to create a healthy morning routine that improves productivity?','Health/Wellness')">🌅 Morning Routine</button>
+          <button class="sidebar-tpl-btn" onclick="useTemplate('How to invest $1000 wisely as a beginner in 2025?','Finance/Money')">💰 Invest $1000</button>
+          <button class="sidebar-tpl-btn" onclick="useTemplate('How to learn a new skill 10x faster using the Feynman Technique?','Education/Learning')">🧠 Learn 10x Faster</button>
+          <button class="sidebar-tpl-btn" onclick="useTemplate('How to build a personal brand on social media from zero followers?','Marketing/Social')">🌟 Personal Brand</button>
+          <button class="sidebar-tpl-btn" onclick="useTemplate('How to build AI-powered side projects and monetize them in 2025?','Technology/AI')">🤖 AI Side Projects</button>
+          <button class="sidebar-tpl-btn" onclick="useTemplate('How to negotiate a 30% salary increase in my next job offer?','Career/Negotiation')">💼 Negotiate Salary</button>
+        </div>
       </div>
-      <div id="historyList">
-        <p style="font-size:.73rem;color:var(--text2);line-height:1.55;">No history yet.</p>
+
+      <div style="height:1px;background:var(--border);margin:.1rem .875rem;"></div>
+
+      <!-- HISTORY (grouped) -->
+      <div class="sb-section">
+        <button class="sb-hdr" onclick="toggleSbSection('sbHistory','sbHistoryIcon')">
+          <span>📜 History</span>
+          <div style="display:flex;align-items:center;gap:.375rem;">
+            <span onclick="event.stopPropagation();navHistoryClick()" style="font-size:.65rem;color:var(--btn);font-weight:600;cursor:pointer;">All →</span>
+            <span id="sbHistoryIcon" style="transition:transform .2s;">▾</span>
+          </div>
+        </button>
+        <div id="sbHistory" style="padding:0 .5rem .25rem;">
+          <div id="historyList">
+            <p style="font-size:.73rem;color:var(--text2);padding:.25rem .375rem;">No history yet.</p>
+          </div>
+        </div>
       </div>
+
+    </div><!-- /scrollable nav -->
+
+    <!-- Bottom: Credits + Profile -->
+    <div style="border-top:1px solid var(--border);">
+
+      <!-- Credits bar -->
+      <div style="padding:.625rem .875rem .375rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.25rem;">
+          <p style="font-size:.67rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;">Credits</p>
+          <span style="font-size:.8rem;font-weight:800;color:var(--text);"><span id="dashCredits">5</span><span style="color:var(--text2);font-weight:400;font-size:.72rem;">/<span id="dashMaxCreds">5</span></span></span>
+        </div>
+        <div class="credit-bar"><div id="creditFill" class="credit-fill g-bg" style="width:100%;"></div></div>
+        <p style="font-size:.67rem;color:var(--text2);margin-top:.2rem;">Resets monthly</p>
+      </div>
+
+      <!-- Profile row -->
+      <div style="padding:.375rem .875rem .75rem;">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem;">
+          <div class="g-bg" style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;">👤</div>
+          <div style="min-width:0;flex:1;">
+            <p id="dashName" style="font-size:.78rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Loading…</p>
+            <span id="dashPlanBadge" style="font-size:.66rem;font-weight:700;background:rgba(16,163,127,.12);border:1px solid rgba(16,163,127,.2);color:#6ee7b7;padding:.08rem .375rem;border-radius:9999px;">Free Plan</span>
+          </div>
+          <button onclick="handleSignOut()" title="Sign out" style="background:transparent;border:none;cursor:pointer;font-size:.85rem;color:var(--text2);padding:.2rem;" title="Sign out">↪</button>
+        </div>
+        <button onclick="showLanding();setTimeout(()=>document.getElementById('pricing')?.scrollIntoView({behavior:'smooth'}),100)" class="btn-p" style="width:100%;border-radius:.75rem;padding:.5rem;font-size:.77rem;border:none;cursor:pointer;font-weight:700;">⬆️ Upgrade Plan</button>
+      </div>
+
     </div>
 
   </aside>
@@ -793,8 +835,8 @@
   </div><!-- /dash-main -->
 </div><!-- /2-col flex -->
 
-<!-- ── 10 Agents Section ──────────────────────────────────── -->
-<section style="max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem;">
+<!-- ── 10 Agents Section (hidden panel, opened from sidebar or main) ── -->
+<section id="agentsPanel" style="display:none;max-width:1100px;margin:0 auto;padding:0 1.5rem 3rem;">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
     <div>
       <h3 style="font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:.2rem;">🤖 AI Agents</h3>
@@ -1404,6 +1446,22 @@ function hideSquare(id) {
   const map = { 'how-ai-works': 'squareHowAI', 'how-mentics-works': 'squareHowMentics' };
   const elId = map[id];
   if (elId) safeStyle(elId, 'display', 'none');
+}
+
+// ── Sidebar collapse/expand ───────────────────────────────────
+function toggleSbSection(contentId, iconId) {
+  const el = document.getElementById(contentId);
+  const icon = document.getElementById(iconId);
+  if (!el) return;
+  const isHidden = el.style.display === 'none';
+  el.style.display = isHidden ? '' : 'none';
+  if (icon) icon.style.transform = isHidden ? '' : 'rotate(-90deg)';
+}
+
+// ── Sidebar: return to main tool ─────────────────────────────
+function sidebarShowMain() {
+  safeStyle('agentsPanel', 'display', 'none');
+  safeStyle('templatesSection', 'display', 'none');
 }
 
 // ── Share result ─────────────────────────────────────────────
@@ -2410,20 +2468,52 @@ async function getAllHistory() {
 
 // ── Render history in right panel (recent) ───────────────────
 async function loadRecentHistory() {
-  const items = await getRecentHistory(5);
+  const items = await getRecentHistory(20);
   const el = document.getElementById('historyList');
   if (!el) return;
   if (!items.length) {
-    el.innerHTML = '<p style="font-size:.78rem;color:var(--text2);line-height:1.55;">No history yet. Run your first analysis!</p>';
+    el.innerHTML = '<p style="font-size:.73rem;color:var(--text2);padding:.25rem .375rem;">No history yet.</p>';
     return;
   }
-  el.innerHTML = items.map((item, i) => `
-    <div class="hist-item" onclick="loadHistoryItem(${i})" data-idx="${i}">
-      <p>${escHtml(item.question.substring(0, 55))}${item.question.length > 55 ? '…' : ''}</p>
-      <span>${new Date(item.created_at).toLocaleDateString()} · ${escHtml(item.context || '')}</span>
-    </div>
-  `).join('');
-  // Store items for click handler
+
+  // Group by time
+  const now = new Date();
+  const todayStart     = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterdayStart = new Date(todayStart); yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+  const weekStart      = new Date(todayStart); weekStart.setDate(weekStart.getDate() - 7);
+
+  const groups = { today: [], yesterday: [], week: [], older: [] };
+  items.forEach(item => {
+    const d = new Date(item.created_at);
+    const day = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    if (day >= todayStart)     groups.today.push(item);
+    else if (day >= yesterdayStart) groups.yesterday.push(item);
+    else if (d >= weekStart)   groups.week.push(item);
+    else                       groups.older.push(item);
+  });
+
+  const renderItem = (item, i) =>
+    `<button class="sb-hist-item" onclick="loadHistoryItem(${i})">${escHtml(item.question.substring(0,48))}${item.question.length>48?'…':''}</button>`;
+
+  let html = '';
+  if (groups.today.length) {
+    html += `<p class="sb-hist-group">Today</p>`;
+    html += groups.today.map((it, i) => renderItem(it, items.indexOf(it))).join('');
+  }
+  if (groups.yesterday.length) {
+    html += `<p class="sb-hist-group">Yesterday</p>`;
+    html += groups.yesterday.map(it => renderItem(it, items.indexOf(it))).join('');
+  }
+  if (groups.week.length) {
+    html += `<p class="sb-hist-group">Last 7 Days</p>`;
+    html += groups.week.map(it => renderItem(it, items.indexOf(it))).join('');
+  }
+  if (groups.older.length) {
+    html += `<p class="sb-hist-group">Older</p>`;
+    html += groups.older.slice(0,5).map(it => renderItem(it, items.indexOf(it))).join('');
+  }
+
+  el.innerHTML = html;
   el._histItems = items;
 }
 
