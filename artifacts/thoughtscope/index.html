@@ -391,7 +391,8 @@
     <nav id="deskNav" style="display:none;gap:.2rem;align-items:center;" class="md-flex">
       <button onclick="showLanding()" class="nav-a" data-i18n="nav_home">Home</button>
       <button onclick="navDashClick()" class="nav-a" data-i18n="nav_dashboard">Dashboard</button>
-      <button onclick="navTemplatesClick()" class="nav-a">Templates</button>
+      <!-- Templates nav item hidden temporarily — restore by uncommenting below -->
+      <!-- <button onclick="navTemplatesClick()" class="nav-a">Templates</button> -->
       <button onclick="navHistoryClick()" class="nav-a">History</button>
       <a href="#features" class="nav-a" data-i18n="nav_features">Features</a>
       <a href="#faq"      class="nav-a" data-i18n="nav_about">About</a>
@@ -449,7 +450,8 @@
     <div style="padding:.875rem 1.5rem;display:flex;flex-direction:column;gap:.35rem;">
       <button onclick="showLanding();closeNav()" class="nav-a" style="text-align:left;padding:.625rem .75rem;" data-i18n="nav_home">Home</button>
       <button onclick="navDashClick();closeNav()" class="nav-a" style="text-align:left;padding:.625rem .75rem;" data-i18n="nav_dashboard">Dashboard</button>
-      <button onclick="navTemplatesClick();closeNav()" class="nav-a" style="text-align:left;padding:.625rem .75rem;">Templates</button>
+      <!-- Templates mobile nav item hidden temporarily — restore by uncommenting below -->
+      <!-- <button onclick="navTemplatesClick();closeNav()" class="nav-a" style="text-align:left;padding:.625rem .75rem;">Templates</button> -->
       <button onclick="navHistoryClick();closeNav()" class="nav-a" style="text-align:left;padding:.625rem .75rem;">History</button>
       <a href="#features" onclick="closeNav()" class="nav-a" style="padding:.625rem .75rem;" data-i18n="nav_features">Features</a>
       <a href="#faq"      onclick="closeNav()" class="nav-a" style="padding:.625rem .75rem;" data-i18n="nav_about">About</a>
