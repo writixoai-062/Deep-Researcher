@@ -53,7 +53,7 @@ router.post("/create-checkout", async (req: Request, res: Response) => {
           redirect_url: process.env.REPLIT_DOMAINS
             ? `https://${process.env.REPLIT_DOMAINS.split(",")[0]}/thoughtscope/?checkout=success`
             : "https://mentics.app/?checkout=success",
-          receipt_button_text: "Return to Mentics",
+          receipt_button_text: "Return to Menticx",
         },
         expires_at: null,
       },
