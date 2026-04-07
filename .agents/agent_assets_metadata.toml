@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "s6pTMRz9bXsmSJLS9Eo1N"
+uri = "file://menticx-source.tar.gz"
+type = "unspecified"
+title = "Menticx Source Code"
